@@ -4547,21 +4547,22 @@ Anlagen:
         console.log("=== updatePreviewOnInput called ===")
         console.log("Timestamp:", new Date().toISOString())
 
-        // Update form data from all input fields
-        updateFormData()
+        try {
+          // Update form data from all input fields
+          updateFormData()
 
-        console.log("Current preview type:", currentPreviewType)
-        console.log("Form data after update:", {
-          fullName: formData.fullName,
-          address: formData.address,
-          email: formData.email,
-          phone: formData.phone,
-          birthDate: formData.birthDate,
-          lebenslaufPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
-          anschreibenPhoto: formData.anschreibenPhoto ? "Present" : "Missing"
-        })
-        console.log("Anschreiben photo:", formData.anschreibenPhoto ? "Present" : "Missing")
-        console.log("Global photo data:", globalPhotoData ? "Present" : "Missing")
+          console.log("🎯 Current preview type:", currentPreviewType)
+          console.log("📊 Form data after update:", {
+            fullName: formData.fullName,
+            address: formData.address,
+            email: formData.email,
+            phone: formData.phone,
+            birthDate: formData.birthDate,
+            lebenslaufPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
+            anschreibenPhoto: formData.anschreibenPhoto ? "Present" : "Missing"
+          })
+          console.log("📸 Anschreiben photo:", formData.anschreibenPhoto ? "Present" : "Missing")
+          console.log("📸 Global photo data:", globalPhotoData ? "Present" : "Missing")
 
         // Detailed photo analysis
         if (formData.lebenslaufPhoto) {
@@ -4619,6 +4620,10 @@ Anlagen:
 
         // Update preview with current data using the determined type
         await showPreview(previewType)
+        console.log("✅ Preview updated successfully")
+        } catch (error) {
+          console.error("❌ Error in updatePreviewOnInput:", error)
+        }
       }
 
       // Debounced version of preview update
@@ -5087,6 +5092,8 @@ Anlagen:
 
       // Add event listeners to form fields for real-time updates
       function addFormEventListeners() {
+        console.log("=== addFormEventListeners called ===")
+        
         // Remove existing listeners first to avoid duplicates
         removeFormEventListeners()
 
@@ -5097,26 +5104,29 @@ Anlagen:
           document.getElementById("anschreibenSection")
         ]
 
+        let totalListenersAdded = 0
+
         sections.forEach(section => {
           if (section) {
             const inputs = section.querySelectorAll("input, textarea, select")
             console.log(`Adding listeners to ${section.id}:`, inputs.length, "inputs")
+            
             inputs.forEach(input => {
               // Add multiple event listeners for better tracking
               input.addEventListener("input", e => {
-                console.log(`Input event on ${input.name || input.id}:`, e.target.value)
+                console.log(`🔄 Input event on ${input.name || input.id}:`, e.target.value)
                 debouncedUpdatePreview()
               })
               input.addEventListener("change", e => {
-                console.log(`Change event on ${input.name || input.id}:`, e.target.value)
+                console.log(`🔄 Change event on ${input.name || input.id}:`, e.target.value)
                 debouncedUpdatePreview()
               })
               input.addEventListener("keyup", e => {
-                console.log(`Keyup event on ${input.name || input.id}:`, e.target.value)
+                console.log(`🔄 Keyup event on ${input.name || input.id}:`, e.target.value)
                 debouncedUpdatePreview()
               })
               input.addEventListener("paste", () => {
-                console.log(`Paste event on ${input.name || input.id}`)
+                console.log(`🔄 Paste event on ${input.name || input.id}`)
                 // Small delay to allow paste content to be processed
                 setTimeout(debouncedUpdatePreview, 10)
               })
@@ -5124,7 +5134,7 @@ Anlagen:
               // Additional listeners for better synchronization
               if (input.type === "radio" || input.type === "checkbox") {
                 input.addEventListener("click", e => {
-                  console.log(`Click event on ${input.name || input.id}:`, e.target.checked)
+                  console.log(`🔄 Click event on ${input.name || input.id}:`, e.target.checked)
                   debouncedUpdatePreview()
                 })
               }
@@ -5132,23 +5142,31 @@ Anlagen:
               // For select elements
               if (input.tagName.toLowerCase() === "select") {
                 input.addEventListener("focus", () => {
-                  console.log(`Focus event on ${input.name || input.id}`)
+                  console.log(`🔄 Focus event on ${input.name || input.id}`)
                 })
                 input.addEventListener("blur", () => {
-                  console.log(`Blur event on ${input.name || input.id}`)
+                  console.log(`🔄 Blur event on ${input.name || input.id}`)
                   debouncedUpdatePreview()
                 })
               }
+
+              totalListenersAdded++
             })
+          } else {
+            console.log(`❌ Section not found: ${section ? section.id : 'undefined'}`)
           }
         })
+
+        console.log(`✅ Total event listeners added: ${totalListenersAdded}`)
+        console.log("=== addFormEventListeners completed ===")
       }
 
       // Remove existing event listeners to prevent duplicates
       function removeFormEventListeners() {
         const sections = [
           document.getElementById("bewerbungForm"),
-          document.getElementById("lebenslaufSection")
+          document.getElementById("lebenslaufSection"),
+          document.getElementById("anschreibenSection")
         ]
 
         sections.forEach(section => {
@@ -8774,28 +8792,28 @@ Anlagen:
 
       // Debug function to test synchronization
       window.debugTestSync = function () {
-        console.log("=== TESTING SYNCHRONIZATION ===")
+        console.log("=== 🔧 TESTING SYNCHRONIZATION ===")
 
         // Test Lebenslauf section
         const lebenslaufInputs = document.querySelectorAll(
           "#lebenslaufSection input, #lebenslaufSection textarea, #lebenslaufSection select"
         )
-        console.log(`Found ${lebenslaufInputs.length} inputs in Lebenslauf section`)
+        console.log(`📝 Found ${lebenslaufInputs.length} inputs in Lebenslauf section`)
 
         // Test Anschreiben section
         const anschreibenInputs = document.querySelectorAll(
           "#anschreibenSection input, #anschreibenSection textarea, #anschreibenSection select"
         )
-        console.log(`Found ${anschreibenInputs.length} inputs in Anschreiben section`)
+        console.log(`📝 Found ${anschreibenInputs.length} inputs in Anschreiben section`)
 
         // Test main form
         const mainFormInputs = document.querySelectorAll(
           "#bewerbungForm input, #bewerbungForm textarea, #bewerbungForm select"
         )
-        console.log(`Found ${mainFormInputs.length} inputs in main form`)
+        console.log(`📝 Found ${mainFormInputs.length} inputs in main form`)
 
         // Check event listeners
-        console.log("Checking event listeners...")
+        console.log("🎯 Checking event listeners...")
         let listenersCount = 0
 
         document
