@@ -8973,6 +8973,133 @@ Anlagen:
         }
       }
 
+      // Debug function to test auto-synchronization
+      window.debugAutoSync = function () {
+        console.log("=== 🔄 TESTING AUTO-SYNCHRONIZATION ===")
+        
+        console.log("1. Checking event listeners...")
+        const sections = [
+          document.getElementById("bewerbungForm"),
+          document.getElementById("lebenslaufSection")
+        ]
+        
+        let totalInputs = 0
+        let inputsWithListeners = 0
+        
+        sections.forEach(section => {
+          if (section) {
+            const inputs = section.querySelectorAll("input, textarea, select")
+            totalInputs += inputs.length
+            console.log(`📝 ${section.id}: ${inputs.length} inputs`)
+            
+            inputs.forEach(input => {
+              // Check if input has event listeners by testing a simple property
+              if (input.addEventListener) {
+                inputsWithListeners++
+              }
+            })
+          }
+        })
+        
+        console.log(`📊 Total inputs: ${totalInputs}`)
+        console.log(`📊 Inputs with listeners: ${inputsWithListeners}`)
+        
+        console.log("2. Testing form data update...")
+        const testValue = "Test " + new Date().getTime()
+        
+        // Find a text input to test
+        const testInput = document.querySelector("#bewerbungForm input[type='text'], #lebenslaufSection input[type='text']")
+        if (testInput) {
+          console.log(`🧪 Testing with input: ${testInput.name || testInput.id}`)
+          console.log(`🧪 Current value: "${testInput.value}"`)
+          
+          // Set test value
+          testInput.value = testValue
+          console.log(`🧪 Set value to: "${testValue}"`)
+          
+          // Trigger input event
+          const inputEvent = new Event('input', { bubbles: true })
+          testInput.dispatchEvent(inputEvent)
+          console.log(`🧪 Dispatched input event`)
+          
+          // Check if formData was updated
+          setTimeout(() => {
+            console.log(`🧪 FormData after update:`, formData[testInput.name] || formData[testInput.id])
+            console.log(`🧪 Expected: "${testValue}"`)
+            console.log(`🧪 Match: ${(formData[testInput.name] || formData[testInput.id]) === testValue}`)
+          }, 100)
+        } else {
+          console.log("❌ No text input found for testing")
+        }
+        
+        console.log("3. Testing debounced function...")
+        console.log(`🧪 debouncedUpdatePreview type: ${typeof debouncedUpdatePreview}`)
+        console.log(`🧪 updatePreviewOnInput type: ${typeof updatePreviewOnInput}`)
+        
+        return {
+          totalInputs: totalInputs,
+          inputsWithListeners: inputsWithListeners,
+          testValue: testValue,
+          testInput: testInput ? testInput.name || testInput.id : "None"
+        }
+      }
+
+      // Debug function to test JSON data overwriting
+      window.debugJSONOverwrite = async function () {
+        console.log("=== 📄 TESTING JSON DATA OVERWRITING ===")
+        
+        console.log("1. Current state before JSON loading:")
+        console.log("   - formData.fullName:", formData.fullName)
+        console.log("   - formData.address:", formData.address)
+        console.log("   - formData.phone:", formData.phone)
+        console.log("   - formData.email:", formData.email)
+        console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        
+        // Test with sample data
+        const testData = {
+          fullName: "Test User JSON",
+          address: "Test Address JSON",
+          phone: "+49 123 456789",
+          email: "test@json.com",
+          birthDate: "01.01.1990",
+          nationality: "Deutsch",
+          // No photo in test data to test preservation
+        }
+        
+        console.log("2. Testing populateFormWithLebenslaufData with test data...")
+        await populateFormWithLebenslaufData(testData)
+        
+        console.log("3. State after populateFormWithLebenslaufData:")
+        console.log("   - formData.fullName:", formData.fullName)
+        console.log("   - formData.address:", formData.address)
+        console.log("   - formData.phone:", formData.phone)
+        console.log("   - formData.email:", formData.email)
+        console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        
+        console.log("4. Testing updateFormData...")
+        updateFormData()
+        
+        console.log("5. Final state after updateFormData:")
+        console.log("   - formData.fullName:", formData.fullName)
+        console.log("   - formData.address:", formData.address)
+        console.log("   - formData.phone:", formData.phone)
+        console.log("   - formData.email:", formData.email)
+        console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        
+        // Check if photo was preserved
+        const photoPreserved = globalPhotoData && formData.lebenslaufPhoto && globalPhotoData === formData.lebenslaufPhoto
+        
+        return {
+          initialPhoto: globalPhotoData ? "Present" : "Missing",
+          finalPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
+          photoPreserved: photoPreserved,
+          dataUpdated: formData.fullName === "Test User JSON"
+        }
+      }
+
       console.log("Debug functions available:")
       console.log("- debugGetTranslation('key') - Test translation")
       console.log("- debugShowStatus('message', 'type') - Test status display")
@@ -8983,6 +9110,8 @@ Anlagen:
       console.log("- debugPhotoOverwrite() - Analyze photo data overwriting")
       console.log("- debugDataSequence() - Test data loading sequence")
       console.log("- debugTestSync() - Test synchronization")
+      console.log("- debugAutoSync() - Test auto-synchronization")
+      console.log("- debugJSONOverwrite() - Test JSON data overwriting")
       console.log("- debugSaveData() - Test save data with photo")
       console.log("- debugClearPhotoData() - Clear invalid photo data")
       console.log("- debugForcePhotoUpload() - Force photo upload from input")
