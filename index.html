@@ -3980,6 +3980,41 @@ Anlagen:
           setFormValue(document, "lebenslaufAdditional", additionalText)
         }
 
+        // Photo - Handle photo from JSON data
+        console.log("Checking data.photo:", data.photo ? "Photo exists" : "No photo")
+        if (data.photo && typeof data.photo === "string") {
+          console.log("=== LOADING PHOTO FROM JSON DATA ===")
+          console.log("Photo data type:", typeof data.photo)
+          console.log("Photo data length:", data.photo.length)
+          console.log("Photo starts with data:image/:", data.photo.startsWith("data:image/"))
+          
+          // Save photo to global variable and formData
+          globalPhotoData = data.photo
+          formData.lebenslaufPhoto = data.photo
+          formData.photo = data.photo
+          
+          // Display photo in preview
+          const photoPreview = document.getElementById("photoPreview")
+          if (photoPreview) {
+            console.log("Updating photo preview with loaded image")
+            photoPreview.innerHTML = `<img src="${data.photo}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
+            
+            // Show remove button
+            const removePhotoBtn = document.getElementById("removePhoto")
+            if (removePhotoBtn) {
+              removePhotoBtn.style.display = "block"
+              console.log("Remove photo button shown")
+            }
+          } else {
+            console.log("Photo preview element not found")
+          }
+          
+          console.log("Photo loaded from JSON and saved to globalPhotoData and formData")
+          saveFormData() // Save to localStorage
+        } else {
+          console.log("No valid photo data in JSON file")
+        }
+
         // Update preview
         console.log("Updating preview...")
         try {
