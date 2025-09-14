@@ -4180,6 +4180,11 @@ Anlagen:
         // Show preview
         console.log("About to show preview for bewerbung")
         await showPreview("bewerbung")
+
+        // Re-add event listeners after data loading
+        console.log("Re-adding event listeners after Anschreiben data loading...")
+        addFormEventListeners()
+        console.log("Event listeners re-added successfully")
       }
 
       // Populate form with Lebenslauf data
@@ -4374,6 +4379,11 @@ Anlagen:
           console.error("Error updating preview:", previewError)
           throw previewError
         }
+
+        // Re-add event listeners after data loading
+        console.log("Re-adding event listeners after data loading...")
+        addFormEventListeners()
+        console.log("Event listeners re-added successfully")
       }
 
       // Helper function to set form values
@@ -9097,6 +9107,69 @@ Anlagen:
         }
       }
 
+      // Debug function to test complete data flow
+      window.debugDataFlow = async function () {
+        console.log("=== 🔄 TESTING COMPLETE DATA FLOW ===")
+        
+        console.log("1. Initial state:")
+        console.log("   - formData.fullName:", formData.fullName)
+        console.log("   - formData.address:", formData.address)
+        
+        // Test user input
+        console.log("2. Testing user input...")
+        const nameInput = document.querySelector("#bewerbungForm input[name='fullName']")
+        if (nameInput) {
+          const testValue = "User Input Test " + new Date().getTime()
+          nameInput.value = testValue
+          console.log(`   - Set name input to: "${testValue}"`)
+          
+          // Trigger input event
+          const inputEvent = new Event('input', { bubbles: true })
+          nameInput.dispatchEvent(inputEvent)
+          
+          // Wait for debounced update
+          setTimeout(() => {
+            console.log("   - formData.fullName after input:", formData.fullName)
+            console.log("   - Match:", formData.fullName === testValue)
+          }, 500)
+        }
+        
+        // Test JSON loading
+        console.log("3. Testing JSON data loading...")
+        setTimeout(async () => {
+          console.log("   - Before JSON load - formData.fullName:", formData.fullName)
+          
+          // Load JSON data
+          await loadDataFromJSON()
+          
+          console.log("   - After JSON load - formData.fullName:", formData.fullName)
+          
+          // Test input again after JSON load
+          console.log("4. Testing input after JSON load...")
+          const nameInput2 = document.querySelector("#bewerbungForm input[name='fullName']")
+          if (nameInput2) {
+            const testValue2 = "After JSON Test " + new Date().getTime()
+            nameInput2.value = testValue2
+            console.log(`   - Set name input to: "${testValue2}"`)
+            
+            // Trigger input event
+            const inputEvent2 = new Event('input', { bubbles: true })
+            nameInput2.dispatchEvent(inputEvent2)
+            
+            // Wait for debounced update
+            setTimeout(() => {
+              console.log("   - formData.fullName after second input:", formData.fullName)
+              console.log("   - Match:", formData.fullName === testValue2)
+            }, 500)
+          }
+        }, 1000)
+        
+        return {
+          initialName: formData.fullName,
+          testCompleted: true
+        }
+      }
+
       console.log("Debug functions available:")
       console.log("- debugGetTranslation('key') - Test translation")
       console.log("- debugShowStatus('message', 'type') - Test status display")
@@ -9109,6 +9182,7 @@ Anlagen:
       console.log("- debugTestSync() - Test synchronization")
       console.log("- debugAutoSync() - Test auto-synchronization")
       console.log("- debugJSONOverwrite() - Test JSON data overwriting")
+      console.log("- debugDataFlow() - Test complete data flow")
       console.log("- debugSaveData() - Test save data with photo")
       console.log("- debugClearPhotoData() - Clear invalid photo data")
       console.log("- debugForcePhotoUpload() - Force photo upload from input")
