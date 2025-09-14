@@ -154,3 +154,6 @@ drafts/*
 .DS_Store
 #Ігнорувати secret.md
 secret.md
+
+#Ігнорувати локальні копії бібліотек
+html-docx.js

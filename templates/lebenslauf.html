@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lebenslauf - Mykola Vutov</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+      body {
+        font-family: "Arial", sans-serif;
+        font-size: 11pt;
+        line-height: 1.4;
+        color: #333;
+      }
+
+      /* Mobile adaptations */
+      @media screen and (max-width: 768px) {
+        body {
+          font-size: 12pt;
+          line-height: 1.5;
+          padding: 10px;
+        }
+
+        h1 {
+          font-size: 20pt;
+          margin-bottom: 15px;
+        }
+
+        h2 {
+          font-size: 16pt;
+          margin-top: 20px;
+          margin-bottom: 10px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin: 10px 0;
+        }
+
+        .competence-grid {
+          grid-template-columns: 1fr;
+          gap: 15px;
+        }
+
+        .experience-item {
+          margin-bottom: 15px;
+          padding: 10px;
+        }
+
+        .highlight-box {
+          padding: 10px;
+          margin: 10px 0;
+        }
+
+        ul {
+          margin: 10px 0;
+          padding-left: 20px;
+        }
+
+        li {
+          margin: 5px 0;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        body {
+          font-size: 11pt;
+          padding: 5px;
+        }
+
+        h1 {
+          font-size: 18pt;
+          margin-bottom: 10px;
+        }
+
+        h2 {
+          font-size: 14pt;
+          margin-top: 15px;
+          margin-bottom: 8px;
+        }
+
+        .grid {
+          gap: 8px;
+          margin: 8px 0;
+        }
+
+        .competence-grid {
+          gap: 10px;
+        }
+
+        .experience-item {
+          margin-bottom: 12px;
+          padding: 8px;
+        }
+
+        .highlight-box {
+          padding: 8px;
+          margin: 8px 0;
+        }
+
+        ul {
+          margin: 8px 0;
+          padding-left: 15px;
+        }
+
+        li {
+          margin: 3px 0;
+        }
+      }
+      h1 {
+        color: #1a5490;
+        font-size: 24pt;
+        border-bottom: 3px solid #1a5490;
+        padding-bottom: 5mm;
+      }
+      h2 {
+        color: #2c5aa0;
+        font-size: 14pt;
+        margin-top: 8mm;
+        border-bottom: 1px solid #2c5aa0;
+        padding-bottom: 2mm;
+      }
+      .header-info {
+        color: #666;
+        font-size: 12pt;
+        margin-bottom: 10mm;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 35mm auto;
+        gap: 5mm;
+        margin: 5mm 0;
+      }
+      .label {
+        font-weight: bold;
+        color: #555;
+      }
+      ul {
+        margin: 5mm 0;
+        padding-left: 6mm;
+      }
+      li {
+        margin: 2mm 0;
+      }
+      .experience-item {
+        margin-bottom: 8mm;
+        padding: 3mm;
+        background: #f8f8f8;
+        border-left: 3px solid #2c5aa0;
+      }
+      .highlight-box {
+        background: #e8f4fd;
+        border: 1px solid #1a5490;
+        padding: 4mm;
+        margin: 5mm 0;
+        border-radius: 3px;
+      }
+      .competence-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5mm;
+        margin: 5mm 0;
+      }
+      .competence-category {
+        background: #f0f8ff;
+        padding: 3mm;
+        border-left: 3px solid #1a5490;
+      }
+
+      /* Стилі для фото в заголовку */
+      .header-with-photo {
+        display: flex;
+        gap: 5mm;
+        margin-bottom: 10mm;
+        align-items: flex-start;
+      }
+
+      .photo-container {
+        width: 35mm;
+        height: 45mm;
+        border: 2px solid #1a5490;
+        border-radius: 3px;
+        overflow: hidden;
+        background: #f8f9fa;
+        position: relative;
+        flex-shrink: 0;
+      }
+
+      .photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .photo-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #666;
+        font-size: 10pt;
+        text-align: center;
+        background: #f0f8ff;
+      }
+
+      .name-container {
+        flex: 1;
+      }
+
+      .name-container h1 {
+        margin-top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Заголовок з фото -->
+    <div class="header-with-photo">
+      <div class="photo-container">
+        {{PHOTO_PLACEHOLDER}}
+      </div>
+      <div class="name-container">
+        <h1>MYKOLA VUTOV</h1>
+        <div class="header-info">
+          Bewerbung für Mitarbeiter (m/w/d) im Stationsservice
+        </div>
+      </div>
+    </div>
+
+    <h2>PERSÖNLICHE DATEN</h2>
+    <div class="grid">
+      <div class="label">Geburtsdatum:</div>
+      <div>19.12.1985</div>
+      <div class="label">Adresse:</div>
+      <div>Am Unterhorstweg 1B, 39122 Magdeburg</div>
+      <div class="label">Telefon:</div>
+      <div>+49 151 64317833</div>
+      <div class="label">E-Mail:</div>
+      <div>vutov_mkola@icloud.com</div>
+      <div class="label">Staatsangehörigkeit:</div>
+      <div>Ukrainisch</div>
+      <div class="label">Aufenthaltsstatus:</div>
+      <div>Aufenthaltserlaubnis (unbefristet)</div>
+    </div>
+
+    <div class="highlight-box">
+      <h3 style="margin-top: 0; color: #1a5490">PROFIL FÜR STATIONSSERVICE</h3>
+      <p>
+        <strong>Motivierter und verantwortungsbewusster Mitarbeiter</strong> mit
+        ausgeprägtem Hygienebewusstsein und hoher Empathie für kranke Menschen.
+        Besitzt die erforderlichen Soft Skills für die Arbeit im
+        Gesundheitswesen und ist bereit, sich kontinuierlich weiterzubilden.
+        Ideal für die vielfältigen Aufgaben im Stationsservice geeignet.
+      </p>
+    </div>
+
+    <h2>KERNKOMPETENZEN FÜR STATIONSSERVICE</h2>
+    <div class="competence-grid">
+      <div class="competence-category">
+        <strong>Hygiene & Sicherheit</strong>
+        <ul>
+          <li>Ausgeprägtes Hygienebewusstsein</li>
+          <li>Sorgfältige Arbeitsweise</li>
+          <li>Verständnis für Hygienevorschriften</li>
+          <li>Verantwortungsbewusstsein</li>
+        </ul>
+      </div>
+      <div class="competence-category">
+        <strong>Patientenorientierung</strong>
+        <ul>
+          <li>Empathischer Umgang mit Menschen</li>
+          <li>Respektvoller Umgang mit Patienten</li>
+          <li>Verständnis für besondere Bedürfnisse</li>
+          <li>Kommunikationsfähigkeit</li>
+        </ul>
+      </div>
+      <div class="competence-category">
+        <strong>Organisation & Team</strong>
+        <ul>
+          <li>Strukturierte Arbeitsweise</li>
+          <li>Teamfähigkeit</li>
+          <li>Zuverlässigkeit</li>
+          <li>Flexibilität</li>
+        </ul>
+      </div>
+      <div class="competence-category">
+        <strong>Körperliche Fitness</strong>
+        <ul>
+          <li>Körperliche Belastbarkeit</li>
+          <li>Schichtarbeitstauglich</li>
+          <li>Gesundheitlich fit</li>
+          <li>Bereitschaft zu flexiblen Zeiten</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2>BERUFSERFAHRUNG</h2>
+    <div class="experience-item">
+      <strong>Buchhalter</strong> | ZSU (Zentrale Staatsverwaltung), Ukraine<br />
+      <em>April 2022 - Oktober 2024</em>
+      <ul>
+        <li>
+          <strong>Präzise Arbeitsweise:</strong> Sorgfältige
+          Dokumentenverwaltung und Datenpflege
+        </li>
+        <li>
+          <strong>Organisation:</strong> Systematische Verwaltung von
+          Arbeitsabläufen und Materialien
+        </li>
+        <li>
+          <strong>Teamkoordination:</strong> Zusammenarbeit mit verschiedenen
+          Abteilungen
+        </li>
+        <li>
+          <strong>Verantwortung:</strong> Übernahme verantwortungsvoller
+          Aufgaben mit hoher Genauigkeit
+        </li>
+      </ul>
+    </div>
+
+    <div class="experience-item">
+      <strong>Kundenservice & Administration</strong> | Ukraine<br />
+      <em>2011 - 2022</em>
+      <ul>
+        <li>
+          <strong>Kundenbetreuung:</strong> Empathischer Umgang mit Menschen in
+          verschiedenen Lebenssituationen
+        </li>
+        <li>
+          <strong>Serviceorientierung:</strong> Hohe Bereitschaft, anderen zu
+          helfen
+        </li>
+        <li>
+          <strong>Problemlösung:</strong> Strukturierte Herangehensweise an
+          komplexe Aufgaben
+        </li>
+        <li>
+          <strong>Anpassungsfähigkeit:</strong> Flexibilität bei wechselnden
+          Anforderungen
+        </li>
+      </ul>
+    </div>
+
+    <h2>AUSBILDUNG</h2>
+    <div class="experience-item">
+      <strong>Diplom-Ingenieur</strong><br />
+      Nationale Technische Universität, Poltava, Ukraine<br />
+      <em>2006 - 2011</em>
+      <p>
+        <strong>Relevanz für Stationsservice:</strong> Analytisches Denken,
+        strukturierte Arbeitsweise, Problemlösungskompetenz und technisches
+        Verständnis für Geräte und Prozesse.
+      </p>
+    </div>
+
+    <h2>SPRACHKENNTNISSE</h2>
+    <ul>
+      <li><strong>Ukrainisch</strong> - Muttersprache</li>
+      <li><strong>Russisch</strong> - Verhandlungssicher</li>
+      <li>
+        <strong>Deutsch</strong> - B1 Niveau (kontinuierliche Verbesserung durch
+        Sprachkurse)
+      </li>
+      <li><strong>Bulgarisch</strong> - Gute Kenntnisse</li>
+      <li><strong>Englisch</strong> - Grundkenntnisse</li>
+    </ul>
+
+    <h2>ZUSÄTZLICHE QUALIFIKATIONEN</h2>
+    <ul>
+      <li>
+        <strong>Führerschein Klasse B</strong> - Mobilität für Hol- und
+        Bringdienste
+      </li>
+      <li>
+        <strong>Gesundheitliche Eignung</strong> - Vollständig arbeitsfähig
+      </li>
+      <li><strong>Schichtarbeit</strong> - Bereitschaft für alle Schichten</li>
+      <li><strong>Flexibilität</strong> - Vollzeit/Teilzeit nach Bedarf</li>
+      <li>
+        <strong>Sofortige Verfügbarkeit</strong> - Ab sofort einsatzbereit
+      </li>
+      <li>
+        <strong>Fortbildungsbereitschaft</strong> - Interesse an internen
+        Schulungen
+      </li>
+    </ul>
+
+    <h2>MOTIVATION FÜR STATIONSSERVICE</h2>
+    <div class="highlight-box">
+      <p>
+        Die Arbeit im Gesundheitswesen erfüllt mich, da ich täglich einen
+        direkten Beitrag zum Wohlbefinden von Patienten leisten kann. Besonders
+        reizt mich die Vielfalt der Aufgaben - von der hygienischen Aufbereitung
+        über die Speiseversorgung bis hin zu Hol- und Bringdiensten. Ich bin
+        motiviert, Teil eines Teams zu werden, das sich für die Gesundheit der
+        Menschen einsetzt, und möchte mich langfristig im Gesundheitswesen
+        weiterentwickeln.
+      </p>
+    </div>
+
+    <div
+      style="margin-top: 15mm; text-align: center; color: #666; font-size: 10pt"
+    >
+      Magdeburg, September 2025
+    </div>
+  </body>
+</html>

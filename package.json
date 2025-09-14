@@ -1,0 +1,39 @@
+{
+  "name": "bewerbung-stationsservice",
+  "version": "1.0.0",
+  "description": "Professional job application document generator optimized for modern recruiting systems 2025. Specifically configured for **Mitarbeiter im Stationsservice** position at Universitätsklinikum Magdeburg.",
+  "main": "index.html",
+  "homepage": "https://vutov.github.io/bewerbung-stationsservice",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "server": "node server.js",
+    "dev": "concurrently \"npm run server\" \"npm run start\"",
+    "build": "echo 'No build step required for static site'",
+    "deploy": "gh-pages -d .",
+    "setup-libs": "node setup-libs.js",
+    "postinstall": "npm run setup-libs"
+  },
+  "keywords": [
+    "bewerbung",
+    "lebenslauf",
+    "cv",
+    "resume",
+    "job-application",
+    "stationsservice",
+    "magdeburg",
+    "german",
+    "ukrainian"
+  ],
+  "author": "Mykola Vutov",
+  "license": "MIT",
+  "devDependencies": {
+    "gh-pages": "^6.0.0"
+  },
+  "dependencies": {
+    "docx": "^9.5.1",
+    "html-docx-js": "^0.3.1",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "concurrently": "^8.2.2"
+  }
+}

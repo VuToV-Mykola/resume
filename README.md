@@ -1,103 +1,199 @@
-<!-- AUTOGEN:STATS -->
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML) [![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS) [![Terminal](https://img.shields.io/badge/mac%20terminal-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=000000)](https://support.apple.com/guide/terminal/welcome/mac) [![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/) [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/) 
+# 📄 Bewerbung Document Generator
 
-[![📊 Views](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/goit-markup-hw-04/main/assets/db/visitors-badge.json)](https://github.com/VuToV-Mykola/goit-markup-hw-04/graphs/traffic)
-[![⭐ Stars](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/goit-markup-hw-04/main/assets/db/likes-badge.json)](https://github.com/VuToV-Mykola/goit-markup-hw-04/actions/workflows/screenshot-and-visitor.yaml)
-[![📦 Size](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/goit-markup-hw-04/main/assets/db/repo-size.json)](https://github.com/VuToV-Mykola/goit-markup-hw-04)
-[![📄 License](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/goit-markup-hw-04/main/assets/db/repo-license.json)](https://github.com/VuToV-Mykola/goit-markup-hw-04/blob/main/LICENSE)
+Professional job application document generator optimized for modern recruiting systems 2025. Specifically configured for **Mitarbeiter im Stationsservice** position at Universitätsklinikum Magdeburg.
 
-## 📸 Скріншот проекту
-![Project Screenshot](./assets/screenshot.png)
-<!-- END:AUTOGEN -->
+## 🌟 Features
 
-## Мої досягнення
+- **📱 Mobile-First Design**: Fully responsive and optimized for mobile devices
+- **🌐 Multi-Language Support**: German, English, and Ukrainian
+- **🎨 Dark/Light Theme**: Automatic theme switching with localStorage persistence
+- **📝 Professional Templates**: Optimized for ATS (Applicant Tracking Systems)
+- **💾 Multiple Formats**: HTML, PDF, DOCX generation
+- **🔄 Real-time Preview**: Live preview of documents as you type
+- **📋 Form Validation**: Comprehensive form validation and error handling
+- **🎯 Station Service Focus**: Specifically tailored for healthcare positions
 
-![Опис зображення](./assets/head.jpg) ![Опис зображення](./assets/hw-04.jpg)
+## 🚀 Live Demo
 
-## Мої сертифікати - Пройшов курс на Sololearn :
+**[Try it now on GitHub Pages](https://vutov.github.io/bewerbung-stationsservice/)**
 
-![Certification Badge](./assets/certificat.jpg)
+## 🛠️ Local Setup
 
-[SOLOLEARN](https://www.sololearn.com/certificates/CT-UJ9JRYCU)
+To run this project locally:
 
-## 📌 Завдання
+```bash
+# Clone the repository
+git clone https://github.com/vutov/bewerbung-stationsservice.git
+cd bewerbung-stationsservice
 
-- Створити репозиторій для проєкту з SVG-іконками та анімаціями.
-- Додати векторні зображення у форматі SVG-спрайту.
-- Реалізувати ефекти ховера та анімації переходів.
-- Налаштуй **GitHub Pages** та додай посилання на живу сторінку у секцію **About**.
+# Install dependencies
+npm install
+
+# The setup script will automatically copy required libraries
+# You can also run it manually:
+npm run setup-libs
+
+# Start local server
+npm start
+# or
+python -m http.server 8000
+```
+
+The project will be available at `http://localhost:8000`
+
+## 📱 Mobile Features
+
+- **Responsive Design**: Adapts perfectly to all screen sizes
+- **Mobile Menu**: Intuitive hamburger menu for easy navigation
+- **Touch-Friendly**: Optimized for touch interactions
+- **iOS Zoom Prevention**: Prevents unwanted zoom on form inputs
+- **Smooth Scrolling**: Enhanced scrolling experience on mobile devices
+
+## 🛠️ Technologies Used
+
+- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
+- **Styling**: CSS Grid, Flexbox, CSS Custom Properties
+- **Icons**: Unicode emojis for cross-platform compatibility
+- **Fonts**: Inter font family for modern typography
+- **Deployment**: GitHub Pages (static hosting)
+
+## 📁 Project Structure
+
+```
+bewerbung-stationsservice/
+├── index.html              # Main application file
+├── config.js               # Configuration settings
+├── utils.js                # Utility functions
+├── locales/                # Translation files
+│   ├── de.json            # German translations
+│   ├── en.json            # English translations
+│   └── uk.json            # Ukrainian translations
+├── data/                   # Sample data files
+│   ├── lebenslauf_data.json
+│   ├── lebenslauf_data_de.json
+│   └── lebenslauf_data_en.json
+├── templates/              # Document templates
+│   ├── bewerbung.html     # Application letter template
+│   └── lebenslauf.html    # CV template
+├── package.json           # Project configuration
+└── README.md              # This file
+```
+
+## 🎯 Target Position
+
+This generator is specifically optimized for:
+- **Position**: Mitarbeiter im Stationsservice
+- **Company**: Universitätsklinikum Magdeburg
+- **Industry**: Healthcare/Hospital services
+- **Requirements**: Hygiene awareness, patient care, team work
+
+## 🌐 Supported Languages
+
+- **🇩🇪 German (Deutsch)**: Primary language
+- **🇺🇸 English**: International support
+- **🇺🇦 Ukrainian (Українська)**: Native language support
+
+## 📱 Mobile Optimization
+
+### Responsive Breakpoints
+- **Desktop**: > 1024px
+- **Large Tablet**: 768px - 1024px
+- **Tablet**: 640px - 768px
+- **Mobile Landscape**: 480px - 640px
+- **Mobile Portrait**: 360px - 480px
+- **Small Mobile**: < 360px
+
+### Mobile Features
+- Hamburger menu with slide-out panel
+- Touch-friendly form inputs
+- Optimized button sizes
+- Responsive grid layouts
+- Mobile-specific typography
+
+## 🚀 Getting Started
+
+### Local Development
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/vutov/bewerbung-stationsservice.git
+   cd bewerbung-stationsservice
+   ```
+
+2. **Start local server**:
+   ```bash
+   # Using Python
+   python -m http.server 8000
+   
+   # Using Node.js
+   npm start
+   ```
+
+3. **Open in browser**:
+   ```
+   http://localhost:8000
+   ```
+
+### GitHub Pages Deployment
+
+1. **Fork this repository**
+2. **Enable GitHub Pages** in repository settings
+3. **Select source**: Deploy from a branch (main)
+4. **Access your site**: `https://yourusername.github.io/bewerbung-stationsservice`
+
+## 📝 Usage
+
+1. **Fill out the form** with your personal and professional information
+2. **Switch between languages** using the language flags
+3. **Toggle theme** between light and dark modes
+4. **Preview documents** in real-time
+5. **Generate and download** documents in HTML, PDF, or DOCX format
+6. **Convert formats** as needed for different applications
+
+## 🎨 Customization
+
+### Adding New Languages
+1. Create new translation file in `locales/` folder
+2. Add language flag button in HTML
+3. Update language switching logic
+
+### Modifying Templates
+1. Edit templates in `templates/` folder
+2. Update CSS styles for mobile responsiveness
+3. Test on different screen sizes
+
+## 📊 Performance
+
+- **Lightweight**: No external dependencies
+- **Fast Loading**: Optimized CSS and JavaScript
+- **Mobile Optimized**: Touch-friendly interactions
+- **Accessible**: WCAG compliant design
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test on multiple devices
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Mykola Vutov**
+- Email: vutov_mkola@icloud.com
+- GitHub: [@vutov](https://github.com/vutov)
+
+## 🙏 Acknowledgments
+
+- Universitätsklinikum Magdeburg for the job opportunity
+- Modern web standards for responsive design
+- GitHub Pages for free hosting
+- Open source community for inspiration
 
 ---
 
-## ✅ Критерії виконання завдання
-
-### **Проєкт**
-
-- `«A1»` У корені проєкту є папка `images` з зображеннями.
-- `«A2»` Усі векторні зображення (іконки) зібрані в SVG-спрайт `icons.svg`, який лежить у папці `images`.
-- `«A3»` Усі векторні зображення оптимізовані.
-- `«A4»` У корені проєкту є папка `css` з файлами стилів.
-- `«A5»` Всі стилі написані в одному файлі `styles.css`, який знаходиться в папці `css`.
-- `«A6»` У назвах файлів відсутні великі літери, пробіли і трансліт. Назви містять тільки літери і слова англійської мови.
-- `«A7»` Вихідний код відформатований за допомогою `Prettier`.
-- `«A8»` Всі зображення та текстовий контент взяті з макета.
-- `«A9»` Підключений нормалізатор стилів `modern-normalize`.
-- `«A10»` Всі стилі написані в одному файлі `styles.css`, який знаходиться в папці `css`.
-- `«A11»` Код написаний з дотриманням **настанови**.
-
-### **Розмітка**
-
-- `«B1»` Для всіх іконок використовується векторна графіка у форматі `svg`.
-- `«B2»` SVG-іконки експортовані правильно. При експорті обрана «група», а не сам вектор.
-- `«B3»` Всі іконки з SVG-спрайту додані в HTML за допомогою тегів `<svg>` і `<use>`.
-- `«B4»` В секції переваг (секція без назви з переліком переваг над `Our Team`) додані іконки.
-- `«B5»` В секції `Our Team` додані іконки соцмереж.
-- `«B7»` У футері додані іконки соцмереж.
-- `«B8»` Виконана HTML-розмітка всіх елементів макету.
-- `«B9»` Теги використані відповідно до їх семантичного змісту.
-
-### **Оформлення**
-
-- `«C1»` Велике зображення з ефектом затемнення (під хедером) виконано як фон. Для затемнення використовується багатошаровий фон з градієнтом.
-- `«C2»` Фонове зображення в блоці під хедером не розтягується ширше свого оригінального розміру `1440рх`.
-- `«C3»` У картках секції `Our Team` є постійний ефект тіні.
-- `«C4»` У картках секції `Our Portfolio` є ефект тіні при ховері в будь-якому місці картки.
-- `«C5»` При ховері або фокусі іконки повинні переходити в активний стан - змінювати колір, якщо це зазначено в макеті.
-- `«C6»` Для всіх ефектів ховера і фокуса (колір, фон, тінь) зроблені переходи. Час - `250ms`, функція розподілу часу - `cubic-bezier(0.4, 0, 0.2, 1)`.
-- `«C7»` У переходах явно зазначені анімовані властивості. Ніде немає значення `all`.
-- `«C8»` В головній навігації, за допомогою псевдоелемента `::after`, зроблено підкреслення посилання поточної сторінки (на якій зараз знаходиться користувач).
-- `«C9»` Оверлей з текстом на картках секції `Our Portfolio` з'являється при ховері в будь-якому місці картки.
-- `«C10»` Синій оверлей в картках секції `Our Portfolio` виїжджає знизу.
-- `«C11»` У псевдоелементів відсутній текстовий контент у властивості `content`. Вони використані виключно для декоративного оформлення.
-
----
-
-## 🎨 Технічні особливості
-
-### SVG Спрайт
-Приклад використання іконок з SVG-спрайту:
-
-~~~html
-<svg class="icon" width="24" height="24">
-  <use href="./images/icons.svg#icon-name"></use>
-</svg>
-~~~
-
-### CSS Переходи
-Стандартні налаштування для переходів:
-
-~~~css
-.element {
-  transition: color 250ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-~~~
-
-### Псевдоелементи
-Використання для декоративного оформлення:
-
-~~~css
-.element::after {
-  content: "";
-  /* декоративні стилі */
-}
-~~~
+**Made with ❤️ for job seekers in Germany**
