@@ -30,10 +30,11 @@
     "gh-pages": "^6.0.0"
   },
   "dependencies": {
-    "docx": "^9.5.1",
-    "html-docx-js": "^0.3.1",
-    "express": "^4.18.2",
+    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
-    "concurrently": "^8.2.2"
+    "docx": "^9.5.1",
+    "express": "^4.18.2",
+    "html-docx-js": "^0.3.1",
+    "translate-google": "^1.5.0"
   }
 }

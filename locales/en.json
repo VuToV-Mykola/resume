@@ -157,7 +157,8 @@
     "data": "Data",
     "createPDF": "Create PDF",
     "createWord": "Create Word",
-    "currentData": "Current Data"
+    "currentData": "Current Data",
+    "checkServer": "Server Status"
   },
   "messages": {
     "dataSaved": "Lebenslauf data saved!",

@@ -157,7 +157,8 @@
     "data": "Дані",
     "createPDF": "Створити PDF",
     "createWord": "Створити Word",
-    "currentData": "Поточні дані"
+    "currentData": "Поточні дані",
+    "checkServer": "Статус сервера"
   },
   "messages": {
     "dataSaved": "Lebenslauf дані збережено!",

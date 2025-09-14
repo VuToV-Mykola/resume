@@ -2,12 +2,40 @@ const express = require("express")
 const fs = require("fs")
 const path = require("path")
 const cors = require("cors")
+const translate = require("translate-google")
 
 const app = express()
-const PORT = 3001
+const PORT = 8000
 
-// Middleware
-app.use(cors())
+// Middleware with detailed CORS configuration
+app.use(
+  cors({
+    origin: [
+      "http://localhost:8000",
+      "http://localhost:3000",
+      "http://127.0.0.1:8000",
+      "http://127.0.0.1:3000"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+  })
+)
+
+// Additional CORS headers for all responses
+app.use((req, res, next) => {
+  console.log(`📡 ${req.method} ${req.url} from ${req.headers.origin || "unknown"}`)
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*")
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+  res.header("Access-Control-Allow-Credentials", "true")
+  if (req.method === "OPTIONS") {
+    console.log(`✅ OPTIONS preflight for ${req.url}`)
+    return res.sendStatus(200)
+  }
+  next()
+})
+
 app.use(express.json())
 app.use(express.static("."))
 
@@ -35,6 +63,15 @@ function ensureFileExists(filePath, defaultData = {}) {
 // API endpoint to save Lebenslauf data
 app.post("/api/save-lebenslauf", (req, res) => {
   try {
+    console.log("=== SAVE LEBENSLAUF REQUEST ===")
+    console.log("Request body:", JSON.stringify(req.body, null, 2))
+    console.log("Photo data:", req.body.photo ? "Present" : "Missing")
+    if (req.body.photo) {
+      console.log("Photo type:", typeof req.body.photo)
+      console.log("Photo length:", req.body.photo.length)
+      console.log("Photo starts with data:image/:", req.body.photo.startsWith("data:image/"))
+    }
+
     const {lang = "uk", ...data} = req.body
 
     // Determine file path based on language
@@ -172,7 +209,8 @@ app.get("/api/file-info/:type/:lang", (req, res) => {
         data: {
           fullName: data.fullName || "N/A",
           email: data.email || "N/A",
-          lastUpdated: data.lastUpdated
+          lastUpdated: data.lastUpdated,
+          photo: data.photo || null
         }
       })
     } else {
@@ -192,7 +230,50 @@ app.get("/api/file-info/:type/:lang", (req, res) => {
   }
 })
 
+// Translation endpoint
+app.post("/api/translate", async (req, res) => {
+  try {
+    const {text, targetLang, sourceLang = "auto"} = req.body
+
+    if (!text || !targetLang) {
+      return res.status(400).json({
+        error: "Missing required parameters",
+        required: ["text", "targetLang"]
+      })
+    }
+
+    console.log(`🌐 Translating "${text}" from ${sourceLang} to ${targetLang}`)
+
+    const translatedText = await translate(text, {
+      from: sourceLang,
+      to: targetLang
+    })
+
+    console.log(`✅ Translation successful: "${translatedText}"`)
+
+    res.json({
+      originalText: text,
+      translatedText: translatedText,
+      sourceLang: sourceLang,
+      targetLang: targetLang
+    })
+  } catch (error) {
+    console.log(`❌ Translation error: ${error.message}`)
+    res.status(500).json({
+      error: "Translation failed",
+      message: error.message,
+      originalText: req.body.text || ""
+    })
+  }
+})
+
 // Start server
+// 404 handler
+app.use((req, res) => {
+  console.log(`❌ 404 Not Found: ${req.method} ${req.url}`)
+  res.status(404).json({error: "Not Found", path: req.url})
+})
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`)
   console.log(`📁 Data directory: ${dataDir}`)
@@ -200,4 +281,6 @@ app.listen(PORT, () => {
   console.log(`   POST /api/save-lebenslauf`)
   console.log(`   POST /api/save-anschreiben`)
   console.log(`   GET  /api/file-info/:type/:lang`)
+  console.log(`   POST /api/translate`)
+  console.log(`🌐 Open your browser to: http://localhost:${PORT}`)
 })
