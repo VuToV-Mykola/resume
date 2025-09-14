@@ -4297,7 +4297,11 @@ Anlagen:
         }
 
         // Photo - Handle photo from JSON data
+        console.log("=== PHOTO HANDLING IN populateFormWithLebenslaufData ===")
         console.log("Checking data.photo:", data.photo ? "Photo exists" : "No photo")
+        console.log("Current globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("Current formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        
         if (data.photo && typeof data.photo === "string") {
           console.log("=== LOADING PHOTO FROM JSON DATA ===")
           console.log("Photo data type:", typeof data.photo)
@@ -4327,6 +4331,39 @@ Anlagen:
 
           console.log("Photo loaded from JSON and saved to globalPhotoData and formData")
           saveFormData() // Save to localStorage
+        } else {
+          console.log("=== NO PHOTO IN JSON DATA ===")
+          console.log("Preserving existing photo data...")
+          
+          // Preserve existing photo if no photo in JSON data
+          if (globalPhotoData || formData.lebenslaufPhoto) {
+            const existingPhoto = globalPhotoData || formData.lebenslaufPhoto
+            console.log("Preserving existing photo:", existingPhoto ? "Present" : "Missing")
+            
+            // Ensure photo is in both variables
+            globalPhotoData = existingPhoto
+            formData.lebenslaufPhoto = existingPhoto
+            formData.photo = existingPhoto
+            
+            // Update photo preview
+            const photoPreview = document.getElementById("photoPreview")
+            if (photoPreview && existingPhoto) {
+              console.log("Updating photo preview with existing image")
+              photoPreview.innerHTML = `<img src="${existingPhoto}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
+
+              // Show remove button
+              const removePhotoBtn = document.getElementById("removePhoto")
+              if (removePhotoBtn) {
+                removePhotoBtn.style.display = "block"
+                console.log("Remove photo button shown")
+              }
+            }
+            
+            console.log("Existing photo preserved and displayed")
+          } else {
+            console.log("No existing photo to preserve")
+          }
+        }
         } else {
           console.log("No valid photo data in JSON file")
         }
@@ -8839,6 +8876,103 @@ Anlagen:
         }
       }
 
+      // Debug function to analyze photo data overwriting issue
+      window.debugPhotoOverwrite = function () {
+        console.log("=== 🔍 ANALYZING PHOTO DATA OVERWRITING ===")
+        
+        console.log("📊 Current state:")
+        console.log("- globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("- formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        console.log("- formData.photo:", formData.photo ? "Present" : "Missing")
+        
+        if (globalPhotoData) {
+          console.log("- globalPhotoData type:", typeof globalPhotoData)
+          console.log("- globalPhotoData length:", globalPhotoData.length)
+          console.log("- globalPhotoData starts with data:image/:", globalPhotoData.startsWith("data:image/"))
+        }
+        
+        if (formData.lebenslaufPhoto) {
+          console.log("- formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
+          console.log("- formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
+          console.log("- formData.lebenslaufPhoto starts with data:image/:", formData.lebenslaufPhoto.startsWith("data:image/"))
+        }
+        
+        // Check if photo preview is showing
+        const photoPreview = document.getElementById("photoPreview")
+        if (photoPreview) {
+          console.log("- Photo preview element:", photoPreview.innerHTML.substring(0, 100) + "...")
+        }
+        
+        // Check if remove button is visible
+        const removeBtn = document.getElementById("removePhoto")
+        if (removeBtn) {
+          console.log("- Remove photo button display:", removeBtn.style.display)
+        }
+        
+        console.log("🔄 Testing data loading sequence...")
+        console.log("1. Current form data before any operations:")
+        console.log("   - fullName:", formData.fullName)
+        console.log("   - address:", formData.address)
+        console.log("   - photo present:", formData.lebenslaufPhoto ? "Yes" : "No")
+        
+        return {
+          globalPhotoData: globalPhotoData ? "Present" : "Missing",
+          formDataPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
+          photoPreview: photoPreview ? "Element exists" : "Missing",
+          removeButton: removeBtn ? "Element exists" : "Missing"
+        }
+      }
+
+      // Debug function to test data loading sequence
+      window.debugDataSequence = async function () {
+        console.log("=== 🔄 TESTING DATA LOADING SEQUENCE ===")
+        
+        console.log("1. Current state before loading:")
+        console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        console.log("   - formData.fullName:", formData.fullName)
+        
+        console.log("2. Testing loadPhotoFromJSON()...")
+        await loadPhotoFromJSON()
+        
+        console.log("3. State after loadPhotoFromJSON():")
+        console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        
+        console.log("4. Testing populateFormWithLebenslaufData()...")
+        // Create test data
+        const testData = {
+          fullName: "Test User",
+          address: "Test Address",
+          phone: "+49 123 456789",
+          email: "test@example.com",
+          birthDate: "01.01.1990",
+          nationality: "Deutsch",
+          photo: globalPhotoData // Use existing photo
+        }
+        
+        await populateFormWithLebenslaufData(testData)
+        
+        console.log("5. State after populateFormWithLebenslaufData():")
+        console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        console.log("   - formData.fullName:", formData.fullName)
+        
+        console.log("6. Testing updateFormData()...")
+        updateFormData()
+        
+        console.log("7. Final state after updateFormData():")
+        console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        console.log("   - formData.fullName:", formData.fullName)
+        
+        return {
+          initialPhoto: globalPhotoData ? "Present" : "Missing",
+          finalPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
+          photoPreserved: globalPhotoData === formData.lebenslaufPhoto
+        }
+      }
+
       console.log("Debug functions available:")
       console.log("- debugGetTranslation('key') - Test translation")
       console.log("- debugShowStatus('message', 'type') - Test status display")
@@ -8846,6 +8980,9 @@ Anlagen:
       console.log("- debugPhotoUpload() - Test photo upload status")
       console.log("- debugPhotoInput() - Test photo input element")
       console.log("- debugManualPhotoUpload() - Manual photo upload test")
+      console.log("- debugPhotoOverwrite() - Analyze photo data overwriting")
+      console.log("- debugDataSequence() - Test data loading sequence")
+      console.log("- debugTestSync() - Test synchronization")
       console.log("- debugSaveData() - Test save data with photo")
       console.log("- debugClearPhotoData() - Clear invalid photo data")
       console.log("- debugForcePhotoUpload() - Force photo upload from input")
