@@ -4588,11 +4588,13 @@ Anlagen:
 
       // Auto-update preview when user types
       async function updatePreviewOnInput() {
-        console.log("=== updatePreviewOnInput called ===")
+        console.log("=== 🔄 updatePreviewOnInput called ===")
         console.log("Timestamp:", new Date().toISOString())
+        console.log("Stack trace:", new Error().stack)
 
         try {
           // Update form data from all input fields
+          console.log("🔄 Calling updateFormData()...")
           updateFormData()
 
           console.log("🎯 Current preview type:", currentPreviewType)
@@ -4671,7 +4673,10 @@ Anlagen:
       }
 
       // Debounced version of preview update
-      const debouncedUpdatePreview = debounce(updatePreviewOnInput, 300)
+      const debouncedUpdatePreview = debounce(() => {
+        console.log("🔄 debouncedUpdatePreview called")
+        updatePreviewOnInput()
+      }, 300)
 
       // Photo upload functionality
       function initializePhotoUpload() {
@@ -5158,14 +5163,17 @@ Anlagen:
               // Add multiple event listeners for better tracking
               input.addEventListener("input", e => {
                 console.log(`🔄 Input event on ${input.name || input.id}:`, e.target.value)
+                console.log(`🔄 Calling debouncedUpdatePreview from input event`)
                 debouncedUpdatePreview()
               })
               input.addEventListener("change", e => {
                 console.log(`🔄 Change event on ${input.name || input.id}:`, e.target.value)
+                console.log(`🔄 Calling debouncedUpdatePreview from change event`)
                 debouncedUpdatePreview()
               })
               input.addEventListener("keyup", e => {
                 console.log(`🔄 Keyup event on ${input.name || input.id}:`, e.target.value)
+                console.log(`🔄 Calling debouncedUpdatePreview from keyup event`)
                 debouncedUpdatePreview()
               })
               input.addEventListener("paste", () => {
@@ -9170,6 +9178,67 @@ Anlagen:
         }
       }
 
+      // Debug function to test if event listeners are working
+      window.debugEventListeners = function () {
+        console.log("=== 🎯 TESTING EVENT LISTENERS ===")
+        
+        // Find a text input
+        const nameInput = document.querySelector("#bewerbungForm input[name='fullName']")
+        if (!nameInput) {
+          console.log("❌ No name input found")
+          return { error: "No name input found" }
+        }
+        
+        console.log("📝 Found name input:", nameInput)
+        console.log("📝 Current value:", nameInput.value)
+        
+        // Test direct value change
+        const testValue = "Event Test " + new Date().getTime()
+        console.log(`🧪 Setting value to: "${testValue}"`)
+        nameInput.value = testValue
+        
+        // Test if updateFormData works
+        console.log("🧪 Testing updateFormData()...")
+        updateFormData()
+        console.log("🧪 formData.fullName after updateFormData:", formData.fullName)
+        
+        // Test if debounced function works
+        console.log("🧪 Testing debouncedUpdatePreview()...")
+        debouncedUpdatePreview()
+        
+        // Test manual event dispatch
+        console.log("🧪 Testing manual event dispatch...")
+        const inputEvent = new Event('input', { bubbles: true })
+        nameInput.dispatchEvent(inputEvent)
+        
+        // Test change event
+        const changeEvent = new Event('change', { bubbles: true })
+        nameInput.dispatchEvent(changeEvent)
+        
+        // Test keyup event
+        const keyupEvent = new Event('keyup', { bubbles: true })
+        nameInput.dispatchEvent(keyupEvent)
+        
+        // Wait and check results
+        setTimeout(() => {
+          console.log("🧪 Final formData.fullName:", formData.fullName)
+          console.log("🧪 Expected:", testValue)
+          console.log("🧪 Match:", formData.fullName === testValue)
+          
+          // Check if preview was updated
+          const previewName = document.querySelector(".preview-content h1")
+          if (previewName) {
+            console.log("🧪 Preview name:", previewName.textContent)
+          }
+        }, 1000)
+        
+        return {
+          inputFound: true,
+          testValue: testValue,
+          currentFormData: formData.fullName
+        }
+      }
+
       console.log("Debug functions available:")
       console.log("- debugGetTranslation('key') - Test translation")
       console.log("- debugShowStatus('message', 'type') - Test status display")
@@ -9183,6 +9252,7 @@ Anlagen:
       console.log("- debugAutoSync() - Test auto-synchronization")
       console.log("- debugJSONOverwrite() - Test JSON data overwriting")
       console.log("- debugDataFlow() - Test complete data flow")
+      console.log("- debugEventListeners() - Test if event listeners work")
       console.log("- debugSaveData() - Test save data with photo")
       console.log("- debugClearPhotoData() - Clear invalid photo data")
       console.log("- debugForcePhotoUpload() - Force photo upload from input")
