@@ -3980,6 +3980,30 @@ Anlagen:
           setFormValue(document, "lebenslaufAdditional", additionalText)
         }
 
+        // Photo
+        console.log("Checking data.photo:", data.photo ? "Present" : "Missing")
+        if (data.photo) {
+          console.log("Loading photo from data...")
+          globalPhotoData = data.photo
+          formData.lebenslaufPhoto = data.photo
+          formData.photo = data.photo
+          
+          // Display photo in preview
+          const photoPreview = document.getElementById("photoPreview")
+          if (photoPreview) {
+            photoPreview.innerHTML = `<img src="${data.photo}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
+            console.log("Photo displayed in preview")
+            
+            // Show remove button
+            const removePhotoBtn = document.getElementById("removePhotoBtn")
+            if (removePhotoBtn) {
+              removePhotoBtn.style.display = "block"
+            }
+          }
+          
+          console.log("Photo loaded and set to globalPhotoData and formData")
+        }
+
         // Update preview
         console.log("Updating preview...")
         try {

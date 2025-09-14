@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест фотографії</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .photo-container {
+            width: 150px;
+            height: 200px;
+            border: 2px solid #1a5490;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 2px 0;
+        }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Тест відображення фотографії</h1>
+    
+    <div class="test-section">
+        <h2>1. Завантаження фотографії</h2>
+        <input type="file" id="photoInput" accept="image/*">
+        <div id="photoPreview" class="photo-container"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Тест збереження в localStorage</h2>
+        <button onclick="savePhoto()">Зберегти фото</button>
+        <button onclick="loadPhoto()">Завантажити фото</button>
+        <button onclick="clearStorage()">Очистити сховище</button>
+        <div id="savedPhotoPreview" class="photo-container"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Тест передачі даних</h2>
+        <button onclick="testDataTransfer()">Тест передачі даних</button>
+        <div id="transferredPhotoPreview" class="photo-container"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Консоль логів</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        let photoData = null;
+        let globalPhotoData = null;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            entry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // Photo upload handler
+        document.getElementById('photoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            log(`Файл вибрано: ${file ? file.name : 'немає'}`, 'info');
+            
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    log('Невірний тип файлу! Потрібне зображення.', 'error');
+                    return;
+                }
+                
+                log(`Тип файлу: ${file.type}, Розмір: ${(file.size / 1024).toFixed(2)} KB`, 'info');
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const result = e.target.result;
+                    log(`Фото завантажено. Data URL довжина: ${result.length} символів`, 'success');
+                    log(`Data URL починається з: ${result.substring(0, 50)}...`, 'info');
+                    
+                    photoData = result;
+                    globalPhotoData = result;
+                    
+                    // Display photo
+                    const preview = document.getElementById('photoPreview');
+                    preview.innerHTML = `<img src="${result}" alt="Uploaded photo">`;
+                    log('Фото відображено в preview', 'success');
+                    
+                    // Check if image actually loaded
+                    const img = preview.querySelector('img');
+                    img.onload = function() {
+                        log(`Зображення завантажено: ${img.naturalWidth}x${img.naturalHeight} px`, 'success');
+                    };
+                    img.onerror = function() {
+                        log('Помилка завантаження зображення!', 'error');
+                    };
+                };
+                
+                reader.onerror = function() {
+                    log('Помилка читання файлу!', 'error');
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function savePhoto() {
+            if (!photoData) {
+                log('Немає фото для збереження', 'error');
+                return;
+            }
+            
+            try {
+                const dataToSave = {
+                    photo: photoData,
+                    globalPhoto: globalPhotoData,
+                    timestamp: new Date().toISOString()
+                };
+                
+                localStorage.setItem('testPhotoData', JSON.stringify(dataToSave));
+                log(`Фото збережено в localStorage. Розмір: ${JSON.stringify(dataToSave).length} символів`, 'success');
+            } catch (error) {
+                log(`Помилка збереження: ${error.message}`, 'error');
+            }
+        }
+
+        function loadPhoto() {
+            try {
+                const savedData = localStorage.getItem('testPhotoData');
+                if (!savedData) {
+                    log('Немає збережених даних', 'info');
+                    return;
+                }
+                
+                const parsed = JSON.parse(savedData);
+                log(`Дані завантажено. Timestamp: ${parsed.timestamp}`, 'success');
+                
+                if (parsed.photo) {
+                    const preview = document.getElementById('savedPhotoPreview');
+                    preview.innerHTML = `<img src="${parsed.photo}" alt="Saved photo">`;
+                    log('Збережене фото відображено', 'success');
+                    
+                    // Restore to variables
+                    photoData = parsed.photo;
+                    globalPhotoData = parsed.globalPhoto || parsed.photo;
+                } else {
+                    log('Фото не знайдено в збережених даних', 'error');
+                }
+            } catch (error) {
+                log(`Помилка завантаження: ${error.message}`, 'error');
+            }
+        }
+
+        function clearStorage() {
+            localStorage.removeItem('testPhotoData');
+            log('localStorage очищено', 'info');
+            document.getElementById('savedPhotoPreview').innerHTML = '';
+        }
+
+        function testDataTransfer() {
+            log('Початок тесту передачі даних...', 'info');
+            
+            // Simulate data structure from main app
+            const formData = {
+                fullName: 'Test User',
+                photo: photoData,
+                lebenslaufPhoto: photoData
+            };
+            
+            log(`formData.photo: ${formData.photo ? 'є' : 'немає'}`, 'info');
+            log(`formData.lebenslaufPhoto: ${formData.lebenslaufPhoto ? 'є' : 'немає'}`, 'info');
+            log(`globalPhotoData: ${globalPhotoData ? 'є' : 'немає'}`, 'info');
+            
+            // Test photo selection logic (як в generateLebenslaufHTML)
+            const photoUrl = formData.photo || globalPhotoData || formData.lebenslaufPhoto;
+            
+            if (!photoUrl) {
+                log('Фото URL не знайдено', 'error');
+                document.getElementById('transferredPhotoPreview').innerHTML = '<div>Немає фото</div>';
+                return;
+            }
+            
+            if (typeof photoUrl !== 'string') {
+                log(`Фото URL не є рядком. Тип: ${typeof photoUrl}`, 'error');
+                return;
+            }
+            
+            const isValidUrl = photoUrl.startsWith('data:image/') || photoUrl.startsWith('blob:');
+            log(`URL валідний: ${isValidUrl}`, isValidUrl ? 'success' : 'error');
+            
+            if (isValidUrl) {
+                document.getElementById('transferredPhotoPreview').innerHTML = 
+                    `<img src="${photoUrl}" alt="Transferred photo">`;
+                log('Фото успішно передано та відображено', 'success');
+            }
+        }
+
+        // Initial log
+        log('Тестова сторінка завантажена', 'success');
+    </script>
+</body>
+</html>
