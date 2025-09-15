@@ -84,13 +84,13 @@
         --color-info: #0ea5e9;
         --color-warning: #f59e0b;
         --color-error: #ef4444;
-        --color-text: #1a1a1a;
-        --color-text-light: #666666;
-        --color-text-muted: #9ca3af;
-        --color-border: #e5e7eb;
-        --color-background: #ffffff;
-        --color-surface: #f8fafc;
-        --color-surface-light: #f1f5f9;
+        --color-text: #ffffff;
+        --color-text-light: #cccccc;
+        --color-text-muted: #999999;
+        --color-border: #404040;
+        --color-background: #1a1a1a;
+        --color-surface: #2d2d2d;
+        --color-surface-light: #3a3a3a;
         --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         --font-size-base: 16px;
         --font-size-sm: 14px;
@@ -2507,14 +2507,14 @@
       }
     </style>
   </head>
-  <body>
+  <body data-theme="dark">
     <div class="container">
       <header class="header">
         <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu öffnen"> ☰ </button>
         <div class="header-controls">
           <div class="control-group">
             <button id="themeToggle" class="theme-toggle" title="Theme wechseln">
-              <span class="theme-icon">🌙</span>
+              <span class="theme-icon">☀️</span>
             </button>
           </div>
           <div class="control-group">
@@ -7142,7 +7142,7 @@ Anlagen:
       // Initialize theme
       async function initializeTheme() {
         // Use localStorage for theme management (no backend needed for GitHub Pages)
-        const savedTheme = localStorage.getItem("theme") || "light"
+        const savedTheme = localStorage.getItem("theme") || "dark"
         document.documentElement.setAttribute("data-theme", savedTheme)
         updateThemeVariables(savedTheme)
 
