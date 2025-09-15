@@ -785,13 +785,13 @@
       /* Preview section */
       .preview-section {
         background: var(--color-surface);
-        padding: var(--spacing-xl);
+      
         border-radius: var(--border-radius-lg);
         box-shadow: var(--shadow-sm);
         height: 100%;
         display: flex;
         flex-direction: column;
-        overflow-y: auto;
+        
       }
 
       .preview-tabs {
@@ -1071,7 +1071,7 @@
         height: 100%;
         overflow: visible;
         display: block;
-        padding: 25mm 20mm; /* Стандартні відступи A4 */
+        
         min-height: 247mm; /* Висота A4 мінус відступи */
         box-sizing: border-box;
       }
@@ -3559,9 +3559,9 @@ Anlagen:
           <div class="form-actions"> </div>
         </section>
 
-        <section class="preview-section">
+        <section class="preview-section" id="previewContent">
           <h2 data-translate="preview.title">📋 Live Preview</h2>
-          <div class="preview-container" id="previewContent">
+          <div class="preview-container" >
             <div class="preview-placeholder">
               <div class="preview-icon">📄</div>
               <h3>Документ готовий до перегляду</h3>
@@ -5389,7 +5389,7 @@ Anlagen:
       function createTwoPageLayout(htmlContent) {
         console.log("📄 Creating intelligent paginated layout")
 
-        const CHARACTERS_PER_PAGE = 3000 // Максимальна кількість символів на сторінку Word A4
+        const CHARACTERS_PER_PAGE = 2500 // Зменшуємо ліміт для більш рівномірного розподілу
 
         // Підрахунок символів у контенті (без HTML тегів)
         const tempDiv = document.createElement('div')
@@ -5397,6 +5397,7 @@ Anlagen:
         const textContent = tempDiv.textContent || tempDiv.innerText || ''
 
         console.log('📄 Total characters in content:', textContent.length)
+        console.log('📄 Characters per page limit:', CHARACTERS_PER_PAGE)
 
         // Якщо контент поміщається на одну сторінку
         if (textContent.length <= CHARACTERS_PER_PAGE) {
@@ -5428,24 +5429,28 @@ Anlagen:
         }
 
         // Розподіляємо елементи між сторінками
-        elements.forEach((element) => {
+        elements.forEach((element, index) => {
           if (element.tagName === 'STYLE') return // Стилі вже додані
 
           const elementText = element.textContent || element.innerText || ''
           const elementChars = elementText.length
 
+          console.log(`📄 Element ${index}: "${elementText.substring(0, 50)}..." (${elementChars} chars)`)
+
           // Якщо додавання цього елементу перевищить ліміт першої сторінки
-          if (isFirstPage && (currentPageChars + elementChars > CHARACTERS_PER_PAGE) && currentPageChars > 500) {
+          if (isFirstPage && (currentPageChars + elementChars > CHARACTERS_PER_PAGE) && currentPageChars > 300) {
             console.log('📄 Moving to page 2, current chars:', currentPageChars, 'element chars:', elementChars)
             isFirstPage = false
-            currentPageChars = 0
-          }
-
-          if (isFirstPage) {
+            currentPageChars = elementChars // Починаємо рахунок з поточного елементу
+            secondPageElements.push(element.outerHTML)
+          } else if (isFirstPage) {
             firstPageElements.push(element.outerHTML)
             currentPageChars += elementChars
+            console.log('📄 Added to page 1, total chars:', currentPageChars)
           } else {
             secondPageElements.push(element.outerHTML)
+            currentPageChars += elementChars
+            console.log('📄 Added to page 2, total chars:', currentPageChars)
           }
         })
 
@@ -5465,6 +5470,20 @@ Anlagen:
         console.log('📄 Created 2 pages with intelligent distribution')
         console.log('📄 Page 1 elements:', firstPageElements.length)
         console.log('📄 Page 2 elements:', secondPageElements.length)
+        console.log('📄 Page 1 content preview:', firstPageElements.join('').substring(0, 200) + '...')
+        console.log('📄 Page 2 content preview:', secondPageElements.join('').substring(0, 200) + '...')
+
+        // Перевіряємо чи друга сторінка не порожня
+        if (secondPageElements.length === 0) {
+          console.warn('⚠️ Second page is empty! Returning single page layout.')
+          return `
+            <div class="document-page page-1">
+              <div class="document-preview">
+                ${htmlContent}
+              </div>
+            </div>
+          `
+        }
 
         return result
       }
@@ -5619,8 +5638,8 @@ Anlagen:
                 `
 
             // Використовуємо функцію розбиття на дві сторінки A4
-            document.getElementById("previewContent").innerHTML =
-              createTwoPageLayout(bewerbungContent)
+            document.getElementById("previewContent").innerHTML = `<h2 data-translate="preview.title">📋 Live Preview</h2>
+               ${createTwoPageLayout(bewerbungContent)}`
           } else if (previewType === "lebenslauf") {
             console.log("Generating lebenslauf preview")
 
@@ -5878,12 +5897,15 @@ Anlagen:
                 `
 
             // Використовуємо функцію розбиття на дві сторінки A4
-            document.getElementById("previewContent").innerHTML =
-              createTwoPageLayout(lebenslaufContent)
+            document.getElementById("previewContent").innerHTML =`
+            <h2 data-translate="preview.title">📋 Live Preview</h2>
+              ${createTwoPageLayout(lebenslaufContent)}
+              `
           }
         } catch (error) {
           console.error("Error in showPreview:", error)
           document.getElementById("previewContent").innerHTML = `
+           <h2 data-translate="preview.title">📋 Live Preview</h2>
                   <div class="status-error">
                     <h3>Fehler beim Laden der Vorschau</h3>
                     <p>Es ist ein Fehler beim Laden der Vorschau aufgetreten: ${error.message}</p>
@@ -7398,6 +7420,7 @@ Anlagen:
         document.getElementById("bewerbungForm").reset()
         formData = {}
         document.getElementById("previewContent").innerHTML = `
+         <h2 data-translate="preview.title">📋 Live Preview</h2>
                 <div class="preview-placeholder">
                   <div class="icon">📄</div>
                   <p>${getTranslation("preview.placeholder") || "Die Vorschau wird automatisch aktualisiert, während Sie die Felder ausfüllen."}</p>
