@@ -160,7 +160,10 @@
     "createPDF": "Створити PDF",
     "createWord": "Створити Word",
     "currentData": "Поточні дані",
-    "checkServer": "Статус сервера"
+    "checkServer": "Статус сервера",
+    "showInfo": "Показати інформацію",
+    "info": "Інформація",
+    "clearForm": "Очистити форму"
   },
   "messages": {
     "dataSaved": "Lebenslauf дані збережено!",

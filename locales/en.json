@@ -160,7 +160,10 @@
     "createPDF": "Create PDF",
     "createWord": "Create Word",
     "currentData": "Current Data",
-    "checkServer": "Server Status"
+    "checkServer": "Server Status",
+    "showInfo": "Show Information",
+    "info": "Information",
+    "clearForm": "Clear Form"
   },
   "messages": {
     "dataSaved": "Lebenslauf data saved!",

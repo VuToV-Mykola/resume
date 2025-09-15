@@ -160,7 +160,10 @@
     "createPDF": "PDF erstellen",
     "createWord": "Word erstellen",
     "currentData": "Aktuelle Daten",
-    "checkServer": "Server-Status"
+    "checkServer": "Server-Status",
+    "showInfo": "Informationen anzeigen",
+    "info": "Informationen",
+    "clearForm": "Formular löschen"
   },
   "messages": {
     "dataSaved": "Lebenslauf Daten gespeichert!",
