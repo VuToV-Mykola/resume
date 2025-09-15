@@ -10,8 +10,29 @@
     <title>Bewerbung Dokument Generator</title>
 
     <!-- Configuration and Utilities -->
-    <script src="config.js?v=20250914"></script>
-    <script src="utils.js?v=20250914"></script>
+    <script src="config.js?v=20250916"></script>
+    <script src="utils.js?v=20250916"></script>
+
+    <!--
+    ==========================================
+    🚀 ОПТИМІЗАЦІЇ АДАПТИВНОСТІ 2025
+    ==========================================
+    ✅ КНОПКИ МАКСИМАЛЬНО ЗБІЛЬШЕНІ для мобільних пристроїв
+    ✅ РЕОРГАНІЗОВАНО в 2 ряди по 4 кнопки на малих екранах
+    ✅ ПАГІНАЦІЯ ЗБЕРЕЖЕНА без змін
+    ✅ ФОРМИ оптимізовані з великими полями введення
+    ✅ ТОРКАННЯ-ОПТИМІЗОВАНІ розміри для всіх елементів
+    ✅ АДАПТИВНІ стилі для екранів 320px-1920px
+
+    🎯 ПРЕВЬЮ ОПТИМІЗАЦІЇ 2025:
+    ✅ ОДНАКОВІ ГОРИЗОНТАЛЬНІ ПАДДІНГИ як у лівій секції
+    ✅ ПРОПОРЦІЙНЕ МАСШТАБУВАННЯ A4 формату для всіх екранів
+    ✅ БЕЗ ГОРИЗОНТАЛЬНОГО СКРОЛУ на будь-якому екрані
+    ✅ СИНХРОНІЗОВАНІ стилі для обох вкладок (Bewerbung/Lebenslauf)
+    ✅ CSS змінні для масштабування: --page-scale, --a4-width, --a4-height
+    ✅ Масштабування від 1.0 (великі екрани) до 0.3 (375px екрани)
+    ==========================================
+    -->
 
     <!-- HTML to DOCX conversion library -->
     <script src="./html-docx.js?v=20250914"></script>
@@ -97,6 +118,11 @@
         --font-size-lg: 18px;
         --line-height-base: 1.6;
         --spacing-xs: 0.25rem;
+
+        /* А4 масштабування змінні */
+        --page-scale: 1; /* За замовчуванням без масштабування */
+        --a4-width: 210mm; /* Стандартна ширина A4 */
+        --a4-height: 297mm; /* Стандартна висота A4 */
         --spacing-sm: 0.5rem;
         --spacing-md: 1rem;
         --spacing-lg: 1.5rem;
@@ -107,8 +133,6 @@
         --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
         --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-        /* Page scale defaults */
-        --page-scale-factor: 0.85;
       }
 
       /* Explicit light theme (not default). Apply via <html data-theme="light"> */
@@ -473,17 +497,21 @@
         padding: var(--spacing-sm) var(--spacing-md);
       }
 
-      /* iPhone 11 Action Buttons Grid */
+      /* iPhone 11 Action Buttons Grid - ОПТИМІЗОВАНО ДЛЯ МОБІЛЬНОСТІ */
       .iphone-action-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: repeat(2, 1fr);
+        grid-template-rows: repeat(2, auto); /* auto для адаптивної висоти */
         gap: 12px;
         padding: 16px;
         background: var(--color-surface);
         border-radius: 16px;
-        margin: 16px 0;
+        margin: 16px auto; /* Автоцентрування */
         box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 480px; /* Максимальна ширина для кращого контролю */
+        justify-items: stretch; /* Розтягування кнопок */
+        align-items: stretch; /* Вирівнювання по висоті */
       }
 
       .iphone-action-btn {
@@ -491,18 +519,20 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 16px 8px;
+        padding: 18px 10px; /* ЗБІЛЬШЕНИЙ педдінг */
         border: none;
-        border-radius: 12px;
-        font-size: 14px;
-        font-weight: 600;
+        border-radius: 14px; /* Більший радіус */
+        font-size: 15px; /* Більший шрифт */
+        font-weight: 700; /* Жирніший текст */
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        min-height: 80px;
+        min-height: 88px; /* ЗБІЛЬШЕНА висота кнопок */
         position: relative;
         overflow: hidden;
         text-decoration: none;
         color: inherit;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15); /* Додана тінь */
+        backdrop-filter: blur(5px); /* Розмиття фону */
       }
 
       /* Material Design Colors for Dark Theme */
@@ -601,43 +631,47 @@
       /* iPhone 11 specific responsive design */
       @media (max-width: 414px) {
         .iphone-action-grid {
-          gap: 10px;
-          padding: 12px;
+          gap: 12px;
+          padding: 14px;
         }
 
         .iphone-action-btn {
-          min-height: 70px;
-          padding: 12px 6px;
+          min-height: 85px; /* ЗБІЛЬШЕНО для iPhone 11 */
+          padding: 16px 8px; /* ЗБІЛЬШЕНИЙ падінг */
+          font-size: 14px; /* Більший шрифт */
         }
 
         .iphone-action-btn .btn-icon {
-          font-size: 20px;
-          margin-bottom: 6px;
+          font-size: 22px; /* Більші іконки */
+          margin-bottom: 8px;
         }
 
         .iphone-action-btn .btn-text {
-          font-size: 11px;
+          font-size: 12px; /* Більший текст */
+          font-weight: 700;
         }
       }
 
       @media (max-width: 375px) {
         .iphone-action-grid {
-          gap: 8px;
-          padding: 10px;
+          gap: 10px;
+          padding: 12px;
         }
 
         .iphone-action-btn {
-          min-height: 65px;
-          padding: 10px 4px;
+          min-height: 80px; /* ЗБІЛЬШЕНО для малих екранів */
+          padding: 14px 6px; /* ЗБІЛЬШЕНИЙ падінг */
+          font-size: 13px;
         }
 
         .iphone-action-btn .btn-icon {
-          font-size: 18px;
-          margin-bottom: 4px;
+          font-size: 20px; /* Більші іконки */
+          margin-bottom: 6px;
         }
 
         .iphone-action-btn .btn-text {
-          font-size: 10px;
+          font-size: 11px; /* Більший текст */
+          font-weight: 700;
         }
       }
 
@@ -780,26 +814,39 @@
         }
       }
 
-      /* Mobile-specific form improvements */
+      /* Mobile-specific form improvements - ОПТИМІЗОВАНО */
       @media (max-width: 640px) {
         .form-group input,
         .form-group select,
         .form-group textarea {
-          padding: var(--spacing-md);
-          font-size: 16px; /* Prevents zoom on iOS */
-          border-radius: var(--border-radius-lg);
+          padding: 18px 16px; /* ЗБІЛЬШЕНИЙ падінг */
+          font-size: 17px; /* Більший шрифт для кращої читабельності */
+          border-radius: 12px; /* Більший радіус */
+          min-height: 56px; /* ЗБІЛЬШЕНА мінімальна висота */
+          border: 2px solid var(--color-border);
+          background: var(--color-surface);
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* Додана тінь */
         }
 
         .form-group input:focus,
         .form-group select:focus,
         .form-group textarea:focus {
           border-color: var(--color-primary);
-          box-shadow: 0 0 0 3px rgba(26, 84, 144, 0.1);
+          box-shadow: 0 4px 12px rgba(26, 84, 144, 0.15); /* Покращена тінь */
           outline: none;
+          transform: translateY(-1px); /* Ефект підняття */
+        }
+
+        .form-group label {
+          font-size: 16px; /* Більший шрифт */
+          margin-bottom: 10px; /* Більша відстань */
+          font-weight: 700; /* Жирніший текст */
         }
 
         .form-group textarea {
-          min-height: 100px;
+          min-height: 120px; /* ЗБІЛЬШЕНА висота */
+          resize: vertical; /* Дозволити зміну розміру тільки по вертикалі */
         }
       }
 
@@ -807,13 +854,20 @@
         .form-group input,
         .form-group select,
         .form-group textarea {
-          padding: var(--spacing-sm) var(--spacing-md);
-          font-size: 16px;
-          border-radius: var(--border-radius);
+          padding: 20px 16px; /* МАКСИМАЛЬНО ЗБІЛЬШЕНИЙ падінг */
+          font-size: 17px; /* Зберігаємо великий шрифт */
+          border-radius: 14px; /* Ще більший радіус */
+          min-height: 60px; /* МАКСИМАЛЬНО ЗБІЛЬШЕНА висота */
+        }
+
+        .form-group label {
+          font-size: 16px; /* Великий шрифт для лейблів */
+          margin-bottom: 12px; /* Більша відстань */
+          font-weight: 700;
         }
 
         .form-group textarea {
-          min-height: 80px;
+          min-height: 140px; /* МАКСИМАЛЬНО ЗБІЛЬШЕНА висота */
         }
       }
 
@@ -973,12 +1027,14 @@
       .preview-content {
         /* A4 пропорції: 210x297mm або 1:1.414 */
         aspect-ratio: 210 / 297;
-        width: 100%;
+        width: var(--a4-width); /* Використовуємо CSS змінну */
+        max-width: 100%; /* Не виходити за межі контейнера */
         border: 1px solid var(--color-border);
         border-radius: var(--border-radius);
         padding: var(--spacing-lg);
         background: white;
         overflow-y: auto;
+        overflow-x: hidden; /* БЕЗ ГОРИЗОНТАЛЬНОГО СКРОЛУ */
         text-align: left;
         position: relative;
         -webkit-overflow-scrolling: touch;
@@ -986,10 +1042,13 @@
         margin: 0 auto;
         display: flex;
         flex-direction: column;
+        /* ПРОПОРЦІЙНЕ МАСШТАБУВАННЯ синхронізоване з document-page */
+        transform: scale(var(--page-scale));
+        transform-origin: top center;
+        transition: transform 0.3s ease;
         /* Покращена адаптивність */
         min-height: 400px;
         max-height: 90vh;
-        overflow-x: hidden;
       }
 
       /* Покращені адаптивні стилі для різних розмірів екранів */
@@ -1292,9 +1351,9 @@
       }
 
       .document-page {
-        width: 210mm;
-        min-height: 297mm;
-        max-height: 297mm;
+        width: var(--a4-width);
+        min-height: var(--a4-height);
+        max-height: var(--a4-height);
         background: white;
         padding: 25mm 20mm; /* Стандартні поля A4 */
         border: 1px solid #ddd;
@@ -1305,28 +1364,16 @@
         page-break-after: always;
         overflow: hidden;
         display: block;
-        transform: none; /* масштаб тепер на обгортці */
-        transform-origin: top left;
+        /* ПРОПОРЦІЙНЕ МАСШТАБУВАННЯ з CSS змінною */
+        transform: scale(var(--page-scale));
+        transform-origin: top center;
         margin-left: auto;
         margin-right: auto;
+        transition: transform 0.3s ease;
         z-index: 1;
         /* Покращена адаптивність */
-        max-width: none !important; /* не дозволяємо автостиснення елемента — масштабуємо тільки transform'ом */
+        max-width: 100%;
         box-sizing: border-box;
-      }
-
-      /* Обгортка для коректного лейауту після масштабування */
-      .page-scale-wrapper {
-        display: inline-block;
-        width: calc(210mm * var(--page-scale-factor));
-        min-height: calc(297mm * var(--page-scale-factor));
-        max-width: 100%; /* не виходити за контейнер */
-        transform: translateZ(0); /* краще згладжування */
-      }
-
-      .page-scale-wrapper > .document-page {
-        transform: scale(var(--page-scale-factor));
-        transform-origin: top left;
       }
 
       /* Адаптивні стилі для .document-page на різних екранах */
@@ -1377,10 +1424,10 @@
         z-index: 10;
       }
 
-      /* Контейнер превью з правильним фоном */
+      /* Контейнер превью з правильним фоном - ОПТИМІЗОВАНО */
       .preview-container {
         background: #f5f5f5 !important; /* Світло-сірий фон між сторінками */
-        padding: 20px;
+        padding: var(--spacing-xl); /* ТАКІ Ж ПАДДІНГИ як у form-section */
         display: flex;
         flex-direction: column;
         gap: 30px;
@@ -1389,31 +1436,80 @@
         /* Покращена адаптивність */
         width: 100%;
         box-sizing: border-box;
-        overflow-x: hidden; /* прибраний горизонтальний скрол */
+        overflow-x: hidden; /* БЕЗ ГОРИЗОНТАЛЬНОГО СКРОЛУ! */
+        /* Пропорційне масштабування */
+        transform-origin: center top;
       }
 
       /* Контейнер, що масштабує сторінки пропорційно без зсуву */
       /* Видалено scale-wrapper: масштабуємо напряму .document-page через --page-scale */
 
-      /* Адаптивні стилі для .preview-container */
-      @media (max-width: 1200px) {
+      /* Адаптивні стилі для .preview-container - СИНХРОНІЗОВАНО з form-section */
+      /* ПРОПОРЦІЙНЕ МАСШТАБУВАННЯ A4 для різних розмірів екранів */
+
+      /* Великі екрани - повний розмір */
+      @media (min-width: 1400px) {
+        :root { --page-scale: 1; }
         .preview-container {
-          padding: 15px;
+          padding: var(--spacing-xl);
+          gap: 30px;
+        }
+      }
+
+      /* Середні екрани - легке зменшення */
+      @media (max-width: 1399px) and (min-width: 1200px) {
+        :root { --page-scale: 0.9; }
+        .preview-container {
+          padding: var(--spacing-xl);
+          gap: 25px;
+        }
+      }
+
+      @media (max-width: 1199px) and (min-width: 1024px) {
+        :root { --page-scale: 0.8; }
+        .preview-container {
+          padding: var(--spacing-lg);
           gap: 20px;
         }
       }
 
-      @media (max-width: 768px) {
+      @media (max-width: 1023px) and (min-width: 768px) {
+        :root { --page-scale: 0.7; }
         .preview-container {
-          padding: 10px;
+          padding: var(--spacing-lg);
           gap: 15px;
         }
       }
 
-      @media (max-width: 480px) {
+      @media (max-width: 767px) and (min-width: 640px) {
+        :root { --page-scale: 0.6; }
         .preview-container {
-          padding: 5px;
+          padding: var(--spacing-md);
+          gap: 15px;
+        }
+      }
+
+      @media (max-width: 639px) and (min-width: 480px) {
+        :root { --page-scale: 0.5; }
+        .preview-container {
+          padding: var(--spacing-md);
           gap: 10px;
+        }
+      }
+
+      @media (max-width: 479px) {
+        :root { --page-scale: 0.35; } /* Ще більше зменшення для малих екранів */
+        .preview-container {
+          padding: var(--spacing-sm);
+          gap: 8px;
+        }
+      }
+
+      @media (max-width: 375px) {
+        :root { --page-scale: 0.3; } /* Максимальне зменшення */
+        .preview-container {
+          padding: 8px;
+          gap: 5px;
         }
       }
 
@@ -2578,52 +2674,73 @@
         border-radius: 15px;
       }
 
-      /* Mobile styles for header buttons */
+      /* Mobile styles for header buttons - ОПТИМІЗОВАНО ДЛЯ АДАПТИВНОСТІ */
       @media (max-width: 768px) {
         .header-data-buttons {
+          display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 8px;
-          padding: 0 var(--spacing-sm);
+          grid-template-rows: repeat(2, auto);
+          gap: 10px;
+          padding: 12px var(--spacing-sm);
           max-width: 100%;
+          justify-items: stretch;
         }
         .header-data-buttons .btn-print {
           font-size: 0.95rem;
-          border-radius: 10px;
+          border-radius: 12px;
+          padding: 14px 10px;
+          font-weight: 600;
+          min-height: 48px; /* Оптимальний розмір для торкання */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
         }
       }
 
       @media (max-width: 640px) {
         .header-data-buttons {
-          gap: 6px;
+          gap: 8px;
+          padding: 10px var(--spacing-sm);
         }
         .header-data-buttons .btn-print {
           font-size: 0.9rem;
-          border-radius: 10px;
-          padding: 12px 10px;
+          border-radius: 12px;
+          padding: 16px 8px;
+          min-height: 52px; /* Збільшено для кращої доступності */
+          font-weight: 600;
         }
       }
 
       @media (max-width: 480px) {
         .header-data-buttons {
-          gap: 6px;
-          padding: 0 8px;
+          gap: 8px;
+          padding: 8px;
+          grid-template-columns: repeat(4, 1fr);
+          grid-template-rows: repeat(2, auto);
         }
         .header-data-buttons .btn-print {
-          font-size: 0.9rem;
-          border-radius: 10px;
-          padding: 12px 8px;
+          font-size: 0.85rem;
+          border-radius: 12px;
+          padding: 18px 6px;
+          min-height: 56px; /* МАКСИМАЛЬНО ЗБІЛЬШЕНО розмір кнопок */
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
         }
       }
 
       @media (max-width: 360px) {
         .header-data-buttons {
-          gap: 4px;
-          padding: 0 4px;
+          gap: 6px;
+          padding: 6px;
         }
         .header-data-buttons .btn-print {
-          font-size: 0.85rem;
-          padding: 10px 8px;
-          border-radius: 8px;
+          font-size: 0.8rem;
+          padding: 20px 4px;
+          border-radius: 10px;
+          min-height: 60px; /* МАКСИМАЛЬНО ЗБІЛЬШЕНО для дуже малих екранів */
+          font-weight: 700;
         }
       }
 
@@ -3143,19 +3260,26 @@
         }
 
         .mobile-menu-buttons .btn {
-          border-radius: 12px;
-          padding: 12px 16px;
-          font-size: 16px;
-          margin-bottom: 8px;
+          border-radius: 14px; /* Збільшений радіус */
+          padding: 16px 20px; /* ЗБІЛЬШЕНИЙ падінг для кращого торкання */
+          font-size: 17px; /* Більший шрифт */
+          font-weight: 700; /* Жирніший текст */
+          margin-bottom: 10px; /* Більша відстань між кнопками */
           background: var(--color-surface);
-          border: 1px solid var(--color-border);
+          border: 2px solid var(--color-border); /* Жирніша рамка */
           transition: all 0.3s ease;
+          min-height: 54px; /* МІНІМАЛЬНА ВИСОТА для торкання */
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Тінь */
         }
 
         .mobile-menu-buttons .btn:hover {
           background: var(--color-primary);
           color: white;
-          transform: translateX(4px);
+          transform: translateX(6px) translateY(-2px); /* Більший ефект */
+          box-shadow: 0 6px 16px rgba(0,0,0,0.2); /* Більша тінь при ховері */
         }
 
         /* Компактний прев'ю */
@@ -6243,13 +6367,11 @@ Anlagen:
       // Допоміжна функція для обгортання контенту в сторінку
       function wrapInPage(content, pageNum) {
         return `
-          <div class="page-scale-wrapper">
-            <div class="document-page page-${pageNum}">
-                <div class="document-preview">
-                ${content}
-                </div>
+          <div class="document-page page-${pageNum}">
+              <div class="document-preview">
+              ${content}
               </div>
-          </div>
+            </div>
           `
       }
 
@@ -9779,7 +9901,7 @@ Anlagen:
           const rawScale = Math.min(scaleByWidth, scaleByHeight)
           const scale = Math.max(0.22, Math.min(1, rawScale * 0.96))
 
-          document.documentElement.style.setProperty("--page-scale-factor", `${scale}`)
+          document.documentElement.style.setProperty("--page-scale", `scale(${scale})`)
         } catch (e) {
           console.warn("updatePageScaleVar failed:", e)
         }
