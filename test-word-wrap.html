@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест переносу тексту</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #4caf50;
+        padding-bottom: 10px;
+      }
+
+      .test-section {
+        margin: 30px 0;
+        padding: 20px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .test-section h3 {
+        margin-top: 0;
+        color: #4caf50;
+      }
+
+      /* БЕЗ переносу */
+      .no-wrap {
+        background: #ffebee;
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 4px solid #f44336;
+        overflow: hidden;
+      }
+
+      /* З переносом */
+      .with-wrap {
+        background: #e8f5e9;
+        padding: 15px;
+        margin: 10px 0;
+        border-left: 4px solid #4caf50;
+        word-wrap: break-word;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        hyphens: auto;
+      }
+
+      /* Тестовий блок для форми */
+      .form-test {
+        margin: 20px 0;
+      }
+
+      .form-test label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+
+      .form-test input,
+      .form-test textarea {
+        width: 100%;
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      .form-test textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      /* Стилі з переносом для форм */
+      .form-test.with-wrap input,
+      .form-test.with-wrap textarea {
+        word-wrap: break-word;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
+      }
+
+      /* A4 емуляція */
+      .a4-preview {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 20px auto;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        box-sizing: border-box;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      .status.bad {
+        background: #ffcdd2;
+        color: #c62828;
+      }
+
+      .status.good {
+        background: #c8e6c9;
+        color: #2e7d32;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>🧪 Тест переносу довгих рядків тексту</h1>
+
+      <div class="test-section">
+        <h3>❌ БЕЗ переносу (проблема)</h3>
+        <span class="status bad">Поганий приклад</span>
+        <div class="no-wrap">
+          <p>Звичайний текст: Lorem ipsum dolor sit amet.</p>
+          <p
+            >Довгий рядок:
+            Service.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</p
+          >
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h3>✅ З переносом (вирішення)</h3>
+        <span class="status good">Хороший приклад</span>
+        <div class="with-wrap">
+          <p>Звичайний текст: Lorem ipsum dolor sit amet.</p>
+          <p
+            >Довгий рядок:
+            Service.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</p
+          >
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h3>📝 Тест з формами</h3>
+
+        <div class="form-test">
+          <label>БЕЗ переносу (input):</label>
+          <input
+            type="text"
+            value="Service.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee">
+        </div>
+
+        <div class="form-test with-wrap">
+          <label>З переносом (input):</label>
+          <input
+            type="text"
+            value="Service.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee">
+        </div>
+
+        <div class="form-test">
+          <label>БЕЗ переносу (textarea):</label>
+          <textarea>
+Gesundheitswesen. Bereit für neue Herausforderungen im Stationsservice mit Fokus auf Hygiene, Organisation und patientenorientierten Service.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</textarea
+          >
+        </div>
+
+        <div class="form-test with-wrap">
+          <label>З переносом (textarea):</label>
+          <textarea>
+Gesundheitswesen. Bereit für neue Herausforderungen im Stationsservice mit Fokus auf Hygiene, Organisation und patientenorientierten Service.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</textarea
+          >
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h3>📄 A4 Preview з переносом</h3>
+        <div class="a4-preview">
+          <style>
+            .a4-preview * {
+              word-wrap: break-word !important;
+              word-break: break-all !important;
+              overflow-wrap: break-word !important;
+            }
+          </style>
+          <h2>BERUFLICHE QUALIFIKATION</h2>
+          <p
+            >5+ Jahre Berufserfahrung im Dienstleistungssektor. Zuverlässiger und
+            verantwortungsbewusster Mitarbeiter mit hoher Motivation für die Arbeit im
+            Gesundheitswesen. Bereit für neue Herausforderungen im Stationsservice mit Fokus auf
+            Hygiene, Organisation und patientenorientierten
+            Service.eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee</p
+          >
+
+          <h2>KERNKOMPETENZEN</h2>
+          <ul>
+            <li>Kommunikation, Teamarbeit, Organisationsfähigkeit</li>
+            <li>Körperliche Ausdauer und Flexibilität</li>
+            <li>Organisatorisches Talent und strukturierter Arbeitsansatz</li>
+            <li>Empathische Einstellung zu kranken Menschen</li>
+            <li>Schnelles Verständnis und Lernbereitschaft</li>
+            <li
+              >Довгий текст без пробілів:
+              aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</li
+            >
+          </ul>
+        </div>
+      </div>
+
+      <div class="test-section">
+        <h3>📊 Порівняння CSS властивостей</h3>
+        <table style="width: 100%; border-collapse: collapse">
+          <thead>
+            <tr style="background: #f0f0f0">
+              <th style="padding: 10px; text-align: left; border: 1px solid #ddd">Властивість</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #ddd">Значення</th>
+              <th style="padding: 10px; text-align: left; border: 1px solid #ddd">Опис</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>word-wrap</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>break-word</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd">Дозволяє перенос довгих слів</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>word-break</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>break-all</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd"
+                >Розриває слова в будь-якому місці</td
+              >
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>overflow-wrap</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>break-word</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd">Сучасна альтернатива word-wrap</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>hyphens</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd"><code>auto</code></td>
+              <td style="padding: 10px; border: 1px solid #ddd">Автоматичні дефіси для переносу</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      console.log("✅ CSS для вирішення проблеми переносу тексту:")
+      console.log(`
+.document-preview * {
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto;
+    max-width: 100%;
+}
+        `)
+    </script>
+  </body>
+</html>

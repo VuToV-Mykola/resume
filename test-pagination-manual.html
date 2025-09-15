@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ручне Тестування Пагінації</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .test-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .controls {
+        background: #e3f2fd;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        border-left: 4px solid #2196f3;
+      }
+
+      .controls h2 {
+        margin-top: 0;
+        color: #1976d2;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: #4caf50;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #45a049;
+        transform: translateY(-2px);
+      }
+
+      .btn-danger {
+        background: #f44336;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #da190b;
+        transform: translateY(-2px);
+      }
+
+      .btn-info {
+        background: #2196f3;
+        color: white;
+      }
+
+      .btn-info:hover {
+        background: #1976d2;
+        transform: translateY(-2px);
+      }
+
+      .status {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 15px 0;
+        font-weight: 500;
+      }
+
+      .content-editor {
+        width: 100%;
+        min-height: 300px;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 14px;
+        resize: vertical;
+      }
+
+      .content-editor:focus {
+        border-color: #2196f3;
+        outline: none;
+      }
+
+      /* A4 стилі для превью */
+      .preview-area {
+        background: #f0f0f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+      }
+
+      .document-page {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 0 auto 30px;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        page-break-after: always;
+        position: relative;
+        border: 1px solid #ddd;
+      }
+
+      .document-preview {
+        font-size: 12pt;
+        line-height: 1.6;
+        color: #333;
+        font-family: "Times New Roman", serif;
+      }
+
+      .document-preview h1 {
+        color: #1a5490;
+        font-size: 24pt;
+        border-bottom: 3px solid #1a5490;
+        padding-bottom: 8px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .document-preview h2 {
+        color: #2c5aa0;
+        font-size: 16pt;
+        border-bottom: 2px solid #2c5aa0;
+        padding-bottom: 5px;
+        margin: 25px 0 15px;
+        text-transform: uppercase;
+      }
+
+      .document-preview h3 {
+        color: #555;
+        font-size: 14pt;
+        margin: 20px 0 10px;
+      }
+
+      .document-preview p {
+        margin: 10px 0;
+        text-align: justify;
+      }
+
+      .page-counter {
+        position: absolute;
+        bottom: 10mm;
+        right: 15mm;
+        background: rgba(26, 84, 144, 0.1);
+        color: #1a5490;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 10pt;
+        font-weight: bold;
+        border: 1px solid rgba(26, 84, 144, 0.2);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .stat-item {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+        border-left: 4px solid #4caf50;
+      }
+
+      .stat-number {
+        font-size: 24px;
+        font-weight: bold;
+        color: #4caf50;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>🧪 Ручне Тестування Динамічної Пагінації</h1>
+
+      <div class="controls">
+        <h2>🎛️ Контроль Тестування</h2>
+
+        <div class="stats" id="stats">
+          <div class="stat-item">
+            <div class="stat-number" id="pageCount">1</div>
+            <div class="stat-label">Сторінок</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="elementCount">0</div>
+            <div class="stat-label">Елементів</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="charCount">0</div>
+            <div class="stat-label">Символів</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="heightCount">0</div>
+            <div class="stat-label">Висота (px)</div>
+          </div>
+        </div>
+
+        <div class="button-grid">
+          <button class="btn btn-primary" onclick="addSection()">➕ Додати секцію</button>
+          <button class="btn btn-primary" onclick="addLongText()">📜 Довгий текст</button>
+          <button class="btn btn-primary" onclick="addTable()">📊 Таблиця</button>
+          <button class="btn btn-info" onclick="testPagination()">🔄 Оновити</button>
+          <button class="btn btn-danger" onclick="removeLastSection()">❌ Видалити</button>
+          <button class="btn btn-danger" onclick="clearAll()">🗑️ Очистити</button>
+        </div>
+
+        <div class="status" id="status">
+          Готовий до тестування. Додавайте або видаляйте контент для перевірки динамічної пагінації.
+        </div>
+
+        <h3>📝 Редактор контенту (прямий ввід):</h3>
+        <textarea
+          class="content-editor"
+          id="contentEditor"
+          placeholder="Введіть або відредагуйте контент тут..."
+          oninput="updateFromEditor()"></textarea>
+      </div>
+
+      <div class="preview-area" id="previewArea">
+        <h2>📋 Превью з пагінацією</h2>
+        <div id="paginatedContent">
+          <div class="document-page">
+            <div class="document-preview" id="testContent">
+              <h1>ТЕСТОВИЙ ДОКУМЕНТ</h1>
+              <h2>Початкова секція</h2>
+              <p>
+                Це тестовий документ для перевірки системи динамічної пагінації. Використовуйте кнопки
+                вище для додавання або видалення контенту.
+              </p>
+              <h3>Введення</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let sectionCounter = 1
+
+      // Головна функція пагінації (відповідає оригінальній логіці)
+      function performAdvancedPagination(htmlContent) {
+        console.log("📄 🧠 Testing advanced pagination method")
+
+        try {
+          // Створюємо прихований контейнер для вимірювання висоти
+          const measureContainer = document.createElement("div")
+          measureContainer.style.cssText = `
+            position: absolute;
+            visibility: hidden;
+            width: 170mm;
+            padding: 20mm;
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            top: -9999px;
+          `
+          document.body.appendChild(measureContainer)
+          measureContainer.innerHTML = htmlContent
+
+          // Витягуємо стилі окремо
+          const styles = measureContainer.querySelectorAll("style")
+          const styleContent = Array.from(styles)
+            .map(s => s.outerHTML)
+            .join("\n")
+
+          // Видаляємо стилі з контейнера для обробки контенту
+          styles.forEach(style => style.remove())
+
+          // Збираємо всі елементи для розподілу
+          const allElements = Array.from(measureContainer.children)
+
+          if (allElements.length === 0) {
+            console.log("📄 ⚠️ No elements found in content")
+            document.body.removeChild(measureContainer)
+            return wrapInPage(htmlContent, 1)
+          }
+
+          console.log(`📄 📊 Analysis:`)
+          console.log(`📄   Total elements: ${allElements.length}`)
+          console.log(`📄   Container height: ${measureContainer.scrollHeight}px`)
+
+          // A4 висота в пікселях (приблизно 1122px при 96 DPI мінус поля)
+          const MAX_PAGE_HEIGHT = 950 // пікселі для контенту на одній сторінці A4
+
+          // Розподіляємо елементи по сторінках на основі висоти
+          const pages = []
+          let currentPage = []
+          let currentPageHeight = 0
+
+          // Створюємо тимчасовий контейнер для вимірювання висоти окремих елементів
+          const tempMeasure = document.createElement("div")
+          tempMeasure.style.cssText = measureContainer.style.cssText
+          document.body.appendChild(tempMeasure)
+
+          for (const element of allElements) {
+            // Вимірюємо висоту елемента
+            tempMeasure.innerHTML = ""
+            tempMeasure.appendChild(element.cloneNode(true))
+            const elementHeight = tempMeasure.scrollHeight
+
+            // Перевіряємо чи елемент є заголовком або важливим блоком
+            const isHeading = /^H[1-6]$/i.test(element.tagName)
+            const isSection =
+              element.classList.contains("section") ||
+              element.classList.contains("profile-header") ||
+              element.classList.contains("section-header")
+
+            // Логіка розподілу по сторінках
+            if (currentPageHeight + elementHeight > MAX_PAGE_HEIGHT && currentPage.length > 0) {
+              // Якщо це заголовок і на сторінці вже є достатньо контенту - переносимо на наступну
+              if (isHeading && currentPageHeight > MAX_PAGE_HEIGHT * 0.6) {
+                pages.push([...currentPage])
+                currentPage = [element]
+                currentPageHeight = elementHeight
+                console.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
+              }
+              // Якщо це важлива секція і вона не поміститься - переносимо
+              else if (isSection && elementHeight > MAX_PAGE_HEIGHT * 0.4) {
+                pages.push([...currentPage])
+                currentPage = [element]
+                currentPageHeight = elementHeight
+                console.log(`📄   Page ${pages.length} completed (section break): ${currentPageHeight}px`)
+              }
+              // Інакше намагаємось помістити, якщо не дуже великий
+              else if (elementHeight < MAX_PAGE_HEIGHT * 0.3) {
+                currentPage.push(element)
+                currentPageHeight += elementHeight
+              }
+              // Якщо елемент занадто великий - починаємо нову сторінку
+              else {
+                pages.push([...currentPage])
+                currentPage = [element]
+                currentPageHeight = elementHeight
+                console.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
+              }
+            } else {
+              // Додаємо елемент на поточну сторінку
+              currentPage.push(element)
+              currentPageHeight += elementHeight
+            }
+
+            console.log(
+              `📄   Element: ${element.tagName}, height: ${elementHeight}px, page height: ${currentPageHeight}px`
+            )
+          }
+
+          // Додаємо останню сторінку
+          if (currentPage.length > 0) {
+            pages.push(currentPage)
+            console.log(`📄   Last page completed: ${currentPageHeight}px`)
+          }
+
+          // Видаляємо тимчасові контейнери
+          document.body.removeChild(measureContainer)
+          document.body.removeChild(tempMeasure)
+
+          // Якщо отримали тільки одну сторінку - повертаємо як є
+          if (pages.length <= 1) {
+            console.log("📄 ✅ Content fits on single page")
+            return wrapInPage(htmlContent, 1)
+          }
+
+          console.log(`📄   Total pages created: ${pages.length}`)
+
+          // Генеруємо HTML для кожної сторінки
+          let paginatedHTML = ""
+          for (let i = 0; i < pages.length; i++) {
+            const pageElements = pages[i]
+            const pageContent = pageElements.map(el => el.outerHTML).join("\n")
+
+            console.log(`📄   Page ${i + 1}: ${pageElements.length} elements`)
+
+            paginatedHTML += `
+              <div class="document-page page-${i + 1}" data-page="${i + 1}" data-total-pages="${pages.length}">
+                <div class="page-counter">Сторінка ${i + 1} із ${pages.length}</div>
+                <div class="document-preview">
+                  ${pageContent}
+                </div>
+              </div>
+            `
+          }
+
+          console.log(`📄 ✅ Height-based pagination complete: ${pages.length} pages created`)
+          return paginatedHTML
+        } catch (error) {
+          console.error("📄 ❌ Error in height-based pagination:", error)
+
+          // Cleanup якщо виникла помилка
+          const tempContainers = document.querySelectorAll('div[style*="visibility: hidden"]')
+          tempContainers.forEach(container => {
+            if (container.parentNode === document.body) {
+              document.body.removeChild(container)
+            }
+          })
+
+          // Fallback - повертаємо оригінальний контент
+          return wrapInPage(htmlContent, 1)
+        }
+      }
+
+      // Допоміжна функція для обгортання контенту в сторінку
+      function wrapInPage(content, pageNum) {
+        return `
+          <div class="document-page page-${pageNum}">
+            <div class="document-preview">
+              ${content}
+            </div>
+          </div>
+        `
+      }
+
+      function addSection() {
+        sectionCounter++
+        const content = document.getElementById("testContent")
+        const newSection = document.createElement("div")
+        newSection.innerHTML = `
+          <h2>Секція ${sectionCounter}</h2>
+          <p>Це нова секція №${sectionCounter} для тестування пагінації. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <h3>Підрозділ ${sectionCounter}.1</h3>
+          <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          <h3>Підрозділ ${sectionCounter}.2</h3>
+          <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+        `
+        content.appendChild(newSection)
+        updateEditor()
+        testPagination()
+      }
+
+      function addLongText() {
+        sectionCounter++
+        const content = document.getElementById("testContent")
+        const newSection = document.createElement("div")
+        newSection.innerHTML = `
+          <h2>Довга секція ${sectionCounter}</h2>
+          <p>${"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. ".repeat(
+            5
+          )}</p>
+          <p>${"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. ".repeat(
+            4
+          )}</p>
+        `
+        content.appendChild(newSection)
+        updateEditor()
+        testPagination()
+      }
+
+      function addTable() {
+        sectionCounter++
+        const content = document.getElementById("testContent")
+        const newSection = document.createElement("div")
+
+        let tableHTML = `<h2>Таблиця ${sectionCounter}</h2><table border="1" style="width:100%; border-collapse: collapse; margin: 15px 0;"><thead><tr style="background: #f0f0f0;"><th style="padding: 8px;">№</th><th style="padding: 8px;">Назва</th><th style="padding: 8px;">Опис</th><th style="padding: 8px;">Статус</th></tr></thead><tbody>`
+
+        for (let i = 1; i <= 12; i++) {
+          tableHTML += `<tr>
+            <td style="padding: 6px; text-align: center;">${i}</td>
+            <td style="padding: 6px;">Елемент ${i}</td>
+            <td style="padding: 6px;">Детальний опис для елемента номер ${i} з додатковою інформацією</td>
+            <td style="padding: 6px; text-align: center;">${i % 2 === 0 ? "Активний" : "Неактивний"}</td>
+          </tr>`
+        }
+
+        tableHTML += "</tbody></table>"
+        newSection.innerHTML = tableHTML
+        content.appendChild(newSection)
+        updateEditor()
+        testPagination()
+      }
+
+      function removeLastSection() {
+        const content = document.getElementById("testContent")
+        if (content.lastElementChild && content.children.length > 1) {
+          content.removeChild(content.lastElementChild)
+          updateEditor()
+          testPagination()
+        }
+      }
+
+      function clearAll() {
+        const content = document.getElementById("testContent")
+        content.innerHTML = `
+          <h1>ТЕСТОВИЙ ДОКУМЕНТ</h1>
+          <h2>Початкова секція</h2>
+          <p>Контент очищено. Додайте новий контент для тестування.</p>
+        `
+        sectionCounter = 1
+        updateEditor()
+        testPagination()
+      }
+
+      function updateFromEditor() {
+        const editor = document.getElementById("contentEditor")
+        const content = document.getElementById("testContent")
+        
+        if (editor.value.trim()) {
+          content.innerHTML = editor.value
+        }
+        
+        testPagination()
+      }
+
+      function updateEditor() {
+        const content = document.getElementById("testContent")
+        const editor = document.getElementById("contentEditor")
+        editor.value = content.innerHTML
+      }
+
+      function testPagination() {
+        const content = document.getElementById("testContent")
+        const paginatedDiv = document.getElementById("paginatedContent")
+
+        // Отримуємо HTML контент
+        const htmlContent = content.innerHTML
+
+        // Застосовуємо пагінацію
+        const paginatedHTML = performAdvancedPagination(htmlContent)
+
+        // Відображаємо результат
+        paginatedDiv.innerHTML = paginatedHTML
+
+        // Оновлюємо статистику
+        updateStats()
+
+        // Оновлюємо статус
+        const pages = document.querySelectorAll(".document-page").length
+        document.getElementById("status").innerHTML = `
+          ✅ Пагінація оновлена! Створено <strong>${pages}</strong> ${
+          pages === 1 ? "сторінку" : pages < 5 ? "сторінки" : "сторінок"
+        }.
+        `
+      }
+
+      function updateStats() {
+        const pages = document.querySelectorAll(".document-page")
+        const content = document.getElementById("testContent")
+        
+        let totalElements = 0
+        let totalHeight = 0
+        
+        pages.forEach(page => {
+          const elements = page.querySelectorAll("h1, h2, h3, p, div, table, tr, td, th").length
+          totalElements += elements
+          totalHeight += page.scrollHeight
+        })
+
+        document.getElementById("pageCount").textContent = pages.length
+        document.getElementById("elementCount").textContent = totalElements
+        document.getElementById("charCount").textContent = content.textContent.length
+        document.getElementById("heightCount").textContent = Math.round(totalHeight)
+      }
+
+      // Початкове оновлення при завантаженні
+      window.addEventListener("load", () => {
+        updateEditor()
+        testPagination()
+      })
+
+      // Інформація для користувача
+      console.log("🧪 Тестова сторінка для динамічної пагінації завантажена!")
+      console.log("📄 Використовуйте кнопки для додавання/видалення контенту")
+      console.log("🔄 Пагінація оновлюється автоматично")
+      console.log("📊 Статистика оновлюється в реальному часі")
+    </script>
+  </body>
+</html>

@@ -785,13 +785,12 @@
       /* Preview section */
       .preview-section {
         background: var(--color-surface);
-      
+
         border-radius: var(--border-radius-lg);
         box-shadow: var(--shadow-sm);
         height: 100%;
         display: flex;
         flex-direction: column;
-        
       }
 
       .preview-tabs {
@@ -1054,6 +1053,14 @@
         z-index: 1;
       }
 
+      /* Емуляція друку для прев'ю, щоб розбиття збігалось з PDF */
+      .document-page.print-like {
+        transform: none !important;
+        padding: 20mm 15mm !important; /* як у @media print */
+        border: none !important;
+        box-shadow: none !important;
+      }
+
       /* Стилі для двох сторінок A4 */
       .document-page.page-1,
       .document-page.page-2 {
@@ -1071,9 +1078,12 @@
         height: 100%;
         overflow: visible;
         display: block;
-        
         min-height: 247mm; /* Висота A4 мінус відступи */
         box-sizing: border-box;
+        /* Забезпечуємо правильний перенос тексту */
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
 
       /* Номер сторінки для другої сторінки */
@@ -1101,7 +1111,7 @@
 
       /* Темна тема - фон між сторінками залишається світлим */
       [data-theme="dark"] .preview-container {
-        background: #f5f5f5 !important;
+        background: rgb(45, 45, 45) !important;
       }
 
       /* Візуальний розрив між сторінками A4 - як горизонтальні марджини */
@@ -1245,9 +1255,61 @@
         border-radius: 0;
         box-shadow: none;
         max-width: none;
+        /* Правильний перенос довгих слів */
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        -webkit-hyphens: auto;
+        -moz-hyphens: auto;
+        -ms-hyphens: auto;
         margin: 0;
         height: fit-content;
         position: relative;
+      }
+
+      /* Перенос тексту для всіх дочірніх елементів */
+      .document-preview * {
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 100%;
+      }
+
+      /* Спеціальні правила для textarea та полів вводу */
+      textarea,
+      input[type="text"],
+      input[type="email"],
+      .form-input,
+      .editable-content {
+        word-wrap: break-word !important;
+        word-break: break-all !important;
+        overflow-wrap: break-word !important;
+        white-space: pre-wrap !important;
+      }
+
+      /* Додаткові правила для конкретних полів з проблемами */
+      textarea[name*="Motivation"],
+      textarea[name*="motivation"],
+      textarea[name*="Interesse"],
+      textarea[name*="Kernkompetenzen"],
+      textarea[name*="Service"],
+      textarea[name*="Berufserfahrung"],
+      textarea[name*="Qualifikation"] {
+        word-wrap: break-word !important;
+        word-break: break-all !important;
+        overflow-wrap: anywhere !important;
+        white-space: pre-wrap !important;
+        overflow-x: hidden !important;
+      }
+
+      /* Перенос для довгих неперервних рядків */
+      .document-preview p,
+      .document-preview li,
+      .document-preview td,
+      .document-preview div {
+        word-break: break-all !important;
+        overflow-wrap: anywhere !important;
       }
 
       /* Пагінація через CSS */
@@ -3192,13 +3254,8 @@
             <h2 data-translate="form.professionalInfo"> 💼 Berufliche Informationen </h2>
 
             <div class="form-group">
-              <label for="position" data-translate="form.position">Beworbene Position *</label>
-              <input
-                type="text"
-                id="position"
-                name="position"
-                required
-                placeholder="Beworbene Position *">
+              <label for="position" data-translate="form.position"></label>
+              <input type="text" id="position" name="position" required placeholder="">
             </div>
 
             <div class="form-group">
@@ -3501,7 +3558,7 @@ Anlagen:
               id="lebenslaufExperience"
               name="lebenslaufExperience"
               rows="8"
-              placeholder="Position | Unternehmen&#10;Zeitraum&#10;Beschreibung&#10;&#10;Position | Unternehmen&#10;Zeitraum&#10;Beschreibung"
+              placeholder=""
               required></textarea>
           </div>
 
@@ -3561,7 +3618,7 @@ Anlagen:
 
         <section class="preview-section" id="previewContent">
           <h2 data-translate="preview.title">📋 Live Preview</h2>
-          <div class="preview-container" >
+          <div class="preview-container">
             <div class="preview-placeholder">
               <div class="preview-icon">📄</div>
               <h3>Документ готовий до перегляду</h3>
@@ -4847,9 +4904,9 @@ Anlagen:
 
       // Debounced version of preview update
       const debouncedUpdatePreview = debounce(() => {
-        console.log("🔄 debouncedUpdatePreview called")
+        console.log("🔄 ⚡ REAL-TIME debouncedUpdatePreview called")
         updatePreviewOnInput()
-      }, 300)
+      }, 150) // Зменшили з 300ms до 150ms для швидшого відгуку пагінації
 
       // Photo upload functionality
       function initializePhotoUpload() {
@@ -5385,23 +5442,58 @@ Anlagen:
         return currentValues
       }
 
-      // Функція для інтелектуальної пагінації контенту з заповненням сторінок по символах
-      function createTwoPageLayout(htmlContent) {
-        console.log("📄 Creating intelligent paginated layout")
+      // Функція для динамічної пагінації в реальному часі з урахуванням активної вкладки
+      function createDynamicPagination(htmlContent) {
+        console.log("📄 🚀 Creating REAL-TIME dynamic pagination")
 
-        const CHARACTERS_PER_PAGE = 2500 // Зменшуємо ліміт для більш рівномірного розподілу
+        // Визначаємо активну вкладку для різних лімітів символів
+        const activeTab = getCurrentActiveTab()
+        console.log("📄 Active tab for pagination:", activeTab)
 
-        // Підрахунок символів у контенті (без HTML тегів)
-        const tempDiv = document.createElement('div')
+        // Різні ліміти для різних типів документів
+        let CHARACTERS_PER_PAGE
+        if (activeTab === "bewerbung") {
+          CHARACTERS_PER_PAGE = 3500 // Ліміт для листів
+        } else {
+          CHARACTERS_PER_PAGE = 2500 // Оптимальний ліміт для резюме (6029 символів / 2 = ~3000)
+        }
+
+        // Підрахунок символів у контенті (зберігаючи пробіли та переноси)
+        const tempDiv = document.createElement("div")
         tempDiv.innerHTML = htmlContent
-        const textContent = tempDiv.textContent || tempDiv.innerText || ''
 
-        console.log('📄 Total characters in content:', textContent.length)
-        console.log('📄 Characters per page limit:', CHARACTERS_PER_PAGE)
+        // Отримуємо текст зберігаючи пробіли та переноси рядків
+        let textContent = tempDiv.textContent || tempDiv.innerText || ""
+
+        // Зберігаємо пробіли та переноси: без глобального trim і без схлопування
+        textContent = textContent.replace(/\r\n/g, "\n") // уніфікуємо перенос рядка
+
+        // Підрахунок різних типів символів для debug
+        const spaceCount = (textContent.match(/\s/g) || []).length
+        const newlineCount = (textContent.match(/\n/g) || []).length
+        const specialCharsCount = (textContent.match(/[^\w\s\u0400-\u04FF]/g) || []).length // латинка + кирилиця + спецсимволи
+        const totalChars = textContent.length
+
+        console.log("🔤 Character analysis for pagination:")
+        console.log("📝 Total characters:", totalChars)
+        console.log("🔤   - Spaces:", spaceCount)
+        console.log("🔤   - New lines:", newlineCount)
+        console.log("🔤   - Special chars:", specialCharsCount)
+        console.log("📝 Text preview (first 200 chars):", textContent.substring(0, 200) + "...")
+
+        console.log("📄 ⚡ Real-time pagination stats:")
+        console.log(`📄    Active tab: ${activeTab}`)
+        console.log(`📄    Characters per page limit: ${CHARACTERS_PER_PAGE}`)
+        console.log(`📄    Total characters: ${textContent.length}`)
+        console.log(`📄    Needs pagination: ${textContent.length > CHARACTERS_PER_PAGE}`)
+        console.log(
+          `📄    🎯 CALCULATION: ${textContent.length} > ${CHARACTERS_PER_PAGE} = ${textContent.length > CHARACTERS_PER_PAGE}`
+        )
 
         // Якщо контент поміщається на одну сторінку
         if (textContent.length <= CHARACTERS_PER_PAGE) {
-          console.log('📄 Content fits on one page')
+          console.log("📄 ✅ Content fits on single page - no pagination needed")
+          console.log(`📄 🔥 REASON: ${textContent.length} <= ${CHARACTERS_PER_PAGE}`)
           return `
             <div class="document-page page-1">
               <div class="document-preview">
@@ -5411,81 +5503,405 @@ Anlagen:
           `
         }
 
-        // Розбиваємо HTML на логічні блоки для розподілу між сторінками
-        const parser = new DOMParser()
-        const doc = parser.parseFromString(`<div>${htmlContent}</div>`, 'text/html')
-        const container = doc.querySelector('div')
-        const elements = Array.from(container.children)
+        console.log(
+          "📄 🔥 Content REQUIRES pagination - proceeding to performIntelligentPagination"
+        )
+        console.log(`📄 🔥 REASON: ${textContent.length} > ${CHARACTERS_PER_PAGE}`)
 
-        let firstPageElements = []
-        let secondPageElements = []
-        let currentPageChars = 0
-        let isFirstPage = true
+        // Розумна пагінація з перерозподілом (FRAME-based для точних полів A4)
+        return performFrameBasedPagination(htmlContent, activeTab)
+      }
 
-        // Спочатку витягуємо стилі для першої сторінки
-        const styleElement = elements.find(el => el.tagName === 'STYLE')
-        if (styleElement) {
-          firstPageElements.push(styleElement.outerHTML)
-        }
+      // Нова покращена методика динамічної пагінації на основі висоти A4
+      function performIntelligentPagination(htmlContent, charactersPerPage, activeTab) {
+        console.log("📄 🧠 NEW Height-based A4 pagination method starting")
 
-        // Розподіляємо елементи між сторінками
-        elements.forEach((element, index) => {
-          if (element.tagName === 'STYLE') return // Стилі вже додані
+        try {
+          // Створюємо прихований контейнер для вимірювання висоти
+          const measureContainer = document.createElement("div")
+          measureContainer.style.cssText = `
+            position: absolute;
+            visibility: hidden;
+            width: 170mm;
+            padding: 15mm;
+            font-family: Arial, sans-serif;
+            font-size: 12pt;
+            line-height: 1.5;
+          `
+          document.body.appendChild(measureContainer)
+          measureContainer.innerHTML = htmlContent
 
-          const elementText = element.textContent || element.innerText || ''
-          const elementChars = elementText.length
+          // Витягуємо стилі окремо
+          const styles = measureContainer.querySelectorAll("style")
+          const styleContent = Array.from(styles)
+            .map(s => s.outerHTML)
+            .join("\n")
 
-          console.log(`📄 Element ${index}: "${elementText.substring(0, 50)}..." (${elementChars} chars)`)
+          // Видаляємо стилі з контейнера для обробки контенту
+          styles.forEach(style => style.remove())
 
-          // Якщо додавання цього елементу перевищить ліміт першої сторінки
-          if (isFirstPage && (currentPageChars + elementChars > CHARACTERS_PER_PAGE) && currentPageChars > 300) {
-            console.log('📄 Moving to page 2, current chars:', currentPageChars, 'element chars:', elementChars)
-            isFirstPage = false
-            currentPageChars = elementChars // Починаємо рахунок з поточного елементу
-            secondPageElements.push(element.outerHTML)
-          } else if (isFirstPage) {
-            firstPageElements.push(element.outerHTML)
-            currentPageChars += elementChars
-            console.log('📄 Added to page 1, total chars:', currentPageChars)
-          } else {
-            secondPageElements.push(element.outerHTML)
-            currentPageChars += elementChars
-            console.log('📄 Added to page 2, total chars:', currentPageChars)
+          // Збираємо всі елементи для розподілу
+          const allElements = Array.from(measureContainer.children)
+
+          if (allElements.length === 0) {
+            console.log("📄 ⚠️ No elements found in content")
+            document.body.removeChild(measureContainer)
+            return wrapInPage(htmlContent, 1)
           }
-        })
 
-        const result = `
-          <div class="document-page page-1">
-            <div class="document-preview">
-              ${firstPageElements.join('')}
-            </div>
-          </div>
-          <div class="document-page page-2">
-            <div class="document-preview">
-              ${secondPageElements.join('')}
-            </div>
-          </div>
-        `
+          console.log(`📄 📊 Analysis:`)
+          console.log(`📄   Total elements: ${allElements.length}`)
+          console.log(`📄   Container height: ${measureContainer.scrollHeight}px`)
 
-        console.log('📄 Created 2 pages with intelligent distribution')
-        console.log('📄 Page 1 elements:', firstPageElements.length)
-        console.log('📄 Page 2 elements:', secondPageElements.length)
-        console.log('📄 Page 1 content preview:', firstPageElements.join('').substring(0, 200) + '...')
-        console.log('📄 Page 2 content preview:', secondPageElements.join('').substring(0, 200) + '...')
+          // A4 висота в пікселях (приблизно 1122px при 96 DPI мінус поля)
+          // Залишаємо місце для полів: верх 15mm, низ 15mm = 30mm = ~113px
+          const MAX_PAGE_HEIGHT = 950 // пікселі для контенту на одній сторінці A4
 
-        // Перевіряємо чи друга сторінка не порожня
-        if (secondPageElements.length === 0) {
-          console.warn('⚠️ Second page is empty! Returning single page layout.')
-          return `
-            <div class="document-page page-1">
+          // Розподіляємо елементи по сторінках на основі висоти
+          const pages = []
+          let currentPage = []
+          let currentPageHeight = 0
+
+          // Створюємо тимчасовий контейнер для вимірювання висоти окремих елементів
+          const tempMeasure = document.createElement("div")
+          tempMeasure.style.cssText = measureContainer.style.cssText
+          document.body.appendChild(tempMeasure)
+
+          for (const element of allElements) {
+            // Вимірюємо висоту елемента
+            tempMeasure.innerHTML = ""
+            tempMeasure.appendChild(element.cloneNode(true))
+            const elementHeight = tempMeasure.scrollHeight
+
+            // Перевіряємо чи елемент є заголовком або важливим блоком
+            const isHeading = /^H[1-6]$/i.test(element.tagName)
+            const isSection =
+              element.classList.contains("section") ||
+              element.classList.contains("profile-header") ||
+              element.classList.contains("section-header")
+
+            // Логіка розподілу по сторінках
+            if (currentPageHeight + elementHeight > MAX_PAGE_HEIGHT && currentPage.length > 0) {
+              // Якщо це заголовок і на сторінці вже є достатньо контенту - переносимо на наступну
+              if (isHeading && currentPageHeight > MAX_PAGE_HEIGHT * 0.6) {
+                pages.push([...currentPage])
+                currentPage = [element]
+                currentPageHeight = elementHeight
+                console.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
+              }
+              // Якщо це важлива секція і вона не поміститься - переносимо
+              else if (isSection && elementHeight > MAX_PAGE_HEIGHT * 0.4) {
+                pages.push([...currentPage])
+                currentPage = [element]
+                currentPageHeight = elementHeight
+                console.log(
+                  `📄   Page ${pages.length} completed (section break): ${currentPageHeight}px`
+                )
+              }
+              // Інакше намагаємось помістити, якщо не дуже великий
+              else if (elementHeight < MAX_PAGE_HEIGHT * 0.3) {
+                currentPage.push(element)
+                currentPageHeight += elementHeight
+              }
+              // Якщо елемент занадто великий - починаємо нову сторінку
+              else {
+                pages.push([...currentPage])
+                currentPage = [element]
+                currentPageHeight = elementHeight
+                console.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
+              }
+            } else {
+              // Додаємо елемент на поточну сторінку
+              currentPage.push(element)
+              currentPageHeight += elementHeight
+            }
+
+            console.log(
+              `📄   Element: ${element.tagName}, height: ${elementHeight}px, page height: ${currentPageHeight}px`
+            )
+          }
+
+          // Додаємо останню сторінку
+          if (currentPage.length > 0) {
+            pages.push(currentPage)
+            console.log(`📄   Last page completed: ${currentPageHeight}px`)
+          }
+
+          // Видаляємо тимчасові контейнери
+          document.body.removeChild(measureContainer)
+          document.body.removeChild(tempMeasure)
+
+          // Якщо отримали тільки одну сторінку - повертаємо як є
+          if (pages.length <= 1) {
+            console.log("📄 ✅ Content fits on single page")
+            return wrapInPage(htmlContent, 1)
+          }
+
+          console.log(`📄   Total pages created: ${pages.length}`)
+
+          // Генеруємо HTML для кожної сторінки
+          let paginatedHTML = ""
+          for (let i = 0; i < pages.length; i++) {
+            const pageElements = pages[i]
+            const pageContent = pageElements.map(el => el.outerHTML).join("\n")
+
+            console.log(`📄   Page ${i + 1}: ${pageElements.length} elements`)
+
+            paginatedHTML += `
+              <div class="document-page page-${i + 1}" data-page="${i + 1}" data-total-pages="${pages.length}">
+                <div class="document-preview">
+                  ${styleContent}
+                  ${pageContent}
+                </div>
+              </div>
+            `
+          }
+
+          console.log(`📄 ✅ Height-based pagination complete: ${pages.length} pages created`)
+          return paginatedHTML
+        } catch (error) {
+          console.error("📄 ❌ Error in height-based pagination:", error)
+
+          // Cleanup якщо виникла помилка
+          const tempContainers = document.querySelectorAll('div[style*="visibility: hidden"]')
+          tempContainers.forEach(container => {
+            if (container.parentNode === document.body) {
+              document.body.removeChild(container)
+            }
+          })
+
+          // Fallback - повертаємо оригінальний контент
+          return wrapInPage(htmlContent, 1)
+        }
+      }
+
+      // Покращена пагінація: складання сторінок у прихованій A4-рамці (з точними полями)
+      function performFrameBasedPagination(htmlContent, activeTab) {
+        console.log("📄 🧠 FRAME-based A4 pagination starting…")
+
+        // Парсимо HTML та відокремлюємо стилі, щоб інлайнити їх на кожній сторінці
+        const parser = document.createElement("div")
+        parser.innerHTML = htmlContent
+        const styleNodes = parser.querySelectorAll("style")
+        const styleContent = Array.from(styleNodes)
+          .map(s => s.outerHTML)
+          .join("\n")
+        styleNodes.forEach(s => s.remove())
+
+        const sourceElements = Array.from(parser.children)
+        if (sourceElements.length === 0) {
+          return wrapInPage(htmlContent, 1)
+        }
+
+        // Створюємо мінімалістичну вимірювальну рамку (без сторонніх стилів)
+        const frame = document.createElement("div")
+        frame.style.position = "fixed"
+        frame.style.visibility = "hidden"
+        frame.style.left = "-10000px"
+        frame.style.top = "-10000px"
+        frame.style.width = "210mm"
+        frame.style.padding = "20mm 15mm" // поля A4 як у друці
+        frame.style.boxSizing = "border-box"
+        frame.style.transform = "none"
+        frame.style.overflow = "visible"
+
+        const framePreview = document.createElement("div")
+        framePreview.style.width = "100%"
+        framePreview.style.height = "257mm" // 297 - 40
+        framePreview.style.overflow = "visible"
+        frame.appendChild(framePreview)
+
+        // Додаємо обгортку з тими ж класами стилю/лейаута, що і у прев'ю,
+        // щоби селектори типу `.resume-style-xxx .document-preview h2` застосувались під час вимірювання
+        const previewSectionEl = document.querySelector(".preview-section")
+        const wrapper = document.createElement("div")
+        if (previewSectionEl) {
+          const classes = Array.from(previewSectionEl.classList)
+          const styleClass = classes.find(c => c.startsWith("resume-style-"))
+          const layoutClass = classes.find(c => c.startsWith("layout-"))
+          ;[styleClass, layoutClass].filter(Boolean).forEach(cls => wrapper.classList.add(cls))
+        }
+        wrapper.appendChild(frame)
+        document.body.appendChild(wrapper)
+
+        const pagesHTML = []
+
+        const availableHeight = framePreview.clientHeight
+
+        const pushPage = () => {
+          pagesHTML.push(`
+              <div class="document-page print-like">
+                <div class="document-preview">
+                  ${styleContent}
+                  ${framePreview.innerHTML}
+                </div>
+              </div>
+            `)
+          framePreview.innerHTML = ""
+        }
+
+        const blockTags = new Set([
+          "P",
+          "DIV",
+          "SECTION",
+          "ARTICLE",
+          "UL",
+          "OL",
+          "LI",
+          "TABLE",
+          "H1",
+          "H2",
+          "H3",
+          "H4",
+          "H5",
+          "H6"
+        ])
+
+        // Розплющуємо .document-preview, щоб пагінувати її дочірні елементи
+        const flatElements = []
+        for (const sec of sourceElements) {
+          if (sec.classList && sec.classList.contains("document-preview")) {
+            Array.from(sec.children).forEach(ch => flatElements.push(ch.cloneNode(true)))
+          } else {
+            flatElements.push(sec.cloneNode(true))
+          }
+        }
+
+        for (const original of flatElements) {
+          let el = original.cloneNode(true)
+          framePreview.appendChild(el)
+
+          // Якщо помістилось — продовжуємо
+          if (framePreview.scrollHeight <= availableHeight) {
+            continue
+          }
+
+          // Інакше — елемент переповнив сторінку
+          // Спочатку намагаємось ДОзаповнити залишок поточної сторінки частиною елемента (розбиття по словах)
+          if (el.parentNode === framePreview) framePreview.removeChild(el)
+          const hasContentOnPage =
+            framePreview.innerHTML && framePreview.innerHTML.replace(/\s/g, "") !== ""
+          if (
+            hasContentOnPage &&
+            blockTags.has(el.tagName) &&
+            el.textContent &&
+            el.textContent.trim().length > 0
+          ) {
+            const words = el.textContent.trim().split(/\s+/)
+            let low = 1
+            let high = words.length
+            let best = 0
+            const testNode = el.cloneNode(false)
+            while (low <= high) {
+              const mid = Math.floor((low + high) / 2)
+              testNode.textContent = words.slice(0, mid).join(" ")
+              framePreview.appendChild(testNode)
+              if (framePreview.scrollHeight <= availableHeight) {
+                best = mid
+                framePreview.removeChild(testNode)
+                low = mid + 1
+              } else {
+                framePreview.removeChild(testNode)
+                high = mid - 1
+              }
+            }
+
+            if (best > 0) {
+              const firstPart = el.cloneNode(false)
+              firstPart.textContent = words.slice(0, best).join(" ")
+              framePreview.appendChild(firstPart)
+              pushPage()
+              const remainder = el.cloneNode(false)
+              remainder.textContent = words.slice(best).join(" ")
+              el = remainder
+            } else {
+              // якщо нічого не поміщається — просто закриваємо сторінку
+              pushPage()
+            }
+          } else if (hasContentOnPage) {
+            // інші елементи переносимо на наступну сторінку
+            pushPage()
+          }
+
+          // Розпочинаємо нову сторінку і пробуємо додати елемент першим
+          framePreview.appendChild(el)
+
+          // Якщо елемент помістився як перший на сторінці — ок
+          if (framePreview.scrollHeight <= availableHeight) {
+            continue
+          }
+
+          // Якщо елемент все ще завеликий — спробуємо розбити текст за словами
+          if (el.parentNode === framePreview) framePreview.removeChild(el)
+          if (blockTags.has(el.tagName) && el.textContent && el.textContent.trim().length > 0) {
+            const words = el.textContent.trim().replace(/\s+/g, " ").split(" ")
+            let index = 0
+
+            while (index < words.length) {
+              let part = ""
+              const testNode = el.cloneNode(false)
+
+              // Набираємо слова, доки вміщується
+              while (index < words.length) {
+                const candidate = part ? part + " " + words[index] : words[index]
+                testNode.textContent = candidate
+                framePreview.appendChild(testNode)
+
+                if (framePreview.scrollHeight <= availableHeight) {
+                  part = candidate
+                  if (testNode.parentNode === framePreview) framePreview.removeChild(testNode)
+                  index++
+                } else {
+                  // Фіксуємо сторінку з тим, що помістилось
+                  const finalNode = el.cloneNode(false)
+                  finalNode.textContent = part || words[index]
+                  framePreview.appendChild(finalNode)
+                  pushPage()
+                  // Якщо нічого не помістилось — просуваємось хоча б на одне слово
+                  if (!part) index++
+                  break
+                }
+              }
+
+              // Якщо усі слова розміщені й ще є залишок у буфері — додаємо його
+              if (index >= words.length && part) {
+                const finalNode2 = el.cloneNode(false)
+                finalNode2.textContent = part
+                framePreview.appendChild(finalNode2)
+              }
+            }
+          } else {
+            // Нетривіальні елементи (таблиці тощо) — переносимо цілим блоком
+            framePreview.appendChild(el)
+            pushPage()
+          }
+        }
+
+        // Додаємо останню сторінку, якщо є контент
+        if (framePreview.innerHTML.trim() !== "") {
+          pushPage()
+        }
+
+        // Прибирання службової рамки
+        if (wrapper && wrapper.parentNode) {
+          wrapper.parentNode.removeChild(wrapper)
+        } else {
+          document.body.removeChild(frame)
+        }
+
+        console.log(`📄 ✅ FRAME-based pagination complete: ${pagesHTML.length} pages`)
+        return pagesHTML.join("") || wrapInPage(htmlContent, 1)
+      }
+
+      // Допоміжна функція для обгортання контенту в сторінку
+      function wrapInPage(content, pageNum) {
+        return `
+          <div class="document-page page-${pageNum}">
               <div class="document-preview">
-                ${htmlContent}
+              ${content}
               </div>
             </div>
           `
-        }
-
-        return result
       }
 
       async function showPreview(type) {
@@ -5638,8 +6054,9 @@ Anlagen:
                 `
 
             // Використовуємо функцію розбиття на дві сторінки A4
-            document.getElementById("previewContent").innerHTML = `<h2 data-translate="preview.title">📋 Live Preview</h2>
-               ${createTwoPageLayout(bewerbungContent)}`
+            document.getElementById("previewContent").innerHTML =
+              `<h2 data-translate="preview.title">📋 Live Preview</h2>
+               <div class="preview-container">${createDynamicPagination(bewerbungContent)}</div>`
           } else if (previewType === "lebenslauf") {
             console.log("Generating lebenslauf preview")
 
@@ -5897,9 +6314,17 @@ Anlagen:
                 `
 
             // Використовуємо функцію розбиття на дві сторінки A4
-            document.getElementById("previewContent").innerHTML =`
+            console.log("🎯 BEFORE calling createDynamicPagination for lebenslauf")
+            console.log("🎯 Content length:", lebenslaufContent.length)
+            const paginatedResult = createDynamicPagination(lebenslaufContent)
+            console.log(
+              "🎯 AFTER calling createDynamicPagination - result length:",
+              paginatedResult.length
+            )
+
+            document.getElementById("previewContent").innerHTML = `
             <h2 data-translate="preview.title">📋 Live Preview</h2>
-              ${createTwoPageLayout(lebenslaufContent)}
+            <div class="preview-container">${paginatedResult}</div>
               `
           }
         } catch (error) {
@@ -8188,7 +8613,7 @@ Anlagen:
               verantwortungsbewusste: "verantwortungsbewusste",
               Person: "Person",
               "erforderlichen Eigenschaften": "erforderlichen Eigenschaften",
-              Position: "Position",
+              Position: "",
               Hygiene: "Hygiene",
               Sauberkeit: "Sauberkeit",
               "höchste Priorität": "höchste Priorität",
@@ -8803,6 +9228,63 @@ Anlagen:
         }
       }
 
+      // Debug function to test pagination on both tabs
+      window.debugTestPagination = function () {
+        console.log("🔍 DIAGNOSING PAGINATION ISSUE")
+        console.log("================================")
+
+        const activeTab = getCurrentActiveTab()
+        console.log(`📋 Current active tab: ${activeTab}`)
+
+        // Test bewerbung tab
+        console.log("🅱️ Testing Bewerbung pagination...")
+        switchFormTab("bewerbung").then(() => {
+          setTimeout(() => {
+            const bewerbungActiveTab = getCurrentActiveTab()
+            const bewerbungValues = getCurrentFormValues()
+            const bewerbungPreview = document.getElementById("previewContent")
+            const bewerbungPages = bewerbungPreview?.querySelectorAll(".document-page")
+
+            console.log(`📋 Bewerbung active tab: ${bewerbungActiveTab}`)
+            console.log(`📝 Bewerbung content length: ${JSON.stringify(bewerbungValues).length}`)
+            console.log(`📄 Bewerbung pages found: ${bewerbungPages?.length || 0}`)
+
+            if (bewerbungPages) {
+              bewerbungPages.forEach((page, index) => {
+                const pageText = page.textContent || page.innerText || ""
+                console.log(`📄   Page ${index + 1}: ${pageText.length} characters`)
+              })
+            }
+
+            // Test lebenslauf tab
+            console.log("\n📝 Testing Lebenslauf pagination...")
+            switchFormTab("lebenslauf").then(() => {
+              setTimeout(() => {
+                const lebenslaufActiveTab = getCurrentActiveTab()
+                const lebenslaufValues = getCurrentFormValues()
+                const lebenslaufPreview = document.getElementById("previewContent")
+                const lebenslaufPages = lebenslaufPreview?.querySelectorAll(".document-page")
+
+                console.log(`📋 Lebenslauf active tab: ${lebenslaufActiveTab}`)
+                console.log(
+                  `📝 Lebenslauf content length: ${JSON.stringify(lebenslaufValues).length}`
+                )
+                console.log(`📄 Lebenslauf pages found: ${lebenslaufPages?.length || 0}`)
+
+                if (lebenslaufPages) {
+                  lebenslaufPages.forEach((page, index) => {
+                    const pageText = page.textContent || page.innerText || ""
+                    console.log(`📄   Page ${index + 1}: ${pageText.length} characters`)
+                  })
+                }
+
+                console.log("🏁 Pagination diagnosis complete!")
+              }, 500)
+            })
+          }, 500)
+        })
+      }
+
       // Debug function to test tab switching and form values
       window.debugTabSwitching = function () {
         console.log("=== 🔄 TESTING TAB SWITCHING ===")
@@ -9380,6 +9862,7 @@ Anlagen:
       console.log("- debugTestSync() - Test synchronization")
       console.log("- debugAutoSync() - Test auto-synchronization")
       console.log("- debugJSONOverwrite() - Test JSON data overwriting")
+      console.log("- debugTestPagination() - Test pagination on both tabs")
       console.log("- debugDataFlow() - Test complete data flow")
       console.log("- debugEventListeners() - Test if event listeners work")
       console.log("- debugSaveData() - Test save data with photo")

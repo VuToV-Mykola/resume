@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Пагінації</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .controls {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-width: 300px;
+      }
+
+      .controls h3 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .controls button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .controls button:hover {
+        background: #45a049;
+      }
+
+      .controls button.remove {
+        background: #f44336;
+      }
+
+      .controls button.remove:hover {
+        background: #da190b;
+      }
+
+      .info {
+        background: #e3f2fd;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-size: 13px;
+      }
+
+      .preview-container {
+        max-width: 800px;
+        margin: 0 auto 50px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      /* A4 стилі для сторінок */
+      .document-page {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 15mm;
+        margin: 0 auto 20px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        page-break-after: always;
+        position: relative;
+      }
+
+      .document-preview {
+        font-size: 12pt;
+        line-height: 1.5;
+        color: #333;
+      }
+
+      .document-preview h2 {
+        color: #2c5aa0;
+        border-bottom: 2px solid #2c5aa0;
+        padding-bottom: 5px;
+        margin: 20px 0 10px;
+      }
+
+      .document-preview h3 {
+        color: #555;
+        margin: 15px 0 10px;
+      }
+
+      .page-indicator {
+        position: absolute;
+        top: 5mm;
+        right: 5mm;
+        background: #4caf50;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-size: 11pt;
+      }
+
+      @media print {
+        .controls {
+          display: none;
+        }
+
+        .document-page {
+          margin: 0;
+          box-shadow: none;
+          page-break-after: always;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls">
+      <h3>🎛️ Контроль Пагінації</h3>
+
+      <div class="info">
+        <strong>Статус:</strong>
+        <div id="pageInfo">Завантаження...</div>
+      </div>
+
+      <button onclick="addContent()">➕ Додати контент</button>
+      <button onclick="addLongContent()">📜 Додати довгий текст</button>
+      <button onclick="addTable()">📊 Додати таблицю</button>
+      <button onclick="removeLastElement()" class="remove">❌ Видалити останній</button>
+      <button onclick="testPagination()">🔄 Оновити пагінацію</button>
+      <button onclick="clearAll()" class="remove">🗑️ Очистити все</button>
+    </div>
+
+    <div class="preview-container">
+      <h1>Тестування Динамічної Пагінації</h1>
+      <div id="testContent">
+        <h2>Початковий контент</h2>
+        <p
+          >Це тестова сторінка для перевірки динамічної пагінації. Додавайте або видаляйте контент
+          за допомогою кнопок праворуч.</p
+        >
+
+        <h3>Секція 1: Вступ</h3>
+        <p
+          >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
+          ut labore et dolore magna aliqua.</p
+        >
+
+        <h3>Секція 2: Основна частина</h3>
+        <p
+          >Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+          commodo consequat.</p
+        >
+      </div>
+
+      <div id="paginatedContent"></div>
+    </div>
+
+    <script>
+      let elementCounter = 3
+
+      // Функція пагінації (спрощена версія)
+      function performPagination() {
+        const content = document.getElementById("testContent")
+        const paginatedDiv = document.getElementById("paginatedContent")
+
+        // Клонуємо контент для вимірювання
+        const measureContainer = document.createElement("div")
+        measureContainer.style.cssText = `
+                position: absolute;
+                visibility: hidden;
+                width: 170mm;
+                padding: 15mm;
+            `
+        document.body.appendChild(measureContainer)
+
+        // Копіюємо весь контент
+        measureContainer.innerHTML = content.innerHTML
+
+        const allElements = Array.from(measureContainer.children)
+        const MAX_PAGE_HEIGHT = 900 // пікселі
+
+        const pages = []
+        let currentPage = []
+        let currentPageHeight = 0
+
+        // Тимчасовий контейнер для вимірювання
+        const tempMeasure = document.createElement("div")
+        tempMeasure.style.cssText = measureContainer.style.cssText
+        document.body.appendChild(tempMeasure)
+
+        for (const element of allElements) {
+          tempMeasure.innerHTML = ""
+          tempMeasure.appendChild(element.cloneNode(true))
+          const elementHeight = tempMeasure.scrollHeight
+
+          if (currentPageHeight + elementHeight > MAX_PAGE_HEIGHT && currentPage.length > 0) {
+            pages.push([...currentPage])
+            currentPage = [element]
+            currentPageHeight = elementHeight
+          } else {
+            currentPage.push(element)
+            currentPageHeight += elementHeight
+          }
+        }
+
+        if (currentPage.length > 0) {
+          pages.push(currentPage)
+        }
+
+        // Видаляємо тимчасові контейнери
+        document.body.removeChild(measureContainer)
+        document.body.removeChild(tempMeasure)
+
+        // Генеруємо HTML для сторінок
+        let paginatedHTML = ""
+        for (let i = 0; i < pages.length; i++) {
+          const pageContent = pages[i].map(el => el.outerHTML).join("\n")
+
+          paginatedHTML += `
+                    <div class="document-page">
+                        <div class="page-indicator">Сторінка ${i + 1} із ${pages.length}</div>
+                        <div class="document-preview">
+                            ${pageContent}
+                        </div>
+                    </div>
+                `
+        }
+
+        paginatedDiv.innerHTML = paginatedHTML
+
+        // Оновлюємо інформацію
+        document.getElementById("pageInfo").innerHTML = `
+                Сторінок: <strong>${pages.length}</strong><br>
+                Елементів: <strong>${allElements.length}</strong>
+            `
+      }
+
+      function addContent() {
+        elementCounter++
+        const content = document.getElementById("testContent")
+        const newSection = document.createElement("div")
+        newSection.innerHTML = `
+                <h3>Секція ${elementCounter}: Новий розділ</h3>
+                <p>Це новий розділ контенту №${elementCounter}. Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                Vivamus lacinia odio vitae vestibulum vestibulum. Cras porttitor metus justo, ut fringilla velit fermentum a.</p>
+                <p>Додатковий параграф для збільшення об'єму контенту. Proin vel ante a orci tempus eleifend ut et magna.</p>
+            `
+        content.appendChild(newSection)
+        testPagination()
+      }
+
+      function addLongContent() {
+        elementCounter++
+        const content = document.getElementById("testContent")
+        const newSection = document.createElement("div")
+        newSection.innerHTML = `
+                <h3>Секція ${elementCounter}: Довгий текст</h3>
+                <p>${"Lorem ipsum dolor sit amet, consectetur adipiscing elit. ".repeat(10)}</p>
+                <p>${"Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ".repeat(8)}</p>
+                <p>${"Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. ".repeat(8)}</p>
+            `
+        content.appendChild(newSection)
+        testPagination()
+      }
+
+      function addTable() {
+        elementCounter++
+        const content = document.getElementById("testContent")
+        const newSection = document.createElement("div")
+
+        let tableHTML =
+          "<h3>Таблиця " +
+          elementCounter +
+          '</h3><table border="1" style="width:100%; border-collapse: collapse;"><thead><tr><th>№</th><th>Назва</th><th>Опис</th><th>Статус</th></tr></thead><tbody>'
+
+        for (let i = 1; i <= 10; i++) {
+          tableHTML += `<tr>
+                    <td>${i}</td>
+                    <td>Елемент ${i}</td>
+                    <td>Опис для елемента номер ${i}</td>
+                    <td>Активний</td>
+                </tr>`
+        }
+
+        tableHTML += "</tbody></table>"
+        newSection.innerHTML = tableHTML
+        content.appendChild(newSection)
+        testPagination()
+      }
+
+      function removeLastElement() {
+        const content = document.getElementById("testContent")
+        if (content.lastElementChild) {
+          content.removeChild(content.lastElementChild)
+          testPagination()
+        }
+      }
+
+      function clearAll() {
+        const content = document.getElementById("testContent")
+        content.innerHTML =
+          "<h2>Початковий контент</h2><p>Контент очищено. Додайте новий контент за допомогою кнопок.</p>"
+        elementCounter = 1
+        testPagination()
+      }
+
+      function testPagination() {
+        performPagination()
+      }
+
+      // Початкова пагінація при завантаженні
+      window.addEventListener("load", testPagination)
+    </script>
+  </body>
+</html>
