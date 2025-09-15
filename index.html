@@ -8165,6 +8165,22 @@ Anlagen:
         // Load default language translations
         await loadTranslations("de")
 
+        // Set default language as active
+        currentLanguage = "de"
+        document.documentElement.lang = "de"
+
+        // Update active language flag
+        const languageFlags = document.querySelectorAll(".language-flag")
+        languageFlags.forEach(flag => {
+          flag.classList.remove("active")
+          if (flag.getAttribute("data-lang") === "de") {
+            flag.classList.add("active")
+          }
+        })
+
+        // Translate page elements after loading translations
+        translatePage()
+
         // Translate form fields after loading translations
         await translateFormFields()
 
