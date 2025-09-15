@@ -36,11 +36,11 @@ const CONFIG = {
 
     // Letter content defaults
     LETTER: {
-      SUBJECT: "Bewerbung als Mitarbeiter im Stationsservice",
+      SUBJECT: "Bewerbung",
       SUBJECT_COLOR: "#1a5490",
       GREETING: "Sehr geehrter Herr Frank Güllmeister,",
       MOTIVATION:
-        "mit großem Interesse habe ich Ihre Stellenanzeige für einen Mitarbeiter im Stationsservice gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
+        "mit großem Interesse habe ich Ihre Stellenanzeige gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
       QUALIFICATIONS:
         "Als zuverlässige und verantwortungsbewusste Person bringe ich die erforderlichen Eigenschaften für diese Position mit. Hygiene und Sauberkeit haben für mich höchste Priorität, was ich als grundlegend für die Arbeit im Gesundheitswesen betrachte. In meiner bisherigen Arbeit habe ich immer gut im Team gearbeitet. Ich kann gut organisieren und bin kommunikativ, freundlich zu allen Menschen und auch in stressigen Situationen ruhig und effizient bleiben.",
       TASKS:
@@ -58,7 +58,7 @@ const CONFIG = {
     // Content translations
     CONTENT: {
       motivation:
-        "mit großem Interesse habe ich Ihre Stellenanzeige für einen Mitarbeiter im Stationsservice gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
+        "mit großem Interesse habe ich Ihre Stellenanzeige gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
       qualifications:
         "Als zuverlässige und verantwortungsbewusste Person bringe ich die erforderlichen Eigenschaften für diese Position mit. Hygiene und Sauberkeit haben für mich höchste Priorität, was ich als grundlegend für die Arbeit im Gesundheitswesen betrachte. In meiner bisherigen Arbeit habe ich immer gut im Team gearbeitet. Ich kann gut organisieren und bin kommunikativ, freundlich zu allen Menschen und auch in stressigen Situationen ruhig und effizient bleiben.",
       tasks:

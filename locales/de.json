@@ -61,7 +61,7 @@
     "contactAddress": "",
     "contactPhone": "",
     "contactEmail": "",
-    "subject": "Bewerbung als Mitarbeiter im Stationsservice",
+    "subject": "Bewerbung",
     "greeting": "Sehr geehrter Herr Frank Güllmeister,",
     "date": "Magdeburg, den 14.09.2025",
     "jobNumberLabel": "Ihre Ausschreibung Nr.:",
@@ -82,7 +82,7 @@
     "additional": "Zusätzliche Qualifikationen"
   },
   "contentValues": {
-    "motivation": "mit großem Interesse habe ich Ihre Stellenanzeige für einen Mitarbeiter im Stationsservice gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
+    "motivation": "mit großem Interesse habe ich Ihre Stellenanzeige gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
     "qualifications": "Als zuverlässige und verantwortungsbewusste Person bringe ich die erforderlichen Eigenschaften für diese Position mit. Hygiene und Sauberkeit haben für mich höchste Priorität, und ich bin bereit, alle sanitären Standards und Regeln strikt einzuhalten. Meine bisherige Arbeit im Dienstleistungsbereich hat mir Erfahrung im Umgang mit Menschen und die Fähigkeit zur schnellen Anpassung an verschiedene Situationen vermittelt.",
     "tasks": "Die in Ihrer Ausschreibung genannten Aufgaben - von der Speiseversorgung über Hol- und Bringdienste bis zur hygienischen Aufbereitung - entsprechen genau meinen Fähigkeiten und Interessen. Ich bin bereit, alle diese Aufgaben mit höchster Verantwortung und Effizienz zu erfüllen.",
     "future": "Besonders ansprechend finde ich Ihr Angebot der Fort- und Weiterbildungsmöglichkeiten sowie die Aussicht auf einen sicheren Arbeitsplatz. Ich bin motiviert, mich kontinuierlich weiterzuentwickeln und zum Erfolg des Teams beizutragen.",
@@ -217,12 +217,12 @@
     "german": "Deutsch"
   },
   "content": {
-    "motivation": "mit großem Interesse habe ich Ihre Stellenanzeige für einen Mitarbeiter im Stationsservice gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
+    "motivation": "mit großem Interesse habe ich Ihre Stellenanzeige gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.",
     "qualifications": "Als zuverlässige und verantwortungsbewusste Person bringe ich die erforderlichen Eigenschaften für diese Position mit. Hygiene und Sauberkeit haben für mich höchste Priorität, was ich als grundlegend für die Arbeit im Gesundheitswesen betrachte. In meiner bisherigen Arbeit habe ich immer gut im Team gearbeitet. Ich kann gut organisieren und bin kommunikativ, freundlich zu allen Menschen und auch in stressigen Situationen ruhig und effizient bleiben.",
     "tasks": "Die in Ihrer Ausschreibung genannten Aufgaben - von der Speiseversorgung über Hol- und Bringdienste bis zur hygienischen Aufbereitung - entsprechen genau meinen Fähigkeiten. Ich verstehe die Wichtigkeit dieser Tätigkeiten für das Wohlbefinden der Patienten und bin bereit, mit großer Sorgfalt und Empathie zu arbeiten.",
     "future": "Besonders ansprechend finde ich Ihr Angebot der Fort- und Weiterbildungsmöglichkeiten sowie die Aussicht auf einen sicheren Arbeitsplatz. Ich bin motiviert, mich kontinuierlich weiterzuentwickeln und langfristig Teil Ihres Teams zu werden.",
     "availability": "Ich stehe Ihnen ab sofort zur Verfügung und bin flexibel bezüglich der Arbeitszeiten. Über die Möglichkeit, mich in einem persönlichen Gespräch vorstellen zu dürfen, würde ich mich sehr freuen.",
-    "subject": "Bewerbung als Mitarbeiter im Stationsservice",
+    "subject": "Bewerbung",
     "closing": "Vielen Dank im Voraus für Ihre Antwort!",
     "signature": "Mit freundlichen Grüßen,\n\n\n\nMykola Vutov\n\nAnlagen:\n- Lebenslauf\n- Zeugnisse"
   },
