@@ -1,210 +1,227 @@
-# 📄 Bewerbung Document Generator
+### 🌐 Виберіть мову/Choose language/Wählen Sprache:
+[🇺🇦 Українська](README.md) | [🇬🇧 English](README.en.md) | [🇩🇪 Deutsch](README.de.md)
 
-Professional job application document generator optimized for modern recruiting systems 2025. Specifically configured for **Mitarbeiter im Stationsservice** position at Universitätsklinikum Magdeburg.
-
-## 🌟 Features
-
-- **📱 Mobile-First Design**: Fully responsive and optimized for mobile devices
-- **🌐 Multi-Language Support**: German, English, and Ukrainian
-- **🎨 Dark/Light Theme**: Automatic theme switching with localStorage persistence
-- **📝 Professional Templates**: Optimized for ATS (Applicant Tracking Systems)
-- **💾 Multiple Formats**: HTML, PDF, DOCX generation
-- **🔄 Real-time Preview**: Live preview of documents as you type
-- **📋 Form Validation**: Comprehensive form validation and error handling
-- **🎯 Station Service Focus**: Specifically tailored for healthcare positions
-
-## 🚀 Live Demo
-
-**[Try it now on GitHub Pages](https://vutov.github.io/bewerbung-stationsservice/)**
-
-## 🛠️ Local Setup
-
-To run this project locally:
-
-```bash
-# Clone the repository
-git clone https://github.com/vutov/bewerbung-stationsservice.git
-cd bewerbung-stationsservice
-
-# Install dependencies
-npm install
-
-# The setup script will automatically copy required libraries
-# You can also run it manually:
-npm run setup-libs
-
-# Start local server
-npm start
-# or
-python -m http.server 8000
-```
-
-The project will be available at `http://localhost:8000`
-
-## 📱 Mobile Features
-
-- **Responsive Design**: Adapts perfectly to all screen sizes
-- **Mobile Menu**: Intuitive hamburger menu for easy navigation
-- **Touch-Friendly**: Optimized for touch interactions
-- **iOS Zoom Prevention**: Prevents unwanted zoom on form inputs
-- **Smooth Scrolling**: Enhanced scrolling experience on mobile devices
-
-## 🛠️ Technologies Used
-
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
-- **Styling**: CSS Grid, Flexbox, CSS Custom Properties
-- **Icons**: Unicode emojis for cross-platform compatibility
-- **Fonts**: Inter font family for modern typography
-- **Deployment**: GitHub Pages (static hosting)
-
-## 📁 Project Structure
-
-```
-bewerbung-stationsservice/
-├── index.html              # Main application file
-├── config.js               # Configuration settings
-├── utils.js                # Utility functions
-├── locales/                # Translation files
-│   ├── de.json            # German translations
-│   ├── en.json            # English translations
-│   └── uk.json            # Ukrainian translations
-├── data/                   # Sample data files
-│   ├── lebenslauf_data.json
-│   ├── lebenslauf_data_de.json
-│   └── lebenslauf_data_en.json
-├── templates/              # Document templates
-│   ├── bewerbung.html     # Application letter template
-│   └── lebenslauf.html    # CV template
-├── package.json           # Project configuration
-└── README.md              # This file
-```
-
-## 🎯 Target Position
-
-This generator is specifically optimized for:
-- **Position**: Mitarbeiter im Stationsservice
-- **Company**: Universitätsklinikum Magdeburg
-- **Industry**: Healthcare/Hospital services
-- **Requirements**: Hygiene awareness, patient care, team work
-
-## 🌐 Supported Languages
-
-- **🇩🇪 German (Deutsch)**: Primary language
-- **🇺🇸 English**: International support
-- **🇺🇦 Ukrainian (Українська)**: Native language support
-
-## 📱 Mobile Optimization
-
-### Responsive Breakpoints
-- **Desktop**: > 1024px
-- **Large Tablet**: 768px - 1024px
-- **Tablet**: 640px - 768px
-- **Mobile Landscape**: 480px - 640px
-- **Mobile Portrait**: 360px - 480px
-- **Small Mobile**: < 360px
-
-### Mobile Features
-- Hamburger menu with slide-out panel
-- Touch-friendly form inputs
-- Optimized button sizes
-- Responsive grid layouts
-- Mobile-specific typography
-
-## 🚀 Getting Started
-
-### Local Development
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/vutov/bewerbung-stationsservice.git
-   cd bewerbung-stationsservice
-   ```
-
-2. **Start local server**:
-   ```bash
-   # Using Python
-   python -m http.server 8000
-   
-   # Using Node.js
-   npm start
-   ```
-
-3. **Open in browser**:
-   ```
-   http://localhost:8000
-   ```
-
-### GitHub Pages Deployment
-
-1. **Fork this repository**
-2. **Enable GitHub Pages** in repository settings
-3. **Select source**: Deploy from a branch (main)
-4. **Access your site**: `https://yourusername.github.io/bewerbung-stationsservice`
-
-## 📝 Usage
-
-1. **Fill out the form** with your personal and professional information
-2. **Switch between languages** using the language flags
-3. **Toggle theme** between light and dark modes
-4. **Preview documents** in real-time
-5. **Generate and download** documents in HTML, PDF, or DOCX format
-6. **Convert formats** as needed for different applications
-
-## 🎨 Customization
-
-### Adding New Languages
-1. Create new translation file in `locales/` folder
-2. Add language flag button in HTML
-3. Update language switching logic
-
-### Modifying Templates
-1. Edit templates in `templates/` folder
-2. Update CSS styles for mobile responsiveness
-3. Test on different screen sizes
-
-## 📊 Performance
-
-- **Lightweight**: No external dependencies
-- **Fast Loading**: Optimized CSS and JavaScript
-- **Mobile Optimized**: Touch-friendly interactions
-- **Accessible**: WCAG compliant design
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test on multiple devices
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Author
-
-**Mykola Vutov**
-- Email: vutov_mkola@icloud.com
-- GitHub: [@vutov](https://github.com/vutov)
-
-## 🙏 Acknowledgments
-
-- Universitätsklinikum Magdeburg for the job opportunity
-- Modern web standards for responsive design
-- GitHub Pages for free hosting
-- Open source community for inspiration
-
----
-
-**Made with ❤️ for job seekers in Germany**
 <!-- AUTOGEN:STATS -->
-[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML) [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/) [![Terminal](https://img.shields.io/badge/mac%20terminal-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=000000)](https://support.apple.com/guide/terminal/welcome/mac) [![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/) [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/) 
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript) [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML) [![Terminal](https://img.shields.io/badge/mac%20terminal-000000?style=for-the-badge&logo=apple&logoColor=white&labelColor=000000)](https://support.apple.com/guide/terminal/welcome/mac) [![VS Code](https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://code.visualstudio.com/) [![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/) [![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)](https://www.figma.com/) 
 
 [![📊 Views](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/resume/main/assets/db/visitors-badge.json)](https://github.com/VuToV-Mykola/resume/graphs/traffic)
 [![⭐ Stars](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/resume/main/assets/db/likes-badge.json)](https://github.com/VuToV-Mykola/resume/actions/workflows/screenshot-and-visitor.yaml)
 [![📦 Size](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/resume/main/assets/db/repo-size.json)](https://github.com/VuToV-Mykola/resume)
 [![📄 License](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/resume/main/assets/db/repo-license.json)](https://github.com/VuToV-Mykola/resume/blob/main/LICENSE)
+[![⬇️ Downloads](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/VuToV-Mykola/resume/main/assets/db/downloads-badge.json)](https://github.com/VuToV-Mykola/resume/releases)
 
 ## 📸 Скріншот проекту
 ![Project Screenshot](./assets/screenshot.png)
 <!-- END:AUTOGEN -->
+
+## 💖 Підтримати автора
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?hosted_button_id=D5U6TQ3Q9CVLS)
+[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee-PayPal-orange.svg)](https://www.paypal.com/donate/?hosted_button_id=D5U6TQ3Q9CVLS)
+
+> Якщо цей генератор допоміг вам у пошуку роботи, підтримайте автора кавою! ☕
+
+# 📄 Генератор документів заявки на роботу
+
+Професійний генератор документів заявки на роботу, оптимізований для сучасних систем рекрутингу 2025 року. Спеціально налаштований для посади **Mitarbeiter im Stationsservice** в Universitätsklinikum Magdeburg.
+
+## 🌟 Особливості
+
+- **📱 Mobile-First Design**: Повністю адаптивний та оптимізований для мобільних пристроїв
+- **🌐 Підтримка багатьох мов**: Німецька, англійська та українська
+- **🎨 Темна/світла тема**: Автоматичне перемикання теми з збереженням в localStorage
+- **📝 Професійні шаблони**: Оптимізовані для ATS (Applicant Tracking Systems)
+- **💾 Кілька форматів**: Генерація HTML, PDF, DOCX
+- **🔄 Превью в реальному часі**: Живе превью документів під час введення
+- **📋 Валідація форм**: Комплексна валідація форм та обробка помилок
+- **🎯 Фокус на станційному сервісі**: Спеціально адаптований для медичних позицій
+- **🤖 Google Translate**: Автоматичний переклад полів форми
+- **💾 Локальне збереження**: Автоматичне збереження даних у браузері
+
+## 🚀 Жива демонстрація
+
+**[Спробуйте зараз на GitHub Pages](https://vutov.github.io/bewerbung-stationsservice/)**
+
+## 🛠️ Локальне налаштування
+
+Для запуску цього проєкту локально:
+
+```bash
+# Клонувати репозиторій
+git clone https://github.com/vutov/bewerbung-stationsservice.git
+cd bewerbung-stationsservice
+
+# Встановити залежності
+npm install
+
+# Скрипт налаштування автоматично скопіює необхідні бібліотеки
+# Ви також можете запустити його вручну:
+npm run setup-libs
+
+# Запустити локальний сервер
+npm start
+# або
+python -m http.server 8000
+```
+
+Проєкт буде доступний за адресою `http://localhost:8000`
+
+## 📱 Мобільні функції
+
+- **Адаптивний дизайн**: Ідеально адаптується до всіх розмірів екрану
+- **Мобільне меню**: Інтуїтивне гамбургер-меню для легкої навігації
+- **Touch-Friendly**: Оптимізовано для дотикових взаємодій
+- **Запобігання зум на iOS**: Запобігає небажаному зум на полях форми
+- **Плавна прокрутка**: Покращена прокрутка на мобільних пристроях
+
+## 🛠️ Використані технології
+
+- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6+)
+- **Стилізація**: CSS Grid, Flexbox, CSS Custom Properties
+- **Іконки**: Unicode емодзі для крос-платформної сумісності
+- **Шрифти**: Сімейство шрифтів Inter для сучасної типографіки
+- **Розгортання**: GitHub Pages (статичний хостинг)
+- **Переклад**: Google Translate API для автоматичного перекладу
+
+## 📁 Структура проєкту
+
+```
+bewerbung-stationsservice/
+├── index.html              # Основний файл додатку
+├── config.js               # Налаштування конфігурації
+├── utils.js                # Утилітарні функції
+├── locales/                # Файли перекладів
+│   ├── de.json            # Німецькі переклади
+│   ├── en.json            # Англійські переклади
+│   └── uk.json            # Українські переклади
+├── data/                   # Файли зразкових даних
+│   ├── lebenslauf_data.json
+│   ├── lebenslauf_data_de.json
+│   └── lebenslauf_data_en.json
+├── templates/              # Шаблони документів
+│   ├── bewerbung.html     # Шаблон листа заявки
+│   └── lebenslauf.html    # Шаблон резюме
+├── assets/                 # Ресурси (скріншоти, дані)
+├── package.json           # Конфігурація проєкту
+└── README.md              # Цей файл
+```
+
+## 🎯 Цільова позиція
+
+Цей генератор спеціально оптимізований для:
+- **Позиція**: Mitarbeiter im Stationsservice
+- **Компанія**: Universitätsklinikum Magdeburg
+- **Галузь**: Медицина/Лікарняні послуги
+- **Вимоги**: Свідомість гігієни, догляд за пацієнтами, робота в команді
+
+## 🌐 Підтримувані мови
+
+- **🇩🇪 Німецька (Deutsch)**: Основна мова
+- **🇺🇸 Англійська**: Міжнародна підтримка
+- **🇺🇦 Українська**: Підтримка рідної мови
+
+## 📱 Мобільна оптимізація
+
+### Адаптивні точки зупинки
+- **Desktop**: > 1024px
+- **Великий планшет**: 768px - 1024px
+- **Планшет**: 640px - 768px
+- **Мобільний ландшафт**: 480px - 640px
+- **Мобільний портрет**: 360px - 480px
+- **Малий мобільний**: < 360px
+
+### Мобільні функції
+- Гамбургер-меню з висувною панеллю
+- Доступні для дотику поля форми
+- Оптимізовані розміри кнопок
+- Адаптивні сіткові макети
+- Мобільна типографіка
+
+## 🚀 Початок роботи
+
+### Локальна розробка
+
+1. **Клонувати репозиторій**:
+   ```bash
+   git clone https://github.com/vutov/bewerbung-stationsservice.git
+   cd bewerbung-stationsservice
+   ```
+
+2. **Запустити локальний сервер**:
+   ```bash
+   # Використовуючи Python
+   python -m http.server 8000
+   
+   # Використовуючи Node.js
+   npm start
+   ```
+
+3. **Відкрити в браузері**:
+   ```
+   http://localhost:8000
+   ```
+
+### Розгортання на GitHub Pages
+
+1. **Форк цього репозиторію**
+2. **Увімкнути GitHub Pages** в налаштуваннях репозиторію
+3. **Вибрати джерело**: Розгортання з гілки (main)
+4. **Доступ до вашого сайту**: `https://yourusername.github.io/bewerbung-stationsservice`
+
+## 📝 Використання
+
+1. **Заповніть форму** своїми особистими та професійними даними
+2. **Перемикайтеся між мовами** використовуючи прапорці мов
+3. **Перемикайте тему** між світлим та темним режимами
+4. **Переглядайте документи** в реальному часі
+5. **Генеруйте та завантажуйте** документи у форматі HTML, PDF або DOCX
+6. **Конвертуйте формати** за потреби для різних заявок
+7. **Використовуйте Google Translate** для автоматичного перекладу полів
+
+## 🎨 Налаштування
+
+### Додавання нових мов
+1. Створіть новий файл перекладу в папці `locales/`
+2. Додайте кнопку прапорця мови в HTML
+3. Оновіть логіку перемикання мов
+
+### Модифікація шаблонів
+1. Редагуйте шаблони в папці `templates/`
+2. Оновіть CSS стилі для мобільної адаптивності
+3. Тестуйте на різних розмірах екрану
+
+## 📊 Продуктивність
+
+- **Легкий**: Без зовнішніх залежностей
+- **Швидке завантаження**: Оптимізований CSS та JavaScript
+- **Мобільна оптимізація**: Доступні для дотику взаємодії
+- **Доступність**: Дизайн відповідає WCAG
+
+## 🤝 Внесок у розробку
+
+1. Форк репозиторію
+2. Створіть гілку функції
+3. Внесіть зміни
+4. Тестуйте на кількох пристроях
+5. Надішліть pull request
+
+## 📄 Ліцензія
+
+Цей проєкт ліцензовано під MIT License - дивіться файл [LICENSE](LICENSE) для деталей.
+
+## 👨‍💻 Автор
+
+**Микола Вутов**
+- Email: vutov_mkola@icloud.com
+- GitHub: [@vutov](https://github.com/vutov)
+
+## 🙏 Подяки
+
+- Universitätsklinikum Magdeburg за можливість роботи
+- Сучасні веб-стандарти за адаптивний дизайн
+- GitHub Pages за безкоштовний хостинг
+- Спільнота open source за натхнення
+
+---
+
+**Створено з ❤️ для шукачів роботи в Німеччині**
