@@ -3148,6 +3148,18 @@ Anlagen:
               required></textarea>
           </div>
 
+          <h2 data-translate="lebenslauf.certifications">📜 Zertifizierungen & Kurse</h2>
+          <div class="form-group">
+            <label for="lebenslaufCertifications" data-translate="form.qualifications"
+              >Zertifizierungen & Kurse</label
+            >
+            <textarea
+              id="lebenslaufCertifications"
+              name="lebenslaufCertifications"
+              rows="6"
+              placeholder="• HTML Kurs&#10;• CSS Kurs&#10;• JavaScript Kurs&#10;• Grundlagen der Cyberhygiene&#10;• GoIT.UA Kurs, Kiew"></textarea>
+          </div>
+
           <h2 data-translate="lebenslauf.languages">🌍 Sprachkenntnisse</h2>
           <div class="form-group">
             <label for="lebenslaufLanguages" data-translate="form.qualifications">Sprachen *</label>
@@ -3592,6 +3604,7 @@ Anlagen:
           skills: document.getElementById("lebenslaufSkills")?.value || "",
           experience: document.getElementById("lebenslaufExperience")?.value || "",
           education: document.getElementById("lebenslaufEducation")?.value || "",
+          certifications: document.getElementById("lebenslaufCertifications")?.value || "",
           languages: document.getElementById("lebenslaufLanguages")?.value || "",
           additional: document.getElementById("lebenslaufAdditional")?.value || "",
           photo: photoData,
@@ -4103,6 +4116,16 @@ Anlagen:
             : data.education
           console.log("Setting education field:", educationText)
           setFormValue(document, "lebenslaufEducation", educationText)
+        }
+
+        // Certifications
+        console.log("Checking data.certifications:", data.certifications)
+        if (data.certifications) {
+          const certificationsText = Array.isArray(data.certifications)
+            ? data.certifications.join("\n")
+            : data.certifications
+          console.log("Setting certifications field:", certificationsText)
+          setFormValue(document, "lebenslaufCertifications", certificationsText)
         }
 
         // Languages
@@ -5149,6 +5172,7 @@ Anlagen:
             const skills = values.lebenslaufSkills || ""
             const experience = values.lebenslaufExperience || ""
             const education = values.lebenslaufEducation || ""
+            const certifications = values.lebenslaufCertifications || ""
             const languages = values.lebenslaufLanguages || ""
             const additional = values.lebenslaufAdditional || ""
             document.getElementById("previewContent").innerHTML = `
@@ -5354,6 +5378,11 @@ Anlagen:
                     <h2>${getTranslation("lebenslaufHeaders.education") || "AUSBILDUNG"}</h2>
                     <div class="experience-item">
                       <div style="white-space: pre-line;">${education}</div>
+                    </div>
+
+                    <h2>${getTranslation("lebenslaufHeaders.certifications") || "ZERTIFIZIERUNGEN & KURSE"}</h2>
+                    <div class="experience-item">
+                      <div style="white-space: pre-line;">${certifications}</div>
                     </div>
 
                     <h2>${getTranslation("lebenslaufHeaders.languageSkills") || "SPRACHKENNTNISSE"}</h2>
@@ -5885,6 +5914,7 @@ Anlagen:
         const skills = currentValues.lebenslaufSkills || ""
         const experience = currentValues.lebenslaufExperience || ""
         const education = currentValues.lebenslaufEducation || ""
+        const certifications = currentValues.lebenslaufCertifications || ""
         const languages = currentValues.lebenslaufLanguages || ""
         const additional = currentValues.lebenslaufAdditional || ""
 
@@ -6053,6 +6083,11 @@ Anlagen:
           <h2>AUSBILDUNG</h2>
           <div class="experience-item">
             <div style="white-space: pre-line;">${education}</div>
+          </div>
+
+          <h2>ZERTIFIZIERUNGEN & KURSE</h2>
+          <div class="experience-item">
+            <div style="white-space: pre-line;">${certifications}</div>
           </div>
 
           <h2>SPRACHKENNTNISSE</h2>
@@ -7001,6 +7036,11 @@ Anlagen:
               id: "lebenslaufEducation",
               key: "form.qualificationsPlaceholder",
               valueKey: "lebenslaufInputValues.education"
+            },
+            {
+              id: "lebenslaufCertifications",
+              key: "form.qualificationsPlaceholder",
+              valueKey: "lebenslaufInputValues.certifications"
             },
             {
               id: "lebenslaufLanguages",
