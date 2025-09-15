@@ -1796,6 +1796,25 @@
         letter-spacing: 2px;
       }
 
+      /* ===== LAYOUT STYLES LIBRARY ===== */
+
+      /* Одна колонка layout (за замовчуванням) */
+      .layout-single-column .document-preview {
+        display: block;
+        width: 100%;
+        max-width: none;
+      }
+
+      .layout-single-column .document-preview .left-column,
+      .layout-single-column .document-preview .right-column {
+        width: 100%;
+        padding: 0;
+        background: transparent;
+        border-radius: 0;
+        height: auto;
+        overflow: visible;
+      }
+
       /* Дві колонки layout */
       .layout-two-column .document-preview {
         display: grid;
@@ -1816,6 +1835,212 @@
         padding: 0;
         height: 100%;
         overflow: hidden;
+      }
+
+      /* ===== СТИЛІ ДЛЯ ДВОХ КОЛОНОК З КОЖНИМ СТИЛЕМ РЕЗЮМЕ ===== */
+
+      /* 1. Сучасний професійний - дві колонки */
+      .resume-style-modern-professional.layout-two-column .document-preview .left-column {
+        background: linear-gradient(135deg, #f8f9fc 0%, #ffffff 100%);
+        border: 1px solid #e3e8f0;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      .resume-style-modern-professional.layout-two-column .document-preview .right-column {
+        background: transparent;
+      }
+
+      /* 2. Мінімалістичний - дві колонки */
+      .resume-style-minimalist.layout-two-column .document-preview .left-column {
+        background: #ffffff;
+        border: 1px solid #e1e8ed;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .resume-style-minimalist.layout-two-column .document-preview .right-column {
+        background: transparent;
+      }
+
+      /* 3. Креативний синій - дві колонки */
+      .resume-style-creative-blue.layout-two-column .document-preview .left-column {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .resume-style-creative-blue.layout-two-column .document-preview .right-column {
+        background: transparent;
+        color: white;
+      }
+
+      /* 4. Елегантний серіф - дві колонки */
+      .resume-style-elegant-serif.layout-two-column .document-preview .left-column {
+        background: #fefefe;
+        border: 2px solid #8b4513;
+        box-shadow: 0 3px 12px rgba(139, 69, 19, 0.1);
+      }
+
+      .resume-style-elegant-serif.layout-two-column .document-preview .right-column {
+        background: transparent;
+      }
+
+      /* 5. Технологічний - дві колонки */
+      .resume-style-tech-modern.layout-two-column .document-preview .left-column {
+        background: #0d1117;
+        border: 1px solid #30363d;
+        color: #c9d1d9;
+      }
+
+      .resume-style-tech-modern.layout-two-column .document-preview .right-column {
+        background: transparent;
+        color: #c9d1d9;
+      }
+
+      /* 6. Класичний офіційний - дві колонки */
+      .resume-style-classic-formal.layout-two-column .document-preview .left-column {
+        background: white;
+        border: 2px solid #000;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .resume-style-classic-formal.layout-two-column .document-preview .right-column {
+        background: transparent;
+      }
+
+      /* 7. Художній градієнт - дві колонки */
+      .resume-style-artistic-gradient.layout-two-column .document-preview .left-column {
+        background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+        border: none;
+        box-shadow: 0 8px 32px rgba(255, 154, 158, 0.3);
+      }
+
+      .resume-style-artistic-gradient.layout-two-column .document-preview .right-column {
+        background: transparent;
+      }
+
+      /* 8. Корпоративний чистий - дві колонки */
+      .resume-style-corporate-clean.layout-two-column .document-preview .left-column {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        box-shadow: 0 3px 12px rgba(0, 123, 255, 0.1);
+      }
+
+      .resume-style-corporate-clean.layout-two-column .document-preview .right-column {
+        background: transparent;
+      }
+
+      /* 9. Стартап сміливий - дві колонки */
+      .resume-style-startup-bold.layout-two-column .document-preview .left-column {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+      }
+
+      .resume-style-startup-bold.layout-two-column .document-preview .right-column {
+        background: transparent;
+        color: white;
+      }
+
+      /* 10. Академічний традиційний - дві колонки */
+      .resume-style-academic-traditional.layout-two-column .document-preview .left-column {
+        background: #fffef7;
+        border: 3px double #8b4513;
+        box-shadow: 0 6px 24px rgba(139, 69, 19, 0.15);
+      }
+
+      .resume-style-academic-traditional.layout-two-column .document-preview .right-column {
+        background: transparent;
+      }
+
+      /* ===== СТИЛІ ДЛЯ ОДНОЇ КОЛОНКИ З КОЖНИМ СТИЛЕМ РЕЗЮМЕ ===== */
+
+      /* 1. Сучасний професійний - одна колонка */
+      .resume-style-modern-professional.layout-single-column .document-preview {
+        background: transparent;
+      }
+
+      /* 2. Мінімалістичний - одна колонка */
+      .resume-style-minimalist.layout-single-column .document-preview {
+        background: transparent;
+      }
+
+      /* 3. Креативний синій - одна колонка */
+      .resume-style-creative-blue.layout-single-column .document-preview {
+        background: transparent;
+        color: white;
+      }
+
+      /* 4. Елегантний серіф - одна колонка */
+      .resume-style-elegant-serif.layout-single-column .document-preview {
+        background: transparent;
+      }
+
+      /* 5. Технологічний - одна колонка */
+      .resume-style-tech-modern.layout-single-column .document-preview {
+        background: transparent;
+        color: #c9d1d9;
+      }
+
+      /* 6. Класичний офіційний - одна колонка */
+      .resume-style-classic-formal.layout-single-column .document-preview {
+        background: transparent;
+      }
+
+      /* 7. Художній градієнт - одна колонка */
+      .resume-style-artistic-gradient.layout-single-column .document-preview {
+        background: transparent;
+      }
+
+      /* 8. Корпоративний чистий - одна колонка */
+      .resume-style-corporate-clean.layout-single-column .document-preview {
+        background: transparent;
+      }
+
+      /* 9. Стартап сміливий - одна колонка */
+      .resume-style-startup-bold.layout-single-column .document-preview {
+        background: transparent;
+        color: white;
+      }
+
+      /* 10. Академічний традиційний - одна колонка */
+      .resume-style-academic-traditional.layout-single-column .document-preview {
+        background: transparent;
+      }
+
+      /* ===== RESPONSIVE LAYOUT STYLES ===== */
+
+      /* Мобільні пристрої - завжди одна колонка */
+      @media (max-width: 768px) {
+        .layout-two-column .document-preview {
+          display: block !important;
+          grid-template-columns: none !important;
+          gap: 0 !important;
+        }
+
+        .layout-two-column .document-preview .left-column,
+        .layout-two-column .document-preview .right-column {
+          width: 100% !important;
+          padding: 0 !important;
+          background: transparent !important;
+          border-radius: 0 !important;
+          height: auto !important;
+          overflow: visible !important;
+          margin-bottom: 20px !important;
+        }
+
+        .layout-two-column .document-preview .left-column {
+          border-bottom: 2px solid var(--color-border) !important;
+          padding-bottom: 20px !important;
+        }
+      }
+
+      /* Планшети - адаптивний layout */
+      @media (max-width: 1024px) and (min-width: 769px) {
+        .layout-two-column .document-preview {
+          grid-template-columns: 1fr 1.5fr;
+          gap: 10mm;
+        }
       }
 
       @keyframes pulse {
@@ -5715,12 +5940,12 @@ Anlagen:
                   <meta name="viewport" content="width=device-width, initial-scale=1.0">
                   <title>Drucken - ${activeTab.textContent}</title>
                   <style>
+                    ${getResumeStyleCSS(currentResumeStyle, currentLayout)}
+                    
+                    /* Print-specific overrides */
                     body {
-                      font-family: "Times New Roman", serif;
                       margin: 0;
                       padding: 20mm;
-                      background: white;
-                      color: #000;
                       line-height: 1.5;
                     }
                     .document {
@@ -5870,7 +6095,7 @@ Anlagen:
                     }
                   </style>
                 </head>
-                <body>
+                <body class="resume-style-${currentResumeStyle} layout-${currentLayout}">
                   <div class="document">
                     ${activeTab === "bewerbung" ? generateBewerbungHTML(currentValues) : generateLebenslaufHTML(currentValues)}
                   </div>
@@ -6453,11 +6678,12 @@ Anlagen:
                         size: A4;
                         margin: 15mm;
                       }
+                      ${getResumeStyleCSS(currentResumeStyle, currentLayout)}
+                      
+                      /* PDF-specific overrides */
                       body {
-                        font-family: "Times New Roman", serif;
                         font-size: 11pt;
                         line-height: 1.5;
-                        color: #000;
                         margin: 0;
                         padding: 0;
                       }
@@ -6597,7 +6823,7 @@ Anlagen:
                       }
                     </style>
                   </head>
-                  <body>
+                  <body class="resume-style-${currentResumeStyle} layout-${currentLayout}">
                     <div class="document">
                       ${htmlContent}
                     </div>
