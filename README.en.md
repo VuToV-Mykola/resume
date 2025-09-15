@@ -23,7 +23,7 @@
 
 # 📄 Job Application Document Generator
 
-Professional job application document generator optimized for modern recruiting systems 2025. Specifically configured for **Mitarbeiter im Stationsservice** position at Universitätsklinikum Magdeburg.
+Professional job application document generator optimized for modern recruiting systems 2025. Specifically configured for work at Universitätsklinikum Magdeburg.
 
 ## 🌟 Features
 
@@ -109,7 +109,7 @@ bewerbung-stationsservice/
 ## 🎯 Target Position
 
 This generator is specifically optimized for:
-- **Position**: Mitarbeiter im Stationsservice
+- **Position**: Various positions in medical field
 - **Company**: Universitätsklinikum Magdeburg
 - **Industry**: Healthcare/Hospital services
 - **Requirements**: Hygiene awareness, patient care, team work

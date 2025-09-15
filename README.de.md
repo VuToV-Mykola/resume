@@ -23,7 +23,7 @@
 
 # 📄 Bewerbung Dokument Generator
 
-Professioneller Bewerbungsdokument-Generator, optimiert für moderne Recruiting-Systeme 2025. Speziell konfiguriert für die Position **Mitarbeiter im Stationsservice** am Universitätsklinikum Magdeburg.
+Professioneller Bewerbungsdokument-Generator, optimiert für moderne Recruiting-Systeme 2025. Speziell konfiguriert für die Arbeit am Universitätsklinikum Magdeburg.
 
 ## 🌟 Features
 
@@ -109,7 +109,7 @@ bewerbung-stationsservice/
 ## 🎯 Zielposition
 
 Dieser Generator ist speziell optimiert für:
-- **Position**: Mitarbeiter im Stationsservice
+- **Position**: Verschiedene Positionen im medizinischen Bereich
 - **Unternehmen**: Universitätsklinikum Magdeburg
 - **Branche**: Gesundheitswesen/Krankenhausdienstleistungen
 - **Anforderungen**: Hygienebewusstsein, Patientenbetreuung, Teamarbeit

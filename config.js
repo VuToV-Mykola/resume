@@ -25,7 +25,7 @@ const CONFIG = {
 
     // Job application defaults
     POSITION: {
-      NAME: "Mitarbeiter im Stationsservice",
+      NAME: "Position",
       COMPANY: "Universitätsklinikum Magdeburg A.ö.R.",
       CONTACT_NAME: "Herr Frank Güllmeister",
       JOB_NUMBER: "",

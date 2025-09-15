@@ -1,7 +1,7 @@
 {
   "name": "bewerbung-stationsservice",
   "version": "1.0.0",
-  "description": "Professional job application document generator optimized for modern recruiting systems 2025. Specifically configured for **Mitarbeiter im Stationsservice** position at Universitätsklinikum Magdeburg.",
+  "description": "Professional job application document generator optimized for modern recruiting systems 2025. Specifically configured for work at Universitätsklinikum Magdeburg.",
   "main": "index.html",
   "homepage": "https://vutov.github.io/bewerbung-stationsservice",
   "scripts": {
