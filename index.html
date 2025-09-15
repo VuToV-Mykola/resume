@@ -271,16 +271,16 @@
       }
 
       .header {
-        position: sticky;
+        /* position: sticky; */
         top: 0;
         z-index: 1000;
         text-align: center;
-        margin-bottom: var(--spacing-lg);
-        padding: var(--spacing-md) 0;
+        /* margin-bottom: var(--spacing-lg);
+        padding: var(--spacing-md) 0; */
         background: linear-gradient(135deg, var(--color-primary), #4a9eff);
         color: white;
         border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
-        min-height: 70px;
+        /* min-height: 70px; */
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
@@ -722,7 +722,7 @@
 
       .preview-content {
         /* A4 пропорції: 210x297mm або 1:1.414 */
-        aspect-ratio: 210 / 297;
+        aspect-ratio: 210 / 297mm;
         max-width: 100%;
         width: 100%;
         border: 1px solid var(--color-border);
@@ -1717,14 +1717,14 @@
       /* Header Controls */
       .header-controls {
         position: absolute;
-        top: var(--spacing-lg);
-        right: var(--spacing-lg);
+        top: 5px;
+        right: 5px;
         z-index: 10;
         display: flex;
         flex-direction: column;
-        gap: var(--spacing-sm);
+        /* gap: var(--spacing-sm); */
         align-items: flex-end;
-        padding: var(--spacing-sm);
+        /* padding: var(--spacing-sm); */
         border-radius: var(--border-radius);
         backdrop-filter: blur(10px);
       }
@@ -2105,9 +2105,9 @@
         align-items: center;
         justify-content: center;
         gap: var(--spacing-lg);
-        margin: var(--spacing-lg) 0;
+        /* margin: var(--spacing-lg) 0; */
         background: var(--color-surface);
-        padding: var(--spacing-md);
+        /* padding: var(--spacing-md); */
         border-radius: var(--border-radius-lg);
         box-shadow: var(--shadow-sm);
         flex-wrap: wrap;
@@ -3023,36 +3023,6 @@ Anlagen:
 - Zeugnisse</textarea
               >
             </div>
-
-            <!-- Photo Upload Section for Anschreiben -->
-            <div class="form-group photo-upload-section">
-              <label for="anschreibenPhoto" data-translate="lebenslauf.photo">📷 Foto</label>
-              <div class="photo-upload-container">
-                <input
-                  type="file"
-                  id="anschreibenPhoto"
-                  name="anschreibenPhoto"
-                  accept="image/*"
-                  style="display: none">
-                <div
-                  class="photo-upload-area"
-                  onclick="console.log('Anschreiben photo upload area clicked'); document.getElementById('anschreibenPhoto').click()">
-                  <div class="photo-preview" id="anschreibenPhotoPreview">
-                    <div class="photo-placeholder">
-                      <span class="photo-icon">📷</span>
-                      <span data-translate="lebenslauf.photoPlaceholder">Foto hochladen</span>
-                    </div>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  id="removeAnschreibenPhoto"
-                  class="btn btn-secondary"
-                  style="display: none">
-                  <span data-translate="lebenslauf.removePhoto">Foto entfernen</span>
-                </button>
-              </div>
-            </div>
           </form>
         </section>
 
@@ -3523,24 +3493,6 @@ Anlagen:
             }
           }
         }
-
-        // Restore Anschreiben photo if exists
-        if (formData.anschreibenPhoto && typeof formData.anschreibenPhoto === "string") {
-          console.log("Restoring Anschreiben photo from formData:", formData.anschreibenPhoto)
-          const anschreibenPhotoPreview = document.getElementById("anschreibenPhotoPreview")
-          if (anschreibenPhotoPreview) {
-            anschreibenPhotoPreview.innerHTML = `<img src="${formData.anschreibenPhoto}" alt="Uploaded photo" />`
-            const removeAnschreibenPhotoBtn = document.getElementById("removeAnschreibenPhoto")
-            if (removeAnschreibenPhotoBtn) {
-              removeAnschreibenPhotoBtn.style.display = "block"
-            }
-          }
-        } else {
-          console.log(
-            "No anschreibenPhoto to restore or not a string:",
-            typeof formData.anschreibenPhoto
-          )
-        }
       }
 
       // Save Lebenslauf data to JSON file
@@ -3678,73 +3630,31 @@ Anlagen:
         try {
           console.log(`Saving Lebenslauf data for language: ${currentLang}`)
 
-          // Try to send data to our API server
+          // Save data locally (no server needed for dynamic preview)
           try {
-            const response = await fetch("http://localhost:3001/api/save-lebenslauf", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(lebenslaufData)
-            })
+            // Save to localStorage for persistence
+            localStorage.setItem("lebenslaufData", JSON.stringify(lebenslaufData))
+            console.log("Lebenslauf data saved locally:", lebenslaufData)
 
-            if (response.ok) {
-              const result = await response.json()
-              console.log("Lebenslauf data saved successfully:", result)
-
-              // Show success message in current language
-              const fileName = result.fileName
-              const wasCreated = result.wasCreated
-              const successMessage =
-                getTranslation("messages.dataSaved") ||
-                (currentLang === "uk"
-                  ? `✅ Lebenslauf дані ${wasCreated ? "створено" : "оновлено"} у файлі ${fileName}!`
-                  : currentLang === "de"
-                    ? `✅ Lebenslauf Daten ${wasCreated ? "erstellt" : "aktualisiert"} in Datei ${fileName}!`
-                    : `✅ Lebenslauf data ${wasCreated ? "created" : "updated"} in file ${fileName}!`)
-
-              showStatus(successMessage, "success")
-              return // Success - exit function
-            } else {
-              const errorData = await response.json()
-              throw new Error(errorData.error || "Failed to save data")
-            }
-          } catch (fetchError) {
-            console.warn("Server not available, saving to localStorage:", fetchError.message)
-
-            // Check if it's a CORS error
-            const isCorsError =
-              fetchError.message.includes("CORS") ||
-              fetchError.message.includes("access control") ||
-              fetchError.message.includes("cross-origin")
-
-            if (isCorsError) {
-              console.error("CORS Error detected:", fetchError.message)
-              const corsErrorMessage =
-                currentLang === "uk"
-                  ? "❌ Помилка CORS: Не вдалося підʼєднатися до сервера. Перевірте налаштування браузера."
-                  : currentLang === "de"
-                    ? "❌ CORS-Fehler: Verbindung zum Server fehlgeschlagen. Browser-Einstellungen prüfen."
-                    : "❌ CORS Error: Failed to connect to server. Check browser settings."
-              showStatus(corsErrorMessage, "error")
-            }
-
-            // Fallback: Save to localStorage
-            const storageKey = `lebenslauf_data_${currentLang}`
-            localStorage.setItem(storageKey, JSON.stringify(lebenslaufData))
-
-            // Also update the main formData
-            Object.assign(formData, lebenslaufData)
-            saveFormData()
-
+            // Show success message in current language
             const successMessage =
-              currentLang === "uk"
-                ? "✅ Дані Lebenslauf збережено локально (сервер недоступний)"
+              getTranslation("messages.dataSavedLocally") ||
+              (currentLang === "uk"
+                ? "✅ Lebenslauf дані збережено локально!"
                 : currentLang === "de"
-                  ? "✅ Lebenslauf-Daten lokal gespeichert (Server nicht verfügbar)"
-                  : "✅ Lebenslauf data saved locally (server unavailable)"
+                  ? "✅ Lebenslauf Daten lokal gespeichert!"
+                  : "✅ Lebenslauf data saved locally!")
 
-            showStatus(successMessage, "warning")
+            showStatus(successMessage, "success")
+          } catch (error) {
+            console.error("Failed to save Lebenslauf data locally:", error)
+            const errorMessage =
+              currentLang === "uk"
+                ? "❌ Помилка збереження даних Lebenslauf"
+                : currentLang === "de"
+                  ? "❌ Fehler beim Speichern der Lebenslauf-Daten"
+                  : "❌ Error saving Lebenslauf data"
+            showStatus(errorMessage, "error")
           }
         } catch (error) {
           console.error("Error saving Lebenslauf data:", error)
@@ -3831,73 +3741,31 @@ Anlagen:
         console.log("Saving Anschreiben data for language:", currentLang, "Data:", anschreibenData)
 
         try {
-          // Try to send data to our API server
+          // Save data locally (no server needed for dynamic preview)
           try {
-            const response = await fetch("http://localhost:3001/api/save-anschreiben", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify(anschreibenData)
-            })
+            // Save to localStorage for persistence
+            localStorage.setItem("anschreibenData", JSON.stringify(anschreibenData))
+            console.log("Anschreiben data saved locally:", anschreibenData)
 
-            if (response.ok) {
-              const result = await response.json()
-              console.log("Anschreiben data saved successfully:", result)
-
-              // Show success message in current language
-              const fileName = result.fileName
-              const wasCreated = result.wasCreated
-              const successMessage =
-                getTranslation("messages.dataSaved") ||
-                (currentLang === "uk"
-                  ? `✅ Anschreiben дані ${wasCreated ? "створено" : "оновлено"} у файлі ${fileName}!`
-                  : currentLang === "de"
-                    ? `✅ Anschreiben Daten ${wasCreated ? "erstellt" : "aktualisiert"} in Datei ${fileName}!`
-                    : `✅ Anschreiben data ${wasCreated ? "created" : "updated"} in file ${fileName}!`)
-
-              showStatus(successMessage, "success")
-              return // Success - exit function
-            } else {
-              const errorData = await response.json()
-              throw new Error(errorData.error || "Failed to save data")
-            }
-          } catch (fetchError) {
-            console.warn("Server not available, saving to localStorage:", fetchError.message)
-
-            // Check if it's a CORS error
-            const isCorsError =
-              fetchError.message.includes("CORS") ||
-              fetchError.message.includes("access control") ||
-              fetchError.message.includes("cross-origin")
-
-            if (isCorsError) {
-              console.error("CORS Error detected:", fetchError.message)
-              const corsErrorMessage =
-                currentLang === "uk"
-                  ? "❌ Помилка CORS: Не вдалося підʼєднатися до сервера. Перевірте налаштування браузера."
-                  : currentLang === "de"
-                    ? "❌ CORS-Fehler: Verbindung zum Server fehlgeschlagen. Browser-Einstellungen prüfen."
-                    : "❌ CORS Error: Failed to connect to server. Check browser settings."
-              showStatus(corsErrorMessage, "error")
-            }
-
-            // Fallback: Save to localStorage
-            const storageKey = `anschreiben_data_${currentLang}`
-            localStorage.setItem(storageKey, JSON.stringify(anschreibenData))
-
-            // Also update the main formData
-            Object.assign(formData, anschreibenData)
-            saveFormData()
-
+            // Show success message in current language
             const successMessage =
-              currentLang === "uk"
-                ? "✅ Дані Anschreiben збережено локально (сервер недоступний)"
+              getTranslation("messages.dataSavedLocally") ||
+              (currentLang === "uk"
+                ? "✅ Anschreiben дані збережено локально!"
                 : currentLang === "de"
-                  ? "✅ Anschreiben-Daten lokal gespeichert (Server nicht verfügbar)"
-                  : "✅ Anschreiben data saved locally (server unavailable)"
+                  ? "✅ Anschreiben Daten lokal gespeichert!"
+                  : "✅ Anschreiben data saved locally!")
 
-            showStatus(successMessage, "warning")
+            showStatus(successMessage, "success")
+          } catch (error) {
+            console.error("Failed to save Anschreiben data locally:", error)
+            const errorMessage =
+              currentLang === "uk"
+                ? "❌ Помилка збереження даних Anschreiben"
+                : currentLang === "de"
+                  ? "❌ Fehler beim Speichern der Anschreiben-Daten"
+                  : "❌ Error saving Anschreiben data"
+            showStatus(errorMessage, "error")
           }
         } catch (error) {
           console.error("Error saving Anschreiben data:", error)
@@ -3918,14 +3786,10 @@ Anlagen:
         const currentLang = currentLanguage || "uk"
 
         try {
-          // Get info for both Lebenslauf and Anschreiben files
-          const [lebenslaufResponse, anschreibenResponse] = await Promise.all([
-            fetch(`http://localhost:3001/api/file-info/lebenslauf/${currentLang}`),
-            fetch(`http://localhost:3001/api/file-info/anschreiben/${currentLang}`)
-          ])
-
-          const lebenslaufInfo = await lebenslaufResponse.json()
-          const anschreibenInfo = await anschreibenResponse.json()
+          // Skip API calls since we're using dynamic preview
+          console.log("Skipping API calls - using dynamic preview instead")
+          const lebenslaufInfo = null
+          const anschreibenInfo = null
 
           let infoMessage = ""
 
@@ -3997,50 +3861,19 @@ Anlagen:
         const currentLang = currentLanguage || "uk"
 
         try {
-          const response = await fetch("http://localhost:3001/api/file-info/lebenslauf/uk", {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json"
-            }
-          })
+          // Skip API call since we're using dynamic preview
+          console.log("Skipping server status check - using dynamic preview instead")
 
-          if (response.ok) {
-            const statusMessage =
-              currentLang === "uk"
-                ? "✅ Сервер працює нормально на порту 3001"
-                : currentLang === "de"
-                  ? "✅ Server läuft normal auf Port 3001"
-                  : "✅ Server is running normally on port 3001"
-            showStatus(statusMessage, "success")
-          } else {
-            throw new Error(`Server responded with status: ${response.status}`)
-          }
+          const statusMessage =
+            currentLang === "uk"
+              ? "✅ Динамічне превью активне"
+              : currentLang === "de"
+                ? "✅ Dynamische Vorschau aktiv"
+                : "✅ Dynamic preview active"
+          showStatus(statusMessage, "success")
         } catch (error) {
-          console.error("Server status check failed:", error)
-
-          const isCorsError =
-            error.message.includes("CORS") ||
-            error.message.includes("access control") ||
-            error.message.includes("cross-origin") ||
-            error.message.includes("Failed to fetch")
-
-          if (isCorsError) {
-            const corsErrorMessage =
-              currentLang === "uk"
-                ? "❌ Сервер недоступний: Помилка CORS або сервер не запущений на порту 3001"
-                : currentLang === "de"
-                  ? "❌ Server nicht verfügbar: CORS-Fehler oder Server läuft nicht auf Port 3001"
-                  : "❌ Server unavailable: CORS error or server not running on port 3001"
-            showStatus(corsErrorMessage, "error")
-          } else {
-            const errorMessage =
-              currentLang === "uk"
-                ? "❌ Не вдалося підключитися до сервера"
-                : currentLang === "de"
-                  ? "❌ Verbindung zum Server fehlgeschlagen"
-                  : "❌ Failed to connect to server"
-            showStatus(errorMessage, "error")
-          }
+          console.error("Status check failed:", error)
+          showStatus("❌ Помилка перевірки статусу", "error")
         }
       }
 
@@ -4305,8 +4138,11 @@ Anlagen:
         console.log("=== PHOTO HANDLING IN populateFormWithLebenslaufData ===")
         console.log("Checking data.photo:", data.photo ? "Photo exists" : "No photo")
         console.log("Current globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("Current formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-        
+        console.log(
+          "Current formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
+
         if (data.photo && typeof data.photo === "string") {
           console.log("=== LOADING PHOTO FROM JSON DATA ===")
           console.log("Photo data type:", typeof data.photo)
@@ -4339,17 +4175,17 @@ Anlagen:
         } else {
           console.log("=== NO PHOTO IN JSON DATA ===")
           console.log("Preserving existing photo data...")
-          
+
           // Preserve existing photo if no photo in JSON data
           if (globalPhotoData || formData.lebenslaufPhoto) {
             const existingPhoto = globalPhotoData || formData.lebenslaufPhoto
             console.log("Preserving existing photo:", existingPhoto ? "Present" : "Missing")
-            
+
             // Ensure photo is in both variables
             globalPhotoData = existingPhoto
             formData.lebenslaufPhoto = existingPhoto
             formData.photo = existingPhoto
-            
+
             // Update photo preview
             const photoPreview = document.getElementById("photoPreview")
             if (photoPreview && existingPhoto) {
@@ -4363,7 +4199,7 @@ Anlagen:
                 console.log("Remove photo button shown")
               }
             }
-            
+
             console.log("Existing photo preserved and displayed")
           } else {
             console.log("No existing photo to preserve")
@@ -4460,7 +4296,10 @@ Anlagen:
         // Save current state
         saveFormData()
 
+        // Immediately update preview for the active tab
         setTimeout(async () => {
+          console.log("About to show preview for tab:", tabName)
+          console.log("Current active tab after switch:", getCurrentActiveTab())
           await showPreview(tabName)
         }, 100)
       }
@@ -4471,12 +4310,9 @@ Anlagen:
 
         // Preserve existing photo data before updating
         const existingPhoto = formData.lebenslaufPhoto || globalPhotoData
-        const existingAnschreibenPhoto = formData.anschreibenPhoto
+
         console.log("Existing photo data:", existingPhoto ? "Present" : "Missing")
-        console.log(
-          "Existing anschreiben photo data:",
-          existingAnschreibenPhoto ? "Present" : "Missing"
-        )
+
         console.log("Global photo data:", globalPhotoData ? "Present" : "Missing")
 
         // Update from main form
@@ -4535,20 +4371,6 @@ Anlagen:
           console.log("No existing photo to restore")
         }
 
-        // Restore Anschreiben photo data if it existed
-        if (existingAnschreibenPhoto) {
-          formData.anschreibenPhoto = existingAnschreibenPhoto
-          console.log("Anschreiben photo data restored:", formData.anschreibenPhoto ? "Yes" : "No")
-          console.log("Restored anschreiben photo data:", formData.anschreibenPhoto)
-          console.log("Restored anschreiben photo data type:", typeof formData.anschreibenPhoto)
-          console.log(
-            "Restored anschreiben photo data length:",
-            formData.anschreibenPhoto ? formData.anschreibenPhoto.length : 0
-          )
-        } else {
-          console.log("No existing anschreiben photo to restore")
-        }
-
         console.log("=== UPDATE FORM DATA DEBUG ===")
         console.log("Final formData after updateFormData:", formData)
         console.log("Final globalPhotoData after updateFormData:", globalPhotoData)
@@ -4593,9 +4415,10 @@ Anlagen:
         console.log("Stack trace:", new Error().stack)
 
         try {
-          // Update form data from all input fields
-          console.log("🔄 Calling updateFormData()...")
-          updateFormData()
+          // Update form data from all input fields using the new function
+          console.log("🔄 Calling getCurrentFormValues()...")
+          const currentValues = getCurrentFormValues()
+          formData = currentValues
 
           console.log("🎯 Current preview type:", currentPreviewType)
           console.log("📊 Form data after update:", {
@@ -4604,69 +4427,35 @@ Anlagen:
             email: formData.email,
             phone: formData.phone,
             birthDate: formData.birthDate,
-            lebenslaufPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
-            anschreibenPhoto: formData.anschreibenPhoto ? "Present" : "Missing"
+            lebenslaufPhoto: formData.lebenslaufPhoto ? "Present" : "Missing"
           })
-          console.log("📸 Anschreiben photo:", formData.anschreibenPhoto ? "Present" : "Missing")
+
           console.log("📸 Global photo data:", globalPhotoData ? "Present" : "Missing")
 
-        // Detailed photo analysis
-        if (formData.lebenslaufPhoto) {
-          console.log("Lebenslauf photo details:")
-          console.log("- Type:", typeof formData.lebenslaufPhoto)
-          console.log("- Length:", formData.lebenslaufPhoto.length)
-          if (typeof formData.lebenslaufPhoto === "string") {
-            console.log(
-              "- Starts with data:image/:",
-              formData.lebenslaufPhoto.startsWith("data:image/")
-            )
-            console.log("- Starts with blob:", formData.lebenslaufPhoto.startsWith("blob:"))
-          } else {
-            console.log("- Not a string, cannot check startsWith")
+          // Detailed photo analysis
+          if (formData.lebenslaufPhoto) {
+            console.log("Lebenslauf photo details:")
+            console.log("- Type:", typeof formData.lebenslaufPhoto)
+            console.log("- Length:", formData.lebenslaufPhoto.length)
+            if (typeof formData.lebenslaufPhoto === "string") {
+              console.log(
+                "- Starts with data:image/:",
+                formData.lebenslaufPhoto.startsWith("data:image/")
+              )
+              console.log("- Starts with blob:", formData.lebenslaufPhoto.startsWith("blob:"))
+            } else {
+              console.log("- Not a string, cannot check startsWith")
+            }
           }
-        }
 
-        if (formData.anschreibenPhoto) {
-          console.log("Anschreiben photo details:")
-          console.log("- Type:", typeof formData.anschreibenPhoto)
-          console.log("- Length:", formData.anschreibenPhoto.length)
-          if (typeof formData.anschreibenPhoto === "string") {
-            console.log(
-              "- Starts with data:image/:",
-              formData.anschreibenPhoto.startsWith("data:image/")
-            )
-            console.log("- Starts with blob:", formData.anschreibenPhoto.startsWith("blob:"))
-          } else {
-            console.log("- Not a string, cannot check startsWith")
-          }
-        }
+          // Determine which preview to show based on active tab
+          const activeTab = getCurrentActiveTab()
+          console.log("Active tab determined:", activeTab)
+          console.log("Current form values:", getCurrentFormValues())
 
-        // Determine which preview to show based on active tab
-        const activeTab = document.querySelector(".form-tab-button.active")
-        let previewType = currentPreviewType
-
-        if (activeTab) {
-          if (
-            activeTab.textContent.includes("Anschreiben") ||
-            activeTab.textContent.includes("Cover Letter") ||
-            activeTab.textContent.includes("Лист заявки")
-          ) {
-            previewType = "bewerbung"
-          } else if (
-            activeTab.textContent.includes("Lebenslauf") ||
-            activeTab.textContent.includes("Resume") ||
-            activeTab.textContent.includes("Резюме")
-          ) {
-            previewType = "lebenslauf"
-          }
-        }
-
-        console.log("Active tab:", activeTab ? activeTab.textContent : "none")
-        console.log("Preview type determined:", previewType)
-
-        // Update preview with current data using the determined type
-        await showPreview(previewType)
-        console.log("✅ Preview updated successfully")
+          // Update preview with current data using the active tab
+          await showPreview(activeTab)
+          console.log("✅ Preview updated successfully")
         } catch (error) {
           console.error("❌ Error in updatePreviewOnInput:", error)
         }
@@ -4919,211 +4708,6 @@ Anlagen:
           }
         }
       }
-
-      // Photo upload functionality for Anschreiben
-      function initializeAnschreibenPhotoUpload() {
-        console.log("=== initializeAnschreibenPhotoUpload called ===")
-        console.log("Current timestamp:", new Date().toISOString())
-        console.log("Document ready state:", document.readyState)
-
-        const photoInput = document.getElementById("anschreibenPhoto")
-        const photoPreview = document.getElementById("anschreibenPhotoPreview")
-        const removePhotoBtn = document.getElementById("removeAnschreibenPhoto")
-
-        console.log("Anschreiben photo input found:", !!photoInput)
-        console.log("Anschreiben photo input element:", photoInput)
-        console.log("Anschreiben photo preview found:", !!photoPreview)
-        console.log("Anschreiben photo preview element:", photoPreview)
-        console.log("Anschreiben remove photo button found:", !!removePhotoBtn)
-        console.log("Anschreiben remove photo button element:", removePhotoBtn)
-
-        // Check if elements are in DOM
-        console.log("Anschreiben photo input in DOM:", document.contains(photoInput))
-        console.log("Anschreiben photo preview in DOM:", document.contains(photoPreview))
-
-        if (photoInput && photoPreview) {
-          console.log("Adding event listener to Anschreiben photo input")
-          photoInput.addEventListener("change", function (e) {
-            console.log("=== ANSCHREIBEN PHOTO INPUT CHANGE EVENT TRIGGERED ===")
-            console.log("Event:", e)
-            console.log("Target:", e.target)
-            console.log("Files:", e.target.files)
-            console.log("Files length:", e.target.files ? e.target.files.length : "no files")
-
-            const file = e.target.files[0]
-            console.log("Selected Anschreiben file:", file)
-            if (file) {
-              // Validate file type
-              if (!file.type.startsWith("image/")) {
-                const errorMsg =
-                  getTranslation("errors.invalidFileType") || "Будь ласка, виберіть файл зображення"
-                alert(errorMsg)
-                return
-              }
-
-              // Validate file size (max 5MB)
-              if (file.size > 5 * 1024 * 1024) {
-                const errorMsg =
-                  getTranslation("errors.fileTooLarge") || "Файл занадто великий. Максимум 5MB"
-                alert(errorMsg)
-                return
-              }
-
-              console.log("Anschreiben photo file selected:", file.name, file.size, file.type)
-
-              // Show loading indicator
-              photoPreview.innerHTML = `
-                <div class="photo-loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 8px;">
-                  <div class="loading-spinner" style="width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 10px;"></div>
-                  <span style="color: #6c757d; font-size: 14px;">Завантаження фото...</span>
-                </div>
-              `
-
-              // Try to read file as data URL first
-              const reader = new FileReader()
-              reader.onload = function (e) {
-                try {
-                  console.log("=== ANSCHREIBEN PHOTO LOADED SUCCESSFULLY ===")
-                  const result = e.target.result
-                  console.log("Anschreiben photo data URL length:", result.length)
-                  console.log("Anschreiben photo data URL starts with:", result.substring(0, 50))
-
-                  // Show success indicator
-                  photoPreview.innerHTML = `
-                    <div class="photo-success" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; background: #d4edda; border: 2px solid #c3e6cb; border-radius: 8px;">
-                      <div style="color: #155724; font-size: 24px; margin-bottom: 10px;">✅</div>
-                      <span style="color: #155724; font-size: 14px;">Фото завантажено успішно!</span>
-                    </div>
-                  `
-
-                  // Wait a moment then show the actual image
-                  setTimeout(() => {
-                    console.log("=== DISPLAYING ANSCHREIBEN PHOTO ===")
-                    photoPreview.innerHTML = `<img src="${result}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
-                    console.log("Anschreiben photo preview updated")
-                  }, 1000)
-                  if (removePhotoBtn) {
-                    removePhotoBtn.style.display = "block"
-                  }
-
-                  // Update form data with photo
-                  formData.anschreibenPhoto = result
-                  console.log("=== ANSCHREIBEN PHOTO UPLOAD DEBUG ===")
-                  console.log("Anschreiben photo uploaded and saved to formData")
-                  console.log("Current formData after anschreiben photo upload:", formData)
-                  console.log("Photo type:", typeof result)
-                  console.log("Photo length:", result.length)
-                  console.log("Photo starts with data:image/:", result.startsWith("data:image/"))
-                  saveFormData() // Save to localStorage
-                  updatePreviewOnInput()
-                } catch (error) {
-                  console.error("Error displaying anschreiben photo:", error)
-                  const errorMsg =
-                    getTranslation("errors.photoDisplayError") || "Помилка при відображенні фото"
-                  alert(errorMsg)
-                }
-              }
-
-              reader.onerror = function () {
-                console.log("FileReader failed, trying fallback method...")
-                try {
-                  console.log("Trying fallback method with URL.createObjectURL...")
-                  const objectURL = URL.createObjectURL(file)
-                  console.log("Object URL created:", objectURL)
-
-                  photoPreview.innerHTML = `<img src="${objectURL}" alt="Uploaded photo" />`
-                  if (removePhotoBtn) {
-                    removePhotoBtn.style.display = "block"
-                  }
-
-                  // Update form data with object URL
-                  formData.anschreibenPhoto = objectURL
-                  console.log("Anschreiben photo uploaded using fallback method")
-                  console.log("Current formData after fallback anschreiben photo upload:", formData)
-                  saveFormData() // Save to localStorage
-                  updatePreviewOnInput()
-                } catch (fallbackError) {
-                  console.error("Fallback method also failed:", fallbackError)
-                  const errorMsg =
-                    getTranslation("errors.fileUploadError") || "Помилка при завантаженні файлу"
-                  alert(errorMsg)
-                }
-              }
-
-              reader.readAsDataURL(file)
-            }
-          })
-        }
-
-        if (removePhotoBtn) {
-          removePhotoBtn.addEventListener("click", function () {
-            photoInput.value = ""
-
-            // Clean up object URL if it exists
-            if (
-              formData.anschreibenPhoto &&
-              typeof formData.anschreibenPhoto === "string" &&
-              formData.anschreibenPhoto.startsWith("blob:")
-            ) {
-              URL.revokeObjectURL(formData.anschreibenPhoto)
-            }
-
-            photoPreview.innerHTML = `
-                    <div class="photo-placeholder">
-                      <span class="photo-icon">📷</span>
-                      <span data-translate="lebenslauf.photoPlaceholder">Foto hochladen</span>
-                    </div>
-                  `
-            removePhotoBtn.style.display = "none"
-
-            // Remove photo from form data
-            delete formData.anschreibenPhoto
-            saveFormData() // Save to localStorage
-            updatePreviewOnInput()
-          })
-        }
-
-        console.log("=== initializeAnschreibenPhotoUpload completed ===")
-        console.log("Anschreiben event listener added:", photoInput ? "Yes" : "No")
-        console.log("Anschreiben photo preview element ready:", photoPreview ? "Yes" : "No")
-      }
-
-      // Function to remove Anschreiben photo (called from HTML)
-      function removeAnschreibenPhoto() {
-        const photoInput = document.getElementById("anschreibenPhoto")
-        const photoPreview = document.getElementById("anschreibenPhotoPreview")
-        const removePhotoBtn = document.getElementById("removeAnschreibenPhoto")
-
-        if (photoInput) photoInput.value = ""
-
-        // Clean up object URL if it exists
-        if (
-          formData.anschreibenPhoto &&
-          typeof formData.anschreibenPhoto === "string" &&
-          formData.anschreibenPhoto.startsWith("blob:")
-        ) {
-          URL.revokeObjectURL(formData.anschreibenPhoto)
-        }
-
-        if (photoPreview) {
-          photoPreview.innerHTML = `
-            <div class="photo-placeholder">
-              <span class="photo-icon">📷</span>
-              <span data-translate="lebenslauf.photoPlaceholder">Foto hochladen</span>
-            </div>
-          `
-        }
-
-        if (removePhotoBtn) {
-          removePhotoBtn.style.display = "none"
-        }
-
-        // Remove photo from form data
-        delete formData.anschreibenPhoto
-        saveFormData() // Save to localStorage
-        updatePreviewOnInput()
-      }
-
       function initializeForm() {
         // Try to load saved data first
         const dataLoaded = loadFormData()
@@ -5142,7 +4726,7 @@ Anlagen:
       // Add event listeners to form fields for real-time updates
       function addFormEventListeners() {
         console.log("=== addFormEventListeners called ===")
-        
+
         // Remove existing listeners first to avoid duplicates
         removeFormEventListeners()
 
@@ -5158,7 +4742,7 @@ Anlagen:
           if (section) {
             const inputs = section.querySelectorAll("input, textarea, select")
             console.log(`Adding listeners to ${section.id}:`, inputs.length, "inputs")
-            
+
             inputs.forEach(input => {
               // Add multiple event listeners for better tracking
               input.addEventListener("input", e => {
@@ -5204,7 +4788,7 @@ Anlagen:
               totalListenersAdded++
             })
           } else {
-            console.log(`❌ Section not found: ${section ? section.id : 'undefined'}`)
+            console.log(`❌ Section not found: ${section ? section.id : "undefined"}`)
           }
         })
 
@@ -5335,18 +4919,90 @@ Anlagen:
           .join("")
       }
 
+      // Function to get current active form tab
+      function getCurrentActiveTab() {
+        const activeTab = document.querySelector(".form-tab-button.active")
+        if (activeTab) {
+          const onclickAttr = activeTab.getAttribute("onclick")
+          if (onclickAttr.includes("bewerbung")) {
+            return "bewerbung"
+          } else if (onclickAttr.includes("lebenslauf")) {
+            return "lebenslauf"
+          }
+        }
+        return "bewerbung" // default
+      }
+
+      // Function to get current form values dynamically based on active tab
+      function getCurrentFormValues() {
+        const activeTab = getCurrentActiveTab()
+
+        // Get values from both sections regardless of visibility
+        const bewerbungSection = document.getElementById("bewerbungForm")
+        const lebenslaufSection = document.getElementById("lebenslaufSection")
+
+        const currentValues = {}
+
+        // Read from bewerbung section
+        if (bewerbungSection) {
+          const bewerbungInputs = bewerbungSection.querySelectorAll("input, textarea, select")
+          console.log("Found bewerbung inputs:", bewerbungInputs.length)
+          bewerbungInputs.forEach(input => {
+            if (input.name && input.type !== "file") {
+              currentValues[input.name] = input.value
+              console.log(`Bewerbung ${input.name}:`, input.value)
+            }
+          })
+        } else {
+          console.log("Bewerbung section not found!")
+        }
+
+        // Read from lebenslauf section
+        if (lebenslaufSection) {
+          const lebenslaufInputs = lebenslaufSection.querySelectorAll("input, textarea, select")
+          console.log("Found lebenslauf inputs:", lebenslaufInputs.length)
+          lebenslaufInputs.forEach(input => {
+            if (input.name && input.type !== "file") {
+              currentValues[input.name] = input.value
+              console.log(`Lebenslauf ${input.name}:`, input.value)
+            }
+          })
+        } else {
+          console.log("Lebenslauf section not found!")
+        }
+
+        // Add photo data if available
+        if (globalPhotoData) {
+          currentValues.lebenslaufPhoto = globalPhotoData
+        }
+
+        // Add active tab info
+        currentValues.activeTab = activeTab
+
+        console.log("Current active tab:", activeTab)
+        console.log("Form values for tab:", activeTab, currentValues)
+
+        return currentValues
+      }
+
       async function showPreview(type) {
         try {
+          // Determine preview type based on active tab if not specified
+          const activeTab = getCurrentActiveTab()
+          const previewType = type || activeTab
+
           // Update current preview type
-          currentPreviewType = type
+          currentPreviewType = previewType
 
           console.log(
             "showPreview called with type:",
             type,
+            "active tab:",
+            activeTab,
+            "final preview type:",
+            previewType,
             "currentLanguage:",
-            currentLanguage,
-            "currentPreviewType set to:",
-            currentPreviewType
+            currentLanguage
           )
 
           // Ensure translations are loaded
@@ -5375,6 +5031,10 @@ Anlagen:
             )
           }
 
+          // Get current form values dynamically
+          const currentFormValues = getCurrentFormValues()
+          console.log("Current form values:", currentFormValues)
+
           // Save current state
           saveFormData()
           const tabs = document.querySelectorAll(".preview-tab")
@@ -5382,107 +5042,64 @@ Anlagen:
 
           // Find the correct tab and activate it
           const targetTab = Array.from(tabs).find(tab =>
-            tab.textContent.includes(type === "bewerbung" ? "Anschreiben" : "Lebenslauf")
+            tab.textContent.includes(previewType === "bewerbung" ? "Anschreiben" : "Lebenslauf")
           )
           console.log("targetTab found:", targetTab)
           if (targetTab) {
             targetTab.classList.add("active")
           }
 
-          if (type === "bewerbung") {
+          if (previewType === "bewerbung") {
             const previewTitle = getTranslation("preview.letter") || "Vorschau des Anschreibens"
 
-            // Get translated content based on current language
-            let motivation =
-              formData.motivation ||
-              getTranslation("contentValues.motivation") ||
-              getTranslation("content.motivation") ||
-              "mit großem Interesse habe ich Ihre Stellenanzeige gelesen..."
-            console.log("Motivation in showPreview:", motivation)
-            console.log("Current language:", currentLanguage)
-            console.log(
-              "Translation for contentValues.motivation:",
-              getTranslation("contentValues.motivation")
-            )
-            let qualifications =
-              formData.qualifications ||
-              getTranslation("contentValues.qualifications") ||
-              getTranslation("content.qualifications") ||
-              "Als zuverlässige und verantwortungsbewusste Person..."
-            let tasks =
-              formData.tasks ||
-              getTranslation("contentValues.tasks") ||
-              getTranslation("content.tasks") ||
-              "Die in Ihrer Ausschreibung genannten Aufgaben..."
-            let future =
-              formData.future ||
-              getTranslation("contentValues.future") ||
-              getTranslation("content.future") ||
-              ""
-            let availability =
-              formData.availability ||
-              getTranslation("contentValues.availability") ||
-              getTranslation("content.availability") ||
-              "Ich stehe Ihnen ab sofort zur Verfügung..."
+            // Use current form values instead of stored formData
+            const values = currentFormValues
 
-            // Get translated greeting
-            let greeting =
-              formData.greeting ||
-              getTranslation("fieldValues.greeting") ||
-              getTranslation("form.greetingPlaceholder") ||
-              "Sehr geehrter Herr Frank Güllmeister,"
-            console.log("Greeting in showPreview:", greeting)
-
-            // Force refresh translations if language changed
-            if (translations[currentLanguage]) {
-              const content = translations[currentLanguage].content
-              if (content) {
-                if (!formData.motivation) motivation = content.motivation || motivation
-                if (!formData.qualifications)
-                  qualifications = content.qualifications || qualifications
-                if (!formData.tasks) tasks = content.tasks || tasks
-                if (!formData.future) future = content.future || future
-                if (!formData.availability) availability = content.availability || availability
-              }
-            }
+            // Get content from form inputs - use actual values or fallback to translations
+            const motivation = values.motivation || getTranslation("content.motivation") || ""
+            const qualifications =
+              values.qualifications || getTranslation("content.qualifications") || ""
+            const tasks = values.tasks || getTranslation("content.tasks") || ""
+            const future = values.future || getTranslation("content.future") || ""
+            const availability = values.availability || getTranslation("content.availability") || ""
+            const greeting = values.greeting || getTranslation("form.greetingPlaceholder") || ""
+            const closing = values.closing || getTranslation("contentValues.closing") || ""
+            const signature = values.signature || getTranslation("contentValues.signature") || ""
 
             console.log("Updating previewContent with bewerbung content")
-            console.log("Form data in showPreview:", formData)
-            console.log("Full name:", formData.fullName)
-            console.log("Address:", formData.address)
-            console.log("Email:", formData.email)
-            console.log("Phone:", formData.phone)
+            console.log("Current form values:", values)
 
-            // Check if we have real data or should show placeholders
-            const hasRealData =
-              formData.fullName && formData.address && formData.email && formData.phone
-            console.log("Has real data:", hasRealData)
+            // Use actual form values for personal information
+            const fullName = values.fullName || ""
+            const address = values.address || ""
+            const email = values.email || ""
+            const phone = values.phone || ""
+            const company = values.company || ""
+            const contactName = values.contactName || ""
+            const contactAddress = values.contactAddress || ""
+            const contactPhone = values.contactPhone || ""
+            const contactEmail = values.contactEmail || ""
+            const subject = values.subject || ""
+            const jobNumber = values.jobNumber || ""
+            const subjectColor = values.subjectColor || "#1a5490"
 
-            // Get translated field values for preview
-            const translatedFullName =
-              getTranslation("fieldValues.fullName") || formData.fullName || "Vollständiger Name *"
-            const translatedAddress =
-              getTranslation("fieldValues.address") || formData.address || "Adresse *"
-            const translatedEmail =
-              getTranslation("fieldValues.email") || formData.email || "E-Mail *"
-            const translatedPhone =
-              getTranslation("fieldValues.phone") || formData.phone || "Telefon *"
-
-            console.log("Translated values for preview:", {
-              fullName: translatedFullName,
-              address: translatedAddress,
-              email: translatedEmail,
-              phone: translatedPhone
+            console.log("Personal info for preview:", {
+              fullName,
+              address,
+              email,
+              phone,
+              company,
+              contactName
             })
 
             document.getElementById("previewContent").innerHTML = `
                   <div class="document-preview">
                     <div class="sender-section">
                       <div class="sender-info">
-                        <strong>${translatedFullName}</strong><br>
-                        ${translatedAddress}<br>
-                        ${translatedEmail}<br>
-                        Tel: ${translatedPhone}
+                        <strong>${fullName}</strong><br>
+                        ${address}<br>
+                        ${email}<br>
+                        Tel: ${phone}
                       </div>
 
                       <div class="date">
@@ -5491,16 +5108,16 @@ Anlagen:
                     </div>
 
                     <div class="recipient">
-                      <strong>${getTranslation("fieldValues.company") || formData.company || "Universitätsklinikum Magdeburg A.ö.R."}</strong><br>
-                      ${getTranslation("fieldValues.contactName") || formData.contactName || "Herrn Frank Güllmeister"}<br>
-                      ${getTranslation("fieldValues.contactAddress") || formData.contactAddress}<br>
-                      ${getTranslation("fieldValues.contactPhone") || formData.contactPhone ? `Tel: ${getTranslation("fieldValues.contactPhone") || formData.contactPhone}` : ""}<br>
-                      ${getTranslation("fieldValues.contactEmail") || formData.contactEmail ? `E-Mail: ${getTranslation("fieldValues.contactEmail") || formData.contactEmail}` : ""}
+                      <strong>${company}</strong><br>
+                      ${contactName}<br>
+                      ${contactAddress}<br>
+                      ${contactPhone ? `Tel: ${contactPhone}` : ""}<br>
+                      ${contactEmail ? `E-Mail: ${contactEmail}` : ""}
                     </div>
 
-                    <div class="subject" style="color: ${formData.subjectColor || "#1a5490"}; font-weight: bold; font-size: 14pt; margin: 15mm 0 0 0; text-align: left;">
-                      ${getTranslation("fieldValues.subject") || formData.subject || "Bewerbung als Mitarbeiter im Stationsservice"}<br>
-                      ${formData.jobNumber && formData.jobNumber.length > 0 ? `${getTranslation("fieldValues.jobNumberLabel") || "Ihre Ausschreibung Nr.:"} ${getTranslation("fieldValues.jobNumberValue") || formData.jobNumber}` : ""}
+                    <div class="subject" style="color: ${subjectColor}; font-weight: bold; font-size: 14pt; margin: 15mm 0 0 0; text-align: left;">
+                      ${subject}<br>
+                      ${jobNumber && jobNumber.length > 0 ? `${getTranslation("fieldValues.jobNumberLabel") || "Ihre Ausschreibung Nr.:"} ${jobNumber}` : ""}
                     </div>
                     <div class="content">
                       <p>${greeting}</p>
@@ -5509,45 +5126,40 @@ Anlagen:
                       <p>${tasks}</p>
                       ${future ? `<p>${future}</p>` : ""}
                       <p>${availability}</p>
-                      <p style="white-space: pre-line;">${formData.closing || getTranslation("contentValues.closing") || ""}</p>
-                      <p style="white-space: pre-line;">${formData.signature || getTranslation("contentValues.signature") || ""}</p>
+                      <p style="white-space: pre-line;">${closing}</p>
+                      <p style="white-space: pre-line;">${signature}</p>
                     </div>
 
                   </div>
                 `
-          } else if (type === "lebenslauf") {
+          } else if (previewType === "lebenslauf") {
             console.log("Generating lebenslauf preview")
-            console.log("Full formData object:", formData)
+
+            // Use current form values instead of stored formData
+            const values = currentFormValues
+
+            console.log("Current form values for lebenslauf:", values)
             console.log("Global photo data:", globalPhotoData)
-            console.log("Photo data:", formData.lebenslaufPhoto ? "Present" : "Missing")
-            console.log("Photo value:", formData.lebenslaufPhoto)
-            console.log(
-              "Photo starts with data:image/:",
-              formData.lebenslaufPhoto && typeof formData.lebenslaufPhoto === "string"
-                ? formData.lebenslaufPhoto.startsWith("data:image/")
-                : false
-            )
-            console.log(
-              "Photo starts with blob:",
-              formData.lebenslaufPhoto && typeof formData.lebenslaufPhoto === "string"
-                ? formData.lebenslaufPhoto.startsWith("blob:")
-                : false
-            )
-            console.log(
-              "Photo condition check:",
-              formData.lebenslaufPhoto &&
-                typeof formData.lebenslaufPhoto === "string" &&
-                (formData.lebenslaufPhoto.startsWith("data:image/") ||
-                  formData.lebenslaufPhoto.startsWith("blob:"))
-            )
-            console.log(
-              "Global photo condition check:",
-              globalPhotoData &&
-                (globalPhotoData.startsWith("data:image/") || globalPhotoData.startsWith("blob:"))
-            )
-            console.log("Final photo URL for display:", formData.lebenslaufPhoto || globalPhotoData)
+            console.log("Photo data:", values.lebenslaufPhoto ? "Present" : "Missing")
+            console.log("Photo value:", values.lebenslaufPhoto)
+
             const previewTitle = getTranslation("preview.cv") || "Vorschau des Lebenslaufs"
             console.log("Updating previewContent with lebenslauf content")
+
+            // Get lebenslauf specific values from form
+            const lebenslaufFullName = values.lebenslaufFullName || values.fullName || ""
+            const lebenslaufAddress = values.lebenslaufAddress || values.address || ""
+            const lebenslaufPhone = values.lebenslaufPhone || values.phone || ""
+            const lebenslaufEmail = values.lebenslaufEmail || values.email || ""
+            const lebenslaufBirthDate = values.lebenslaufBirthDate || values.birthDate || ""
+            const lebenslaufNationality = values.lebenslaufNationality || values.nationality || ""
+            const position = values.position || ""
+            const summary = values.lebenslaufSummary || ""
+            const skills = values.lebenslaufSkills || ""
+            const experience = values.lebenslaufExperience || ""
+            const education = values.lebenslaufEducation || ""
+            const languages = values.lebenslaufLanguages || ""
+            const additional = values.lebenslaufAdditional || ""
             document.getElementById("previewContent").innerHTML = `
                   <div class="document-preview">
                     <style>
@@ -5661,10 +5273,10 @@ Anlagen:
                       <div class="photo-container">
                          ${(() => {
                            console.log("=== PHOTO DISPLAY DEBUG START ===")
-                           console.log("formData:", formData)
+                           console.log("values:", values)
                            console.log("globalPhotoData:", globalPhotoData)
 
-                           const photoUrl = globalPhotoData || formData.lebenslaufPhoto
+                           const photoUrl = globalPhotoData || values.lebenslaufPhoto
                            console.log("Selected photoUrl:", photoUrl)
                            console.log("PhotoUrl type:", typeof photoUrl)
 
@@ -5701,9 +5313,9 @@ Anlagen:
                          })()}
                       </div>
                       <div class="name-container">
-                        <h1>${(getTranslation("fieldValues.fullName") || formData.lebenslaufFullName || getTranslation("lebenslaufInputValues.fullName") || getTranslation("lebenslaufValues.fullName") || formData.fullName || "MYKOLA VUTOV").toUpperCase()}</h1>
+                        <h1>${lebenslaufFullName.toUpperCase()}</h1>
                         <div class="header-info">
-                          ${getTranslation("fieldValues.position") || getTranslation("lebenslaufValues.position") || formData.position || "Mitarbeiter im Stationsservice"}
+                          ${position}
                         </div>
                       </div>
                     </div>
@@ -5720,44 +5332,44 @@ Anlagen:
                     })()}</h2>
                     <div class="grid">
                       <div class="label">${getTranslation("lebenslaufLabels.birthDate") || "Geburtsdatum:"}</div>
-                      <div>${getTranslation("fieldValues.birthDate") || (formData.birthDate ? new Date(formData.birthDate).toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit", year: "numeric"}) : "19.12.1985")}</div>
+                      <div>${lebenslaufBirthDate ? new Date(lebenslaufBirthDate).toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit", year: "numeric"}) : ""}</div>
                       <div class="label">${getTranslation("lebenslaufLabels.address") || "Adresse:"}</div>
-                      <div>${getTranslation("fieldValues.address") || getTranslation("lebenslaufValues.address") || formData.address || "Am Unterhorstweg 1B, 39122 Magdeburg"}</div>
+                      <div>${lebenslaufAddress}</div>
                       <div class="label">${getTranslation("lebenslaufLabels.phone") || "Telefon:"}</div>
-                      <div>${getTranslation("fieldValues.phone") || getTranslation("lebenslaufValues.phone") || formData.phone || "+49 151 64317833"}</div>
+                      <div>${lebenslaufPhone}</div>
                       <div class="label">${getTranslation("lebenslaufLabels.email") || "E-Mail:"}</div>
-                      <div>${getTranslation("fieldValues.email") || getTranslation("lebenslaufValues.email") || formData.email || "vutov_mkola@icloud.com"}</div>
+                      <div>${lebenslaufEmail}</div>
                       <div class="label">${getTranslation("lebenslaufLabels.nationality") || "Staatsangehörigkeit:"}</div>
-                      <div>${getTranslation("fieldValues.nationality") || getTranslation("lebenslaufValues.nationality") || formData.nationality || "Ukrainisch"}</div>
+                      <div>${lebenslaufNationality}</div>
                       <div class="label">${getTranslation("lebenslaufLabels.residenceStatus") || "Aufenthaltsstatus:"}</div>
                       <div>${getTranslation("fieldValues.residenceStatus") || getTranslation("lebenslaufLabels.residenceStatusValue") || "Aufenthaltserlaubnis vorhanden"}</div>
                     </div>
 
                     <h2>${getTranslation("lebenslaufHeaders.professionalQualification") || "BERUFLICHE QUALIFIKATION"}</h2>
                     <p>
-                      ${getTranslation("lebenslaufInputValues.summary") || getTranslation("lebenslaufValues.experience") || "Engagierter und zuverlässiger Mitarbeiter mit ausgeprägtem Verantwortungsbewusstsein und hoher Motivation für die Arbeit im Gesundheitswesen. Bereit für neue Herausforderungen im Stationsservice mit Fokus auf Hygiene, Organisation und patientenorientierten Service."}
+                      ${summary}
                     </p>
 
                     <h2>${getTranslation("lebenslaufHeaders.coreCompetencies") || "KERNKOMPETENZEN"}</h2>
                     <ul>
-                      <li>${getTranslation("lebenslaufInputValues.skills") || getTranslation("lebenslaufValues.skills") || "Ausgeprägtes Hygienebewusstsein und Sorgfalt, Zuverlässigkeit und Verantwortungsbewusstsein, Teamfähigkeit und Kommunikationsstärke, Körperliche Belastbarkeit und Flexibilität, Organisationstalent und strukturierte Arbeitsweise, Empathischer Umgang mit kranken Menschen, Schnelle Auffassungsgabe und Lernbereitschaft"}</li>
+                      <li>${skills}</li>
                     </ul>
 
                     <h2>${getTranslation("lebenslaufHeaders.workExperience") || "BERUFSERFAHRUNG"}</h2>
                     <div class="experience-item">
-                      <div style="white-space: pre-line;">${getTranslation("lebenslaufInputValues.experience") || getTranslation("lebenslaufValues.workExperience") || "Buchhalter | ZSU, Ukraine\nApril 2022 - Oktober 2024\nVerwaltung und Organisation von Arbeitsabläufen, Sorgfältige Dokumentenverwaltung, Teamkoordination und Kommunikation"}</div>
+                      <div style="white-space: pre-line;">${experience}</div>
                     </div>
 
                     <h2>${getTranslation("lebenslaufHeaders.education") || "AUSBILDUNG"}</h2>
                     <div class="experience-item">
-                      <div style="white-space: pre-line;">${getTranslation("lebenslaufInputValues.education") || getTranslation("lebenslaufValues.educationDetails") || "Diplom-Ingenieur\nNationale Technische Universität, Poltava, Ukraine\n2006 - 2011"}</div>
+                      <div style="white-space: pre-line;">${education}</div>
                     </div>
 
                     <h2>${getTranslation("lebenslaufHeaders.languageSkills") || "SPRACHKENNTNISSE"}</h2>
-                    <div style="white-space: pre-line;">${getTranslation("lebenslaufInputValues.languages") || getTranslation("lebenslaufValues.languageSkills") || "Ukrainisch - Muttersprache\nRussisch - Verhandlungssicher\nDeutsch - B1 Niveau (in kontinuierlicher Verbesserung)\nBulgarisch - Gute Kenntnisse\nEnglisch - Grundkenntnisse"}</div>
+                    <div style="white-space: pre-line;">${languages}</div>
 
                     <h2>${getTranslation("lebenslaufHeaders.additionalQualifications") || "ZUSÄTZLICHE QUALIFIKATIONEN"}</h2>
-                    <div style="white-space: pre-line;">${getTranslation("lebenslaufInputValues.additional") || getTranslation("lebenslaufValues.additionalSkills") || "Führerschein Klasse B\nGesundheitlich fit und belastbar\nBereitschaft zur Schichtarbeit\nFlexibilität bei Arbeitszeiten (Vollzeit/Teilzeit)\nSofortige Verfügbarkeit"}</div>
+                    <div style="white-space: pre-line;">${additional}</div>
 
                     <div class="date-info">
                       Magdeburg, ${new Date().toLocaleDateString("de-DE", {year: "numeric", month: "long"})}
@@ -5798,38 +5410,50 @@ Anlagen:
         showStatus("Dokumente werden generiert...", "info")
 
         try {
-          // Generate HTML content
-          const bewerbungHtml = generateBewerbungHTML(formData)
-          const lebenslaufHtml = generateLebenslaufHTML(formData)
+          // Get current active tab
+          const activeTab = getCurrentActiveTab()
+          console.log("Generating documents for active tab:", activeTab)
+
+          // Generate HTML content only for active tab
+          let htmlContent = ""
+          let documentType = ""
+
+          if (activeTab === "bewerbung") {
+            htmlContent = generateBewerbungHTML(formData)
+            documentType = "Bewerbung"
+          } else if (activeTab === "lebenslauf") {
+            htmlContent = generateLebenslaufHTML(formData)
+            documentType = "Lebenslauf"
+          }
+
+          if (!htmlContent) {
+            showStatus("Немає контенту для генерації", "error")
+            return
+          }
 
           // Create timestamp and filename
           const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
           const name = formData.fullName ? formData.fullName.replace(/\s+/g, "_") : "Dokument"
 
-          // Generate all formats
+          // Generate all formats for active tab only
           const promises = []
 
-          // HTML files
+          // HTML file
           promises.push(
-            downloadFile(`Bewerbung_${name}_${timestamp}.html`, bewerbungHtml, "text/html")
-          )
-          promises.push(
-            downloadFile(`Lebenslauf_${name}_${timestamp}.html`, lebenslaufHtml, "text/html")
+            downloadFile(`${documentType}_${name}_${timestamp}.html`, htmlContent, "text/html")
           )
 
-          // PDF files
-          promises.push(generatePDF(bewerbungHtml, `Bewerbung_${name}_${timestamp}.pdf`))
-          promises.push(generatePDF(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.pdf`))
+          // PDF file
+          promises.push(generatePDF(htmlContent, `${documentType}_${name}_${timestamp}.pdf`))
 
-          // DOCX files
-          promises.push(generateDOCX(bewerbungHtml, `Bewerbung_${name}_${timestamp}.docx`))
-          promises.push(generateDOCX(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.docx`))
+          // DOCX file
+          promises.push(generateDOCX(htmlContent, `${documentType}_${name}_${timestamp}.docx`))
 
           // Wait for all downloads to complete
           await Promise.allSettled(promises)
 
           showStatus(
-            "Alle Dokumente erfolgreich erstellt und heruntergeladen! (HTML, PDF, DOCX)",
+            `${documentType} erfolgreich erstellt und heruntergeladen! (HTML, PDF, DOCX)`,
             "success"
           )
 
@@ -5837,10 +5461,10 @@ Anlagen:
           const statusEl = document.getElementById("statusMessage")
           statusEl.innerHTML = `
                   <div style="margin-top: 10px;">
-                    <strong>✅ Erfolgreich erstellt:</strong><br>
-                    • HTML-Dateien (für Browser-Anzeige)<br>
-                    • PDF-Dateien (für Druck und E-Mail)<br>
-                    • DOCX-Dateien (für Microsoft Word)<br><br>
+                    <strong>✅ ${documentType} erfolgreich erstellt:</strong><br>
+                    • HTML-Datei (für Browser-Anzeige)<br>
+                    • PDF-Datei (für Druck und E-Mail)<br>
+                    • DOCX-Datei (für Microsoft Word)<br><br>
                     <strong>Hinweis:</strong> PDF und DOCX werden automatisch generiert.
                     DOCX-Dateien öffnen sich direkt in Microsoft Word.
                   </div>
@@ -6114,6 +5738,11 @@ Anlagen:
 
       // Generate Bewerbung HTML
       function generateBewerbungHTML(data) {
+        // Get current form values dynamically
+        const currentValues = getCurrentFormValues()
+
+        console.log("Generating bewerbung HTML with current values:", currentValues)
+
         const currentDate =
           getTranslation("fieldValues.date") ||
           new Date().toLocaleDateString("de-DE", {
@@ -6122,15 +5751,12 @@ Anlagen:
             year: "numeric"
           })
         const jobNumber =
-          data.jobNumber && data.jobNumber.length > 0
-            ? `<br>${getTranslation("fieldValues.jobNumberLabel") || "Ihre Ausschreibung Nr.:"} ${getTranslation("fieldValues.jobNumberValue") || data.jobNumber}`
+          currentValues.jobNumber && currentValues.jobNumber.length > 0
+            ? `<br>${getTranslation("fieldValues.jobNumberLabel") || "Ihre Ausschreibung Nr.:"} ${currentValues.jobNumber}`
             : ""
 
         // Get translated greeting
-        const greeting =
-          data.greeting ||
-          getTranslation("form.greetingPlaceholder") ||
-          "Sehr geehrter Herr Frank Güllmeister,"
+        const greeting = currentValues.greeting || getTranslation("form.greetingPlaceholder") || ""
 
         return `<!doctype html>
       <html lang="de">
@@ -6193,42 +5819,42 @@ Anlagen:
         <body>
           <div class="sender-section">
             <div class="sender-info">
-              <strong>${data.fullName}</strong><br />
-              ${data.address}<br>
-              ${data.email}<br>
-              Tel: ${data.phone}
+              <strong>${currentValues.fullName}</strong><br />
+              ${currentValues.address}<br>
+              ${currentValues.email}<br>
+              Tel: ${currentValues.phone}
             </div>
 
             <div class="date">Magdeburg, den ${currentDate}</div>
           </div>
 
           <div class="recipient">
-            <strong>${data.company}</strong><br />
+            <strong>${currentValues.company}</strong><br />
             Personalmanagement<br />
-            ${data.contactName || ""}<br />
-            ${data.contactAddress || ""}<br />
-            ${data.contactPhone ? `Tel: ${data.contactPhone}` : ""}<br />
-            ${data.contactEmail ? `E-Mail: ${data.contactEmail}` : ""}
+            ${currentValues.contactName || ""}<br />
+            ${currentValues.contactAddress || ""}<br />
+            ${currentValues.contactPhone ? `Tel: ${currentValues.contactPhone}` : ""}<br />
+            ${currentValues.contactEmail ? `E-Mail: ${currentValues.contactEmail}` : ""}
           </div>
 
-          <div class="subject" style="color: ${data.subjectColor || "#1a5490"}; font-weight: bold; font-size: 14pt; margin: 15mm 0; text-align: left;">
-            ${data.subject || "Bewerbung als Mitarbeiter im Stationsservice"}${jobNumber}
+          <div class="subject" style="color: ${currentValues.subjectColor || "#1a5490"}; font-weight: bold; font-size: 14pt; margin: 15mm 0; text-align: left;">
+            ${currentValues.subject || ""}${jobNumber}
           </div>
 
           <div class="content">
             <p>${greeting}</p>
 
-            <p>${data.motivation}</p>
+            <p>${currentValues.motivation}</p>
 
-            <p>${data.qualifications}</p>
+            <p>${currentValues.qualifications}</p>
 
-            <p>${data.tasks}</p>
+            <p>${currentValues.tasks}</p>
 
-            ${data.future ? `<p>${data.future}</p>` : ""}
+            ${currentValues.future ? `<p>${currentValues.future}</p>` : ""}
 
-            <p>${data.availability}</p>
-            <p style="white-space: pre-line;">${data.closing}</p>
-            <p style="white-space: pre-line;">${data.signature}</p>
+            <p>${currentValues.availability}</p>
+            <p style="white-space: pre-line;">${currentValues.closing}</p>
+            <p style="white-space: pre-line;">${currentValues.signature}</p>
           </div>
 
         </body>
@@ -6237,15 +5863,38 @@ Anlagen:
 
       // Generate Lebenslauf HTML
       function generateLebenslaufHTML(data) {
-        const birthDate = new Date(data.birthDate).toLocaleDateString("de-DE", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric"
-        })
+        // Get current form values dynamically
+        const currentValues = getCurrentFormValues()
+
+        console.log("Generating lebenslauf HTML with current values:", currentValues)
+
+        const birthDate = currentValues.lebenslaufBirthDate || currentValues.birthDate
+        const formattedBirthDate = birthDate
+          ? new Date(birthDate).toLocaleDateString("de-DE", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric"
+            })
+          : ""
+
         const currentMonth = new Date().toLocaleDateString("de-DE", {
           year: "numeric",
           month: "long"
         })
+
+        // Get lebenslauf specific values
+        const fullName = currentValues.lebenslaufFullName || currentValues.fullName || ""
+        const address = currentValues.lebenslaufAddress || currentValues.address || ""
+        const phone = currentValues.lebenslaufPhone || currentValues.phone || ""
+        const email = currentValues.lebenslaufEmail || currentValues.email || ""
+        const nationality = currentValues.lebenslaufNationality || currentValues.nationality || ""
+        const position = currentValues.position || ""
+        const summary = currentValues.lebenslaufSummary || ""
+        const skills = currentValues.lebenslaufSkills || ""
+        const experience = currentValues.lebenslaufExperience || ""
+        const education = currentValues.lebenslaufEducation || ""
+        const languages = currentValues.lebenslaufLanguages || ""
+        const additional = currentValues.lebenslaufAdditional || ""
 
         return `<!doctype html>
       <html lang="de">
@@ -6358,7 +6007,7 @@ Anlagen:
             <div class="photo-container">
               ${(() => {
                 // Отримуємо фото з даних або глобальної змінної
-                const photoUrl = data.photo || globalPhotoData || data.lebenslaufPhoto
+                const photoUrl = globalPhotoData || currentValues.lebenslaufPhoto
                 console.log("PDF Generation - Photo URL:", photoUrl)
 
                 if (
@@ -6373,91 +6022,52 @@ Anlagen:
               })()}
             </div>
             <div class="name-container">
-              <h1 style="text-align: left;">${data.fullName.toUpperCase()}</h1>
-              <div class="header-info" style="text-align: left;">Bewerbung für ${data.position || "Stationsservice"}</div>
+              <h1 style="text-align: left;">${fullName.toUpperCase()}</h1>
+              <div class="header-info" style="text-align: left;">Bewerbung für ${position}</div>
             </div>
           </div>
 
           <h2>PERSÖNLICHE DATEN</h2>
           <div class="grid">
             <div class="label">Geburtsdatum:</div>
-            <div>${birthDate}</div>
+            <div>${formattedBirthDate}</div>
             <div class="label">Adresse:</div>
-            <div>${data.address}</div>
+            <div>${address}</div>
             <div class="label">Telefon:</div>
-            <div>${data.phone}</div>
+            <div>${phone}</div>
             <div class="label">E-Mail:</div>
-            <div>${data.email}</div>
+            <div>${email}</div>
             <div class="label">Staatsangehörigkeit:</div>
-            <div>${data.nationality}</div>
+            <div>${nationality}</div>
             <div class="label">Aufenthaltsstatus:</div>
             <div>Aufenthaltserlaubnis vorhanden</div>
           </div>
 
           <h2>BERUFLICHE QUALIFIKATION</h2>
           <p>
-            Engagierter und zuverlässiger Mitarbeiter mit ausgeprägtem
-            Verantwortungsbewusstsein und hoher Motivation für die Arbeit im
-            Gesundheitswesen. Bereit für neue Herausforderungen im Stationsservice mit
-            Fokus auf Hygiene, Organisation und patientenorientierten Service.
+            ${summary}
           </p>
 
           <h2>KERNKOMPETENZEN</h2>
           <ul>
-            <li>Ausgeprägtes Hygienebewusstsein und Sorgfalt</li>
-            <li>Zuverlässigkeit und Verantwortungsbewusstsein</li>
-            <li>Teamfähigkeit und Kommunikationsstärke</li>
-            <li>Körperliche Belastbarkeit und Flexibilität</li>
-            <li>Organisationstalent und strukturierte Arbeitsweise</li>
-            <li>Empathischer Umgang mit kranken Menschen</li>
-            <li>Schnelle Auffassungsgabe und Lernbereitschaft</li>
+            <li>${skills}</li>
           </ul>
 
           <h2>BERUFSERFAHRUNG</h2>
           <div class="experience-item">
-            <strong>Buchhalter</strong> | ZSU, Ukraine<br />
-            <em>April 2022 - Oktober 2024</em>
-            <ul>
-              <li>Verwaltung und Organisation von Arbeitsabläufen</li>
-              <li>Sorgfältige Dokumentenverwaltung</li>
-              <li>Teamkoordination und Kommunikation</li>
-            </ul>
-          </div>
-
-          <div class="experience-item">
-            <strong>Verschiedene Tätigkeiten</strong> | Ukraine<br />
-            <em>2011 - 2022</em>
-            <ul>
-              <li>Kundenservice und Betreuung</li>
-              <li>Administrative Aufgaben</li>
-              <li>Teamarbeit in verschiedenen Bereichen</li>
-            </ul>
+            <div style="white-space: pre-line;">${experience}</div>
           </div>
 
           <h2>AUSBILDUNG</h2>
           <div class="experience-item">
-            <strong>Diplom-Ingenieur</strong><br />
-            Nationale Technische Universität, Poltava, Ukraine<br />
-            <em>2006 - 2011</em>
+            <div style="white-space: pre-line;">${education}</div>
           </div>
 
           <h2>SPRACHKENNTNISSE</h2>
-          <ul>
-            <li>Ukrainisch - Muttersprache</li>
-            <li>Russisch - Verhandlungssicher</li>
-            <li>Deutsch - B1 Niveau (in kontinuierlicher Verbesserung)</li>
-            <li>Bulgarisch - Gute Kenntnisse</li>
-            <li>Englisch - Grundkenntnisse</li>
-          </ul>
+          <div style="white-space: pre-line;">${languages}</div>
 
           <h2>ZUSÄTZLICHE QUALIFIKATIONEN</h2>
-          <ul>
-            <li>Führerschein Klasse B</li>
-            <li>Gesundheitlich fit und belastbar</li>
-            <li>Bereitschaft zur Schichtarbeit</li>
-            <li>Flexibilität bei Arbeitszeiten (Vollzeit/Teilzeit)</li>
-            <li>Sofortige Verfügbarkeit</li>
-          </ul>
+          <div style="white-space: pre-line;">${additional}</div>
 
           <div
             style="margin-top: 15mm; text-align: center; color: #666; font-size: 10pt"
@@ -6557,126 +6167,36 @@ Anlagen:
         showStatus(message, isSupported ? "success" : "info")
       }
 
-      // Generate PDF using jsPDF
+      // Generate PDF using browser print dialog (more reliable)
       async function generatePDF(htmlContent, filename) {
-        let tempContainer = null
         try {
-          // Create a temporary container
-          tempContainer = document.createElement("div")
-          tempContainer.innerHTML = htmlContent
-          tempContainer.style.position = "absolute"
-          tempContainer.style.left = "-9999px"
-          tempContainer.style.top = "-9999px"
-          tempContainer.style.width = "210mm"
-          tempContainer.style.fontSize = "11pt"
-          tempContainer.style.fontFamily = "Arial, sans-serif"
-          tempContainer.style.lineHeight = "1.4"
-          tempContainer.style.color = "#333"
-          document.body.appendChild(tempContainer)
+          console.log("Generating PDF using browser print dialog...")
 
-          // Load jsPDF dynamically with fallback
-          let PDF
-          try {
-            await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js")
-
-            if (typeof window.jsPDF !== "undefined" && window.jsPDF.jsPDF) {
-              PDF = window.jsPDF.jsPDF
-            } else {
-              throw new Error("Primary CDN failed")
-            }
-          } catch (error) {
-            console.warn("Primary jsPDF CDN failed, trying alternative:", error)
-
-            // Try alternative CDN
-            await loadScript("https://unpkg.com/jspdf@2.5.1/dist/jspdf.umd.min.js")
-
-            if (typeof window.jsPDF !== "undefined" && window.jsPDF.jsPDF) {
-              PDF = window.jsPDF.jsPDF
-            } else {
-              throw new Error("All jsPDF CDNs failed to load")
-            }
-          }
-
-          console.log("Creating PDF with jsPDF...")
-          const pdf = new PDF({
-            orientation: "portrait",
-            unit: "mm",
-            format: "a4"
-          })
-          console.log("PDF object created successfully")
-
-          // Add content to PDF
-          pdf.html(tempContainer, {
-            callback: async function (doc) {
-              try {
-                // Try to use File System Access API for PDF
-                if ("showSaveFilePicker" in window) {
-                  const fileHandle = await window.showSaveFilePicker({
-                    suggestedName: filename,
-                    types: [
-                      {
-                        description: "PDF-Dokument",
-                        accept: {"application/pdf": [".pdf"]}
-                      }
-                    ]
-                  })
-
-                  const pdfBlob = doc.output("blob")
-                  const writable = await fileHandle.createWritable()
-                  await writable.write(pdfBlob)
-                  await writable.close()
-
-                  showStatus(`PDF gespeichert: ${filename}`, "success")
-                } else {
-                  // Fallback to traditional save
-                  doc.save(filename)
-                  showStatus(`PDF heruntergeladen: ${filename}`, "success")
-                }
-              } catch (error) {
-                if (error.name !== "AbortError") {
-                  console.warn("File System Access API failed, using fallback:", error)
-                  doc.save(filename)
-                  showStatus(`PDF heruntergeladen: ${filename}`, "success")
-                } else {
-                  showStatus("PDF-Speichern abgebrochen", "info")
-                }
-              }
-
-              if (tempContainer && document.body.contains(tempContainer)) {
-                document.body.removeChild(tempContainer)
-              }
-            },
-            x: 15,
-            y: 15,
-            width: 180,
-            windowWidth: 800
-          })
+          // Use the alternative method which is more reliable
+          generatePDFAlternative(htmlContent, filename)
         } catch (error) {
           console.error("Error generating PDF:", error)
-          showStatus("Fehler beim Generieren der PDF-Datei", "error")
-
-          // Clean up temp container
-          if (tempContainer && document.body.contains(tempContainer)) {
-            document.body.removeChild(tempContainer)
-          }
-
-          // Try alternative PDF generation
-          console.log("Trying alternative PDF generation...")
-          try {
-            generatePDFAlternative(htmlContent, filename)
-          } catch (altError) {
-            console.error("Alternative PDF generation also failed:", altError)
-            showStatus(
-              "PDF-Generierung fehlgeschlagen. Bitte verwenden Sie die HTML-Dateien und konvertieren Sie diese manuell.",
-              "error"
-            )
-          }
+          showStatus(`PDF-Generierung fehlgeschlagen: ${error.message}`, "error")
         }
       }
 
       // Alternative PDF generation using print dialog
       function generatePDFAlternative(htmlContent, filename) {
         try {
+          // Check if HTML content is empty
+          if (!htmlContent || htmlContent.trim().length === 0) {
+            console.error("HTML content is empty for filename:", filename)
+            showStatus(`HTML-Inhalt ist leer für ${filename}`, "error")
+            return
+          }
+
+          console.log(
+            "Generating PDF alternative for:",
+            filename,
+            "HTML length:",
+            htmlContent.length
+          )
+
           // Create a new window for printing
           const printWindow = window.open(
             "",
@@ -7026,39 +6546,6 @@ Anlagen:
       }
 
       // Load external script dynamically
-      function loadScript(src) {
-        return new Promise((resolve, reject) => {
-          // Check if script is already loaded
-          const existingScript = document.querySelector(`script[src="${src}"]`)
-          if (existingScript) {
-            resolve(window)
-            return
-          }
-
-          const script = document.createElement("script")
-          script.src = src
-          script.async = true
-          script.type = "module" // Add module type for ES modules
-
-          // Add crossOrigin only for external CDNs
-          if (src.startsWith("http")) {
-            script.crossOrigin = "anonymous"
-          }
-
-          script.onload = () => {
-            console.log(`Script loaded successfully: ${src}`)
-            // Wait a bit for the library to initialize
-            setTimeout(() => resolve(window), 100)
-          }
-
-          script.onerror = error => {
-            console.error(`Failed to load script: ${src}`, error)
-            reject(new Error(`Failed to load script: ${src}`))
-          }
-
-          document.head.appendChild(script)
-        })
-      }
 
       // Convert HTML content to DOCX format
       function convertHTMLToDOCX(htmlContent, docx) {
@@ -7209,24 +6696,24 @@ Anlagen:
           const bewerbungHtml = generateBewerbungHTML(formData)
           const lebenslaufHtml = generateLebenslaufHTML(formData)
 
+          console.log("Generated bewerbung HTML length:", bewerbungHtml.length)
+          console.log("Generated lebenslauf HTML length:", lebenslaufHtml.length)
+          console.log("Bewerbung HTML preview:", bewerbungHtml.substring(0, 200))
+          console.log("Lebenslauf HTML preview:", lebenslaufHtml.substring(0, 200))
+
           const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
           const name = formData.fullName ? formData.fullName.replace(/\s+/g, "_") : "Dokument"
 
-          // Try jsPDF first, fallback to print dialog
-          try {
-            await generatePDF(bewerbungHtml, `Bewerbung_${name}_${timestamp}.pdf`)
-            await generatePDF(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.pdf`)
-            showStatus("PDF-Dokumente erfolgreich erstellt!", "success")
-          } catch (pdfError) {
-            console.warn("jsPDF failed, using print dialog:", pdfError)
-            showStatus("Verwende Druckdialog für PDF-Erstellung...", "info")
+          // Use print dialog for PDF generation (more reliable)
+          showStatus("Verwende Druckdialog für PDF-Erstellung...", "info")
 
-            // Use print dialog as fallback
-            generatePDFAlternative(bewerbungHtml, `Bewerbung_${name}_${timestamp}.pdf`)
-            setTimeout(() => {
-              generatePDFAlternative(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.pdf`)
-            }, 1000)
-          }
+          // Generate PDFs using print dialog
+          generatePDFAlternative(bewerbungHtml, `Bewerbung_${name}_${timestamp}.pdf`)
+          setTimeout(() => {
+            generatePDFAlternative(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.pdf`)
+          }, 1000)
+
+          showStatus("PDF-Dokumente erfolgreich erstellt!", "success")
         } catch (error) {
           console.error("Error generating PDF:", error)
           showStatus(`Fehler beim Generieren der PDF-Dateien: ${error.message}`, "error")
@@ -8443,19 +7930,11 @@ Anlagen:
         // Check if elements exist before initializing
         const lebenslaufPhotoInput = document.getElementById("lebenslaufPhoto")
         const lebenslaufPhotoPreview = document.getElementById("photoPreview")
-        const anschreibenPhotoInput = document.getElementById("anschreibenPhoto")
-        const anschreibenPhotoPreview = document.getElementById("anschreibenPhotoPreview")
 
         console.log("Lebenslauf photo input exists:", !!lebenslaufPhotoInput)
         console.log("Lebenslauf photo preview exists:", !!lebenslaufPhotoPreview)
-        console.log("Anschreiben photo input exists:", !!anschreibenPhotoInput)
-        console.log("Anschreiben photo preview exists:", !!anschreibenPhotoPreview)
 
         initializePhotoUpload()
-
-        // Initialize Anschreiben photo upload functionality
-        console.log("=== About to initialize Anschreiben photo upload function ===")
-        initializeAnschreibenPhotoUpload()
 
         // Add click handlers for language flags
         const languageFlags = document.querySelectorAll(".language-flag")
@@ -8633,106 +8112,37 @@ Anlagen:
         try {
           console.log("=== LOADING PHOTO FROM JSON ===")
           console.log(`Current language: ${currentLanguage}`)
-          console.log(`Requesting: /api/file-info/lebenslauf/${currentLanguage}`)
-          console.log(`Current URL: ${window.location.href}`)
-          console.log(`Server should be running on: http://localhost:8000`)
+          console.log("Skipping API call - using dynamic preview instead")
 
-          // Check if we're on the right port
-          const currentPort = window.location.port
-          console.log(`Current port: ${currentPort}`)
-
-          if (currentPort !== "8000") {
-            console.log(`⚠️ WARNING: Expected port 8000, but current port is ${currentPort}`)
-            console.log(`This might cause 404 errors if server is running on port 8000`)
-          }
-
-          // Try to load from server first
-          const response = await fetch(`/api/file-info/lebenslauf/${currentLanguage}`, {
-            method: "GET",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json"
-            },
-            cache: "no-cache" // Prevent caching issues
-          })
-
-          console.log(`Response status: ${response.status}`)
-          console.log(`Response ok: ${response.ok}`)
-          console.log(`Response headers:`, Object.fromEntries(response.headers.entries()))
-
-          if (response.ok) {
-            const data = await response.json()
-            console.log("Response data:", data)
-
-            if (data.data && data.data.photo && data.data.photo.startsWith("data:image/")) {
-              console.log("📸 Photo found in JSON, loading...")
-              globalPhotoData = data.data.photo
-              formData.lebenslaufPhoto = data.data.photo
-
-              // Update photo preview in left menu
-              const photoPreview = document.getElementById("photoPreview")
-              if (photoPreview) {
-                photoPreview.innerHTML = `<img src="${data.data.photo}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
-                console.log("✅ Photo loaded in left menu")
-              }
-
-              // Show remove button
-              const removePhotoBtn = document.getElementById("removePhoto")
-              if (removePhotoBtn) {
-                removePhotoBtn.style.display = "block"
-              }
-
-              // Update preview
-              updatePreviewOnInput()
-              console.log("✅ Photo loaded and preview updated")
-              return
-            } else {
-              console.log("No photo found in response data")
-            }
-          } else {
-            console.log(`Server returned error: ${response.status}`)
-            const errorText = await response.text()
-            console.log(`Error response: ${errorText}`)
-          }
-
-          console.log("No photo found in JSON or server unavailable")
+          // Skip API call since we're using dynamic preview
+          return
         } catch (error) {
-          console.log("Error loading photo from JSON:", error)
-          console.log("Error details:", error.message)
-          console.log("Error stack:", error.stack)
-
-          // Try to load from localStorage as fallback
-          const savedData = localStorage.getItem("lebenslaufData")
-          if (savedData) {
-            try {
-              const data = JSON.parse(savedData)
-              if (data.photo && data.photo.startsWith("data:image/")) {
-                console.log("📸 Photo found in localStorage, loading...")
-                globalPhotoData = data.photo
-                formData.lebenslaufPhoto = data.photo
-
-                // Update photo preview in left menu
-                const photoPreview = document.getElementById("photoPreview")
-                if (photoPreview) {
-                  photoPreview.innerHTML = `<img src="${data.photo}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
-                  console.log("✅ Photo loaded from localStorage")
-                }
-
-                // Show remove button
-                const removePhotoBtn = document.getElementById("removePhoto")
-                if (removePhotoBtn) {
-                  removePhotoBtn.style.display = "block"
-                }
-
-                // Update preview
-                updatePreviewOnInput()
-                console.log("✅ Photo loaded from localStorage and preview updated")
-              }
-            } catch (parseError) {
-              console.log("Error parsing localStorage data:", parseError)
-            }
-          }
+          console.log("Error in loadPhotoFromJSON:", error)
         }
+      }
+
+      // Debug function to test tab switching and form values
+      window.debugTabSwitching = function () {
+        console.log("=== 🔄 TESTING TAB SWITCHING ===")
+
+        console.log("1. Current active tab:", getCurrentActiveTab())
+        console.log("2. Current form values:", getCurrentFormValues())
+
+        console.log("3. Testing bewerbung tab...")
+        switchFormTab("bewerbung").then(() => {
+          console.log("4. After switching to bewerbung:")
+          console.log("   Active tab:", getCurrentActiveTab())
+          console.log("   Form values:", getCurrentFormValues())
+
+          setTimeout(() => {
+            console.log("5. Testing lebenslauf tab...")
+            switchFormTab("lebenslauf").then(() => {
+              console.log("6. After switching to lebenslauf:")
+              console.log("   Active tab:", getCurrentActiveTab())
+              console.log("   Form values:", getCurrentFormValues())
+            })
+          }, 1000)
+        })
       }
 
       // Debug function to refresh photo display
@@ -8894,42 +8304,48 @@ Anlagen:
       // Debug function to analyze photo data overwriting issue
       window.debugPhotoOverwrite = function () {
         console.log("=== 🔍 ANALYZING PHOTO DATA OVERWRITING ===")
-        
+
         console.log("📊 Current state:")
         console.log("- globalPhotoData:", globalPhotoData ? "Present" : "Missing")
         console.log("- formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
         console.log("- formData.photo:", formData.photo ? "Present" : "Missing")
-        
+
         if (globalPhotoData) {
           console.log("- globalPhotoData type:", typeof globalPhotoData)
           console.log("- globalPhotoData length:", globalPhotoData.length)
-          console.log("- globalPhotoData starts with data:image/:", globalPhotoData.startsWith("data:image/"))
+          console.log(
+            "- globalPhotoData starts with data:image/:",
+            globalPhotoData.startsWith("data:image/")
+          )
         }
-        
+
         if (formData.lebenslaufPhoto) {
           console.log("- formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
           console.log("- formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
-          console.log("- formData.lebenslaufPhoto starts with data:image/:", formData.lebenslaufPhoto.startsWith("data:image/"))
+          console.log(
+            "- formData.lebenslaufPhoto starts with data:image/:",
+            formData.lebenslaufPhoto.startsWith("data:image/")
+          )
         }
-        
+
         // Check if photo preview is showing
         const photoPreview = document.getElementById("photoPreview")
         if (photoPreview) {
           console.log("- Photo preview element:", photoPreview.innerHTML.substring(0, 100) + "...")
         }
-        
+
         // Check if remove button is visible
         const removeBtn = document.getElementById("removePhoto")
         if (removeBtn) {
           console.log("- Remove photo button display:", removeBtn.style.display)
         }
-        
+
         console.log("🔄 Testing data loading sequence...")
         console.log("1. Current form data before any operations:")
         console.log("   - fullName:", formData.fullName)
         console.log("   - address:", formData.address)
         console.log("   - photo present:", formData.lebenslaufPhoto ? "Yes" : "No")
-        
+
         return {
           globalPhotoData: globalPhotoData ? "Present" : "Missing",
           formDataPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
@@ -8941,19 +8357,25 @@ Anlagen:
       // Debug function to test data loading sequence
       window.debugDataSequence = async function () {
         console.log("=== 🔄 TESTING DATA LOADING SEQUENCE ===")
-        
+
         console.log("1. Current state before loading:")
         console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        console.log(
+          "   - formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
         console.log("   - formData.fullName:", formData.fullName)
-        
+
         console.log("2. Testing loadPhotoFromJSON()...")
         await loadPhotoFromJSON()
-        
+
         console.log("3. State after loadPhotoFromJSON():")
         console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-        
+        console.log(
+          "   - formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
+
         console.log("4. Testing populateFormWithLebenslaufData()...")
         // Create test data
         const testData = {
@@ -8965,22 +8387,28 @@ Anlagen:
           nationality: "Deutsch",
           photo: globalPhotoData // Use existing photo
         }
-        
+
         await populateFormWithLebenslaufData(testData)
-        
+
         console.log("5. State after populateFormWithLebenslaufData():")
         console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        console.log(
+          "   - formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
         console.log("   - formData.fullName:", formData.fullName)
-        
+
         console.log("6. Testing updateFormData()...")
         updateFormData()
-        
+
         console.log("7. Final state after updateFormData():")
         console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+        console.log(
+          "   - formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
         console.log("   - formData.fullName:", formData.fullName)
-        
+
         return {
           initialPhoto: globalPhotoData ? "Present" : "Missing",
           finalPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
@@ -8991,22 +8419,22 @@ Anlagen:
       // Debug function to test auto-synchronization
       window.debugAutoSync = function () {
         console.log("=== 🔄 TESTING AUTO-SYNCHRONIZATION ===")
-        
+
         console.log("1. Checking event listeners...")
         const sections = [
           document.getElementById("bewerbungForm"),
           document.getElementById("lebenslaufSection")
         ]
-        
+
         let totalInputs = 0
         let inputsWithListeners = 0
-        
+
         sections.forEach(section => {
           if (section) {
             const inputs = section.querySelectorAll("input, textarea, select")
             totalInputs += inputs.length
             console.log(`📝 ${section.id}: ${inputs.length} inputs`)
-            
+
             inputs.forEach(input => {
               // Check if input has event listeners by testing a simple property
               if (input.addEventListener) {
@@ -9015,42 +8443,49 @@ Anlagen:
             })
           }
         })
-        
+
         console.log(`📊 Total inputs: ${totalInputs}`)
         console.log(`📊 Inputs with listeners: ${inputsWithListeners}`)
-        
+
         console.log("2. Testing form data update...")
         const testValue = "Test " + new Date().getTime()
-        
+
         // Find a text input to test
-        const testInput = document.querySelector("#bewerbungForm input[type='text'], #lebenslaufSection input[type='text']")
+        const testInput = document.querySelector(
+          "#bewerbungForm input[type='text'], #lebenslaufSection input[type='text']"
+        )
         if (testInput) {
           console.log(`🧪 Testing with input: ${testInput.name || testInput.id}`)
           console.log(`🧪 Current value: "${testInput.value}"`)
-          
+
           // Set test value
           testInput.value = testValue
           console.log(`🧪 Set value to: "${testValue}"`)
-          
+
           // Trigger input event
-          const inputEvent = new Event('input', { bubbles: true })
+          const inputEvent = new Event("input", {bubbles: true})
           testInput.dispatchEvent(inputEvent)
           console.log(`🧪 Dispatched input event`)
-          
+
           // Check if formData was updated
           setTimeout(() => {
-            console.log(`🧪 FormData after update:`, formData[testInput.name] || formData[testInput.id])
+            console.log(
+              `🧪 FormData after update:`,
+              formData[testInput.name] || formData[testInput.id]
+            )
             console.log(`🧪 Expected: "${testValue}"`)
-            console.log(`🧪 Match: ${(formData[testInput.name] || formData[testInput.id]) === testValue}`)
+            console.log(
+              `🧪 Match: ${(formData[testInput.name] || formData[testInput.id]) === testValue}`
+            )
           }, 100)
         } else {
           console.log("❌ No text input found for testing")
         }
-        
+
         console.log("3. Testing debounced function...")
         console.log(`🧪 debouncedUpdatePreview type: ${typeof debouncedUpdatePreview}`)
         console.log(`🧪 updatePreviewOnInput type: ${typeof updatePreviewOnInput}`)
-        
+
         return {
           totalInputs: totalInputs,
           inputsWithListeners: inputsWithListeners,
@@ -9062,15 +8497,18 @@ Anlagen:
       // Debug function to test JSON data overwriting
       window.debugJSONOverwrite = async function () {
         console.log("=== 📄 TESTING JSON DATA OVERWRITING ===")
-        
+
         console.log("1. Current state before JSON loading:")
         console.log("   - formData.fullName:", formData.fullName)
         console.log("   - formData.address:", formData.address)
         console.log("   - formData.phone:", formData.phone)
         console.log("   - formData.email:", formData.email)
         console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-        
+        console.log(
+          "   - formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
+
         // Test with sample data
         const testData = {
           fullName: "Test User JSON",
@@ -9078,35 +8516,44 @@ Anlagen:
           phone: "+49 123 456789",
           email: "test@json.com",
           birthDate: "01.01.1990",
-          nationality: "Deutsch",
+          nationality: "Deutsch"
           // No photo in test data to test preservation
         }
-        
+
         console.log("2. Testing populateFormWithLebenslaufData with test data...")
         await populateFormWithLebenslaufData(testData)
-        
+
         console.log("3. State after populateFormWithLebenslaufData:")
         console.log("   - formData.fullName:", formData.fullName)
         console.log("   - formData.address:", formData.address)
         console.log("   - formData.phone:", formData.phone)
         console.log("   - formData.email:", formData.email)
         console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-        
+        console.log(
+          "   - formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
+
         console.log("4. Testing updateFormData...")
         updateFormData()
-        
+
         console.log("5. Final state after updateFormData:")
         console.log("   - formData.fullName:", formData.fullName)
         console.log("   - formData.address:", formData.address)
         console.log("   - formData.phone:", formData.phone)
         console.log("   - formData.email:", formData.email)
         console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-        console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-        
+        console.log(
+          "   - formData.lebenslaufPhoto:",
+          formData.lebenslaufPhoto ? "Present" : "Missing"
+        )
+
         // Check if photo was preserved
-        const photoPreserved = globalPhotoData && formData.lebenslaufPhoto && globalPhotoData === formData.lebenslaufPhoto
-        
+        const photoPreserved =
+          globalPhotoData &&
+          formData.lebenslaufPhoto &&
+          globalPhotoData === formData.lebenslaufPhoto
+
         return {
           initialPhoto: globalPhotoData ? "Present" : "Missing",
           finalPhoto: formData.lebenslaufPhoto ? "Present" : "Missing",
@@ -9118,11 +8565,11 @@ Anlagen:
       // Debug function to test complete data flow
       window.debugDataFlow = async function () {
         console.log("=== 🔄 TESTING COMPLETE DATA FLOW ===")
-        
+
         console.log("1. Initial state:")
         console.log("   - formData.fullName:", formData.fullName)
         console.log("   - formData.address:", formData.address)
-        
+
         // Test user input
         console.log("2. Testing user input...")
         const nameInput = document.querySelector("#bewerbungForm input[name='fullName']")
@@ -9130,28 +8577,28 @@ Anlagen:
           const testValue = "User Input Test " + new Date().getTime()
           nameInput.value = testValue
           console.log(`   - Set name input to: "${testValue}"`)
-          
+
           // Trigger input event
-          const inputEvent = new Event('input', { bubbles: true })
+          const inputEvent = new Event("input", {bubbles: true})
           nameInput.dispatchEvent(inputEvent)
-          
+
           // Wait for debounced update
           setTimeout(() => {
             console.log("   - formData.fullName after input:", formData.fullName)
             console.log("   - Match:", formData.fullName === testValue)
           }, 500)
         }
-        
+
         // Test JSON loading
         console.log("3. Testing JSON data loading...")
         setTimeout(async () => {
           console.log("   - Before JSON load - formData.fullName:", formData.fullName)
-          
+
           // Load JSON data
           await loadDataFromJSON()
-          
+
           console.log("   - After JSON load - formData.fullName:", formData.fullName)
-          
+
           // Test input again after JSON load
           console.log("4. Testing input after JSON load...")
           const nameInput2 = document.querySelector("#bewerbungForm input[name='fullName']")
@@ -9159,11 +8606,11 @@ Anlagen:
             const testValue2 = "After JSON Test " + new Date().getTime()
             nameInput2.value = testValue2
             console.log(`   - Set name input to: "${testValue2}"`)
-            
+
             // Trigger input event
-            const inputEvent2 = new Event('input', { bubbles: true })
+            const inputEvent2 = new Event("input", {bubbles: true})
             nameInput2.dispatchEvent(inputEvent2)
-            
+
             // Wait for debounced update
             setTimeout(() => {
               console.log("   - formData.fullName after second input:", formData.fullName)
@@ -9171,7 +8618,7 @@ Anlagen:
             }, 500)
           }
         }, 1000)
-        
+
         return {
           initialName: formData.fullName,
           testCompleted: true
@@ -9181,57 +8628,57 @@ Anlagen:
       // Debug function to test if event listeners are working
       window.debugEventListeners = function () {
         console.log("=== 🎯 TESTING EVENT LISTENERS ===")
-        
+
         // Find a text input
         const nameInput = document.querySelector("#bewerbungForm input[name='fullName']")
         if (!nameInput) {
           console.log("❌ No name input found")
-          return { error: "No name input found" }
+          return {error: "No name input found"}
         }
-        
+
         console.log("📝 Found name input:", nameInput)
         console.log("📝 Current value:", nameInput.value)
-        
+
         // Test direct value change
         const testValue = "Event Test " + new Date().getTime()
         console.log(`🧪 Setting value to: "${testValue}"`)
         nameInput.value = testValue
-        
+
         // Test if updateFormData works
         console.log("🧪 Testing updateFormData()...")
         updateFormData()
         console.log("🧪 formData.fullName after updateFormData:", formData.fullName)
-        
+
         // Test if debounced function works
         console.log("🧪 Testing debouncedUpdatePreview()...")
         debouncedUpdatePreview()
-        
+
         // Test manual event dispatch
         console.log("🧪 Testing manual event dispatch...")
-        const inputEvent = new Event('input', { bubbles: true })
+        const inputEvent = new Event("input", {bubbles: true})
         nameInput.dispatchEvent(inputEvent)
-        
+
         // Test change event
-        const changeEvent = new Event('change', { bubbles: true })
+        const changeEvent = new Event("change", {bubbles: true})
         nameInput.dispatchEvent(changeEvent)
-        
+
         // Test keyup event
-        const keyupEvent = new Event('keyup', { bubbles: true })
+        const keyupEvent = new Event("keyup", {bubbles: true})
         nameInput.dispatchEvent(keyupEvent)
-        
+
         // Wait and check results
         setTimeout(() => {
           console.log("🧪 Final formData.fullName:", formData.fullName)
           console.log("🧪 Expected:", testValue)
           console.log("🧪 Match:", formData.fullName === testValue)
-          
+
           // Check if preview was updated
           const previewName = document.querySelector(".preview-content h1")
           if (previewName) {
             console.log("🧪 Preview name:", previewName.textContent)
           }
         }, 1000)
-        
+
         return {
           inputFound: true,
           testValue: testValue,
