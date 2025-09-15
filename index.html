@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" data-theme="dark">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -109,6 +109,36 @@
         --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
       }
 
+      /* Explicit light theme (not default). Apply via <html data-theme="light"> */
+      [data-theme="light"] {
+        --color-background: #f7f9fc;
+        --color-surface: #ffffff;
+        --color-surface-light: #f3f6fb;
+        --color-text: #0f172a; /* slate-900 */
+        --color-text-light: #334155; /* slate-700 */
+        --color-text-muted: #64748b; /* slate-500 */
+        --color-border: #e2e8f0; /* slate-200 */
+        --color-hover: #eef2f7;
+        --primary-color: #1a5490;
+        /* iOS/macOS 2026-inspired elevations */
+        --surface-0: rgba(255, 255, 255, 0.65);
+        --surface-1: rgba(255, 255, 255, 0.75);
+        --surface-2: rgba(255, 255, 255, 0.85);
+        --surface-3: rgba(255, 255, 255, 0.95);
+        --blur-amount: 18px;
+        --border-alpha: rgba(15, 23, 42, 0.08);
+        --shadow-xs: 0 0.5px 1px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+        --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.06);
+        --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08);
+        --shadow-lg: 0 10px 24px rgba(15, 23, 42, 0.12);
+        --gradient-sky: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(246, 249, 255, 0.9) 100%
+        );
+        --tint-blue: #2563eb;
+      }
+
       [data-theme="dark"] {
         --color-background: #1a1a1a;
         --color-surface: #2d2d2d;
@@ -126,6 +156,72 @@
 
       .theme-transitioning * {
         transition: all 0.3s ease;
+      }
+
+      /* Light theme component styles (iOS/macOS look) */
+      [data-theme="light"] .header {
+        background: var(--gradient-sky);
+        color: var(--color-text);
+        border-bottom: 1px solid var(--border-alpha);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(var(--blur-amount));
+        -webkit-backdrop-filter: blur(var(--blur-amount));
+      }
+
+      [data-theme="light"] .control-panel,
+      [data-theme="light"] .preview-section {
+        background: var(--surface-2);
+        border: 1px solid var(--border-alpha);
+        box-shadow: var(--shadow-xs);
+        backdrop-filter: blur(var(--blur-amount));
+        -webkit-backdrop-filter: blur(var(--blur-amount));
+      }
+
+      [data-theme="light"] .mobile-menu-panel {
+        background: var(--surface-3);
+        border-left: 1px solid var(--border-alpha);
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(var(--blur-amount));
+        -webkit-backdrop-filter: blur(var(--blur-amount));
+      }
+
+      [data-theme="light"] .btn {
+        background: var(--surface-1);
+        color: var(--color-text);
+        border: 1px solid var(--border-alpha);
+        box-shadow: var(--shadow-xs);
+      }
+
+      [data-theme="light"] .btn:hover {
+        background: var(--surface-2);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+      }
+
+      [data-theme="light"] .btn-primary {
+        background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+        color: #fff;
+        border: 1px solid rgba(37, 99, 235, 0.35);
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+      }
+
+      [data-theme="light"] .btn-primary:hover {
+        background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+        box-shadow: 0 8px 20px rgba(29, 78, 216, 0.28);
+      }
+
+      [data-theme="light"] .btn-secondary {
+        background: var(--surface-1);
+        border: 1px solid var(--border-alpha);
+      }
+
+      [data-theme="light"] .preview-container::before {
+        background: rgba(15, 23, 42, 0.06);
+      }
+
+      [data-theme="light"] .document-page {
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
       }
 
       /* Dark theme */
@@ -158,6 +254,16 @@
         padding: 0;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Responsive base font sizing for overall UI (does not change A4 content layout) */
+      html {
+        font-size: clamp(14px, 1.05vw, 16px);
+      }
+      @media (max-width: 480px) {
+        html {
+          font-size: 14px;
+        }
       }
 
       /* Typography */
@@ -195,6 +301,36 @@
         max-width: 1600px;
         margin: 0 auto;
         padding: var(--spacing-md);
+        display: grid;
+        grid-template-rows: auto 1fr auto; /* header | main | footer */
+        gap: var(--spacing-md);
+        min-height: 100vh; /* pin footer to bottom without overlap */
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: calc(var(--spacing-sm) + 4px);
+        }
+      }
+
+      /* Ensure main takes flexible space within grid without overflow issues */
+      main {
+        min-height: 0; /* allows child flex/overflow layouts to work inside grid */
+        display: block;
+      }
+
+      /* Stabilize preview section to reduce reflow during async content */
+      .preview-section {
+        content-visibility: auto;
+        contain-intrinsic-size: 800px 1200px; /* reserve reasonable space until rendered */
+      }
+
+      /* Footer baseline styles */
+      .footer {
+        border-top: 1px solid var(--color-border);
+        color: var(--color-text-light);
+        text-align: center;
+        padding: var(--spacing-md) 0;
       }
 
       .header {
@@ -240,6 +376,25 @@
         font-size: 1.2rem;
         z-index: 1000;
         transition: all 0.3s ease;
+      }
+
+      /* Візуальна підказка для сендвіч-меню на малих екранах */
+      @keyframes pulse-ring {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+        }
+        70% {
+          box-shadow: 0 0 0 12px rgba(255, 255, 255, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        }
+      }
+
+      .mobile-menu-btn.hint {
+        animation: pulse-ring 1.8s infinite;
+        outline: 2px solid rgba(255, 255, 255, 0.8);
+        outline-offset: 2px;
       }
 
       .mobile-menu-btn:hover {
@@ -768,7 +923,6 @@
           width: 100%;
         }
       }
-
       @media (max-width: 480px) {
         .btn-group {
           flex-direction: column;
@@ -785,7 +939,7 @@
       /* Preview section */
       .preview-section {
         background: var(--color-surface);
-
+        padding: var(--spacing-xl);
         border-radius: var(--border-radius-lg);
         box-shadow: var(--shadow-sm);
         height: 100%;
@@ -816,7 +970,7 @@
 
       .preview-content {
         /* A4 пропорції: 210x297mm або 1:1.414 */
-        aspect-ratio: 210 / 297mm;
+        aspect-ratio: 210 / 297;
         max-width: 100%;
         width: 100%;
         border: 1px solid var(--color-border);
@@ -831,15 +985,69 @@
         margin: 0 auto;
         display: flex;
         flex-direction: column;
+        /* Покращена адаптивність */
+        min-height: 400px;
+        max-height: 90vh;
+        overflow-x: hidden;
       }
 
-      /* Mobile preview improvements */
-      @media (max-width: 640px) {
+      /* Покращені адаптивні стилі для різних розмірів екранів */
+
+      /* Великі екрани (Desktop) - 1400px+ */
+      @media (min-width: 1400px) {
         .preview-content {
+          max-width: 800px;
+          aspect-ratio: 210 / 297;
+          padding: 30px;
+          font-size: 12pt;
+          line-height: 1.6;
+        }
+      }
+
+      /* Середні екрани (Desktop/Tablet) - 1200px-1399px */
+      @media (max-width: 1399px) and (min-width: 1200px) {
+        .preview-content {
+          max-width: 700px;
+          aspect-ratio: 210 / 297;
+          padding: 25px;
+          font-size: 11pt;
+          line-height: 1.5;
+        }
+      }
+
+      /* Планшети в landscape - 992px-1199px */
+      @media (max-width: 1199px) and (min-width: 992px) {
+        .preview-content {
+          max-width: 600px;
+          aspect-ratio: 210 / 297;
+          padding: 20px;
+          font-size: 11pt;
+          line-height: 1.5;
+          max-height: 85vh;
+        }
+      }
+
+      /* Планшети в portrait - 768px-991px */
+      @media (max-width: 991px) and (min-width: 768px) {
+        .preview-content {
+          max-width: 500px;
+          aspect-ratio: 210 / 297;
+          padding: 18px;
+          font-size: 10pt;
+          line-height: 1.4;
+          max-height: 80vh;
+        }
+      }
+
+      /* Мобільні телефони - 640px-767px */
+      @media (max-width: 767px) and (min-width: 640px) {
+        .preview-content {
+          max-width: 100%;
           aspect-ratio: 210 / 297;
           padding: var(--spacing-md);
           font-size: var(--font-size-sm);
           line-height: 1.5;
+          max-height: 75vh;
         }
 
         .preview-content h1 {
@@ -872,11 +1080,14 @@
         }
       }
 
-      @media (max-width: 480px) {
+      /* Малі мобільні телефони - 480px-639px */
+      @media (max-width: 639px) and (min-width: 480px) {
         .preview-content {
           aspect-ratio: 210 / 297;
           padding: var(--spacing-sm);
           font-size: var(--font-size-sm);
+          max-height: 70vh;
+          line-height: 1.4;
         }
 
         .preview-content h1 {
@@ -892,6 +1103,53 @@
         .preview-content h3 {
           font-size: 1rem;
           margin-bottom: var(--spacing-sm);
+        }
+      }
+
+      /* Дуже малі екрани - до 479px */
+      @media (max-width: 479px) {
+        .preview-content {
+          aspect-ratio: 210 / 297;
+          padding: 12px;
+          font-size: 9pt;
+          max-height: 65vh;
+          line-height: 1.3;
+          /* Для дуже малих екранів можна змінити пропорції */
+          aspect-ratio: 3 / 4; /* Більш квадратний формат для малих екранів */
+        }
+
+        .preview-content h1 {
+          font-size: 1.1rem;
+          margin-bottom: 8px;
+          line-height: 1.2;
+        }
+
+        .preview-content h2 {
+          font-size: 1rem;
+          margin-bottom: 6px;
+          line-height: 1.2;
+        }
+
+        .preview-content h3 {
+          font-size: 0.9rem;
+          margin-bottom: 6px;
+          line-height: 1.2;
+        }
+
+        .preview-content p {
+          margin-bottom: 6px;
+          line-height: 1.3;
+        }
+
+        .preview-content ul,
+        .preview-content ol {
+          margin-bottom: 6px;
+          padding-left: 16px;
+        }
+
+        .preview-content li {
+          margin-bottom: 3px;
+          line-height: 1.3;
         }
       }
 
@@ -1046,12 +1304,18 @@
         page-break-after: always;
         overflow: hidden;
         display: block;
-        transform: scale(0.85); /* Оптимальний розмір для відображення */
+        transform: var(--page-scale, scale(0.85)); /* Пропорційне масштабування без зсуву */
         transform-origin: top center;
         margin-left: auto;
         margin-right: auto;
         z-index: 1;
+        /* Покращена адаптивність */
+        max-width: 100%;
+        box-sizing: border-box;
       }
+
+      /* Адаптивні стилі для .document-page на різних екранах */
+      /* Масштабування керується змінною --page-scale; не змінюємо width, щоб уникнути зсувів */
 
       /* Емуляція друку для прев'ю, щоб розбиття збігалось з PDF */
       .document-page.print-like {
@@ -1107,6 +1371,35 @@
         gap: 30px;
         align-items: center;
         min-height: 100vh;
+        /* Покращена адаптивність */
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+      }
+
+      /* Контейнер, що масштабує сторінки пропорційно без зсуву */
+      /* Видалено scale-wrapper: масштабуємо напряму .document-page через --page-scale */
+
+      /* Адаптивні стилі для .preview-container */
+      @media (max-width: 1200px) {
+        .preview-container {
+          padding: 15px;
+          gap: 20px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .preview-container {
+          padding: 10px;
+          gap: 15px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .preview-container {
+          padding: 5px;
+          gap: 10px;
+        }
       }
 
       /* Темна тема - фон між сторінками залишається світлим */
@@ -1423,7 +1716,6 @@
         text-align: left;
         margin-top: 8mm;
       }
-
       .document-preview .subject {
         font-weight: bold;
         margin: 15mm 0;
@@ -1548,6 +1840,17 @@
         margin-left: -15px;
         margin-right: -15px;
         margin-top: 25px;
+        margin-bottom: 10px;
+      }
+
+      /* Обмежуємо ширину контенту під синіми заголовками */
+      .resume-style-modern-professional .document-preview h2 + *,
+      .resume-style-modern-professional .document-preview h2 + p,
+      .resume-style-modern-professional .document-preview h2 + ul,
+      .resume-style-modern-professional .document-preview h2 + div {
+        max-width: calc(100% - 30px);
+        margin-left: 0;
+        margin-right: 0;
       }
 
       /* 2. Мінімалістичний */
@@ -1754,6 +2057,17 @@
         padding: 10px 15px;
         margin-left: -15px;
         margin-right: -15px;
+        margin-bottom: 10px;
+      }
+
+      /* Обмежуємо ширину контенту під синіми заголовками */
+      .resume-style-corporate-clean .document-preview h2 + *,
+      .resume-style-corporate-clean .document-preview h2 + p,
+      .resume-style-corporate-clean .document-preview h2 + ul,
+      .resume-style-corporate-clean .document-preview h2 + div {
+        max-width: calc(100% - 30px);
+        margin-left: 0;
+        margin-right: 0;
       }
 
       /* 9. Стартап сміливий */
@@ -2160,12 +2474,11 @@
 
       /* Header Data Buttons */
       .header-data-buttons {
-        display: flex;
-        gap: var(--spacing-sm);
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
         margin-top: var(--spacing-md);
-        justify-content: center;
-        flex-wrap: wrap;
-        align-items: center;
+        align-items: stretch;
         width: 100%;
         max-width: 1200px;
         margin-left: auto;
@@ -2177,12 +2490,13 @@
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         color: #495057;
         border: 2px solid #e9ecef;
-        padding: var(--spacing-sm) var(--spacing-md);
+        padding: 12px 14px;
         font-size: var(--font-size-base);
         border-radius: 12px;
         font-weight: 600;
         transition: all 0.3s ease;
-        min-width: 90px;
+        min-width: unset;
+        min-height: 44px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
@@ -2190,6 +2504,8 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         position: relative;
         overflow: hidden;
+        width: 100%;
+        justify-content: center;
       }
 
       .btn-print::before {
@@ -2202,7 +2518,6 @@
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
         transition: left 0.5s ease;
       }
-
       .btn-print:hover::before {
         left: 100%;
       }
@@ -2251,96 +2566,49 @@
       /* Mobile styles for header buttons */
       @media (max-width: 768px) {
         .header-data-buttons {
-          gap: var(--spacing-sm);
-          margin-top: var(--spacing-md);
-          padding: 0 var(--spacing-md);
-          width: 100%;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 8px;
+          padding: 0 var(--spacing-sm);
           max-width: 100%;
         }
-
         .header-data-buttons .btn-print {
-          min-width: 70px;
-          padding: var(--spacing-sm) var(--spacing-md);
-          font-size: 0.9rem;
+          font-size: 0.95rem;
           border-radius: 10px;
-          flex: 1;
-          max-width: calc(25% - var(--spacing-sm));
-        }
-
-        .header-data-buttons .btn-print span {
-          display: none;
         }
       }
 
       @media (max-width: 640px) {
         .header-data-buttons {
-          gap: var(--spacing-xs);
-          margin-top: var(--spacing-sm);
-          padding: 0 var(--spacing-sm);
-          flex-wrap: wrap;
-          justify-content: center;
-          width: 100%;
+          gap: 6px;
         }
-
         .header-data-buttons .btn-print {
-          min-width: 60px;
-          padding: var(--spacing-sm);
-          font-size: 0.85rem;
-          border-radius: 8px;
-          flex: 1;
-          max-width: calc(25% - var(--spacing-xs));
-        }
-
-        .header-data-buttons .btn-print span {
-          display: none;
+          font-size: 0.9rem;
+          border-radius: 10px;
+          padding: 12px 10px;
         }
       }
 
       @media (max-width: 480px) {
         .header-data-buttons {
-          gap: 4px;
-          margin-top: var(--spacing-sm);
+          gap: 6px;
           padding: 0 8px;
-          flex-wrap: wrap;
-          justify-content: center;
-          width: 100%;
         }
-
         .header-data-buttons .btn-print {
-          min-width: 50px;
-          padding: var(--spacing-xs) var(--spacing-sm);
-          font-size: 0.8rem;
-          border-radius: 6px;
-          flex: 1;
-          max-width: calc(25% - 4px);
-        }
-
-        .header-data-buttons .btn-print span {
-          display: none;
+          font-size: 0.9rem;
+          border-radius: 10px;
+          padding: 12px 8px;
         }
       }
 
       @media (max-width: 360px) {
         .header-data-buttons {
-          gap: 2px;
-          margin-top: var(--spacing-xs);
+          gap: 4px;
           padding: 0 4px;
-          flex-wrap: wrap;
-          justify-content: center;
-          width: 100%;
         }
-
         .header-data-buttons .btn-print {
-          min-width: 45px;
-          padding: 6px 8px;
-          font-size: 0.75rem;
-          border-radius: 5px;
-          flex: 1;
-          max-width: calc(25% - 2px);
-        }
-
-        .header-data-buttons .btn-print span {
-          display: none;
+          font-size: 0.85rem;
+          padding: 10px 8px;
+          border-radius: 8px;
         }
       }
 
@@ -2582,6 +2850,24 @@
         cursor: pointer;
       }
 
+      /* Large tablets and small desktops */
+      @media (max-width: 1500px) {
+        .main-content {
+          grid-template-columns: 1fr;
+          gap: var(--spacing-lg);
+        }
+
+        .form-section,
+        .preview-section {
+          padding: var(--spacing-lg);
+        }
+        /* Компактний прев'ю */
+        .preview-section {
+          order: -1; /* Переносимо прев'ю вгору на мобільних */
+          margin-bottom: 20px;
+        }
+      }
+
       /* Responsive design */
 
       /* Large tablets and small desktops */
@@ -2594,6 +2880,11 @@
         .form-section,
         .preview-section {
           padding: var(--spacing-lg);
+        }
+        /* Компактний прев'ю */
+        .preview-section {
+          order: -1; /* Переносимо прев'ю вгору на мобільних */
+          margin-bottom: 20px;
         }
       }
 
@@ -2634,6 +2925,11 @@
         .preview-tab {
           flex: 1;
           min-width: 120px;
+        }
+        /* Компактний прев'ю */
+        .preview-section {
+          order: -1; /* Переносимо прев'ю вгору на мобільних */
+          margin-bottom: 20px;
         }
       }
 
@@ -2800,6 +3096,11 @@
         .btn-group .btn {
           flex: 1;
         }
+        /* Компактний прев'ю */
+        .preview-section {
+          order: -1; /* Переносимо прев'ю вгору на мобільних */
+          margin-bottom: 20px;
+        }
       }
 
       /* Мобільне меню - покращений дизайн */
@@ -2915,7 +3216,7 @@
       }
     </style>
   </head>
-  <body data-theme="dark">
+  <body>
     <div class="container">
       <header class="header">
         <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu öffnen"> ☰ </button>
@@ -3719,7 +4020,10 @@ Anlagen:
           const savedData = localStorage.getItem("resumeFormData")
           if (savedData) {
             const parsedData = JSON.parse(savedData)
-            if (parsedData.formData && parsedData.formData.position === "Station Service Angestellter") {
+            if (
+              parsedData.formData &&
+              parsedData.formData.position === "Station Service Angestellter"
+            ) {
               parsedData.formData.position = ""
               localStorage.setItem("resumeFormData", JSON.stringify(parsedData))
               console.log("Видалено небажаний текст 'Station Service Angestellter' з localStorage")
@@ -4246,7 +4550,6 @@ Anlagen:
           showStatus(errorMessage, "error")
         }
       }
-
       // Show current JSON data info
       async function showCurrentDataInfo() {
         const currentLang = currentLanguage || "uk"
@@ -4398,13 +4701,14 @@ Anlagen:
           root.style.setProperty("--color-border", "#404040")
           root.style.setProperty("--color-hover", "#3a3a3a")
         } else {
-          root.style.setProperty("--color-background", "#ffffff")
-          root.style.setProperty("--color-surface", "#f8fafc")
-          root.style.setProperty("--color-text", "#1f2937")
-          root.style.setProperty("--color-text-light", "#6b7280")
-          root.style.setProperty("--color-text-muted", "#9ca3af")
-          root.style.setProperty("--color-border", "#e5e7eb")
-          root.style.setProperty("--color-hover", "#f3f4f6")
+          // Узгоджено з CSS [data-theme="light"]
+          root.style.setProperty("--color-background", "#f7f9fc")
+          root.style.setProperty("--color-surface", "#ffffff")
+          root.style.setProperty("--color-text", "#0f172a")
+          root.style.setProperty("--color-text-light", "#334155")
+          root.style.setProperty("--color-text-muted", "#64748b")
+          root.style.setProperty("--color-border", "#e2e8f0")
+          root.style.setProperty("--color-hover", "#eef2f7")
         }
       }
 
@@ -4919,6 +5223,8 @@ Anlagen:
 
           // Update preview with current data using the active tab
           await showPreview(activeTab)
+          // Recalculate proportional scale after preview updates
+          setTimeout(updatePageScaleVar, 0)
           console.log("✅ Preview updated successfully")
         } catch (error) {
           console.error("❌ Error in updatePreviewOnInput:", error)
@@ -4930,7 +5236,6 @@ Anlagen:
         console.log("🔄 ⚡ REAL-TIME debouncedUpdatePreview called")
         updatePreviewOnInput()
       }, 150) // Зменшили з 300ms до 150ms для швидшого відгуку пагінації
-
       // Photo upload functionality
       function initializePhotoUpload() {
         console.log("=== initializePhotoUpload called ===")
@@ -5700,7 +6005,6 @@ Anlagen:
           return wrapInPage(htmlContent, 1)
         }
       }
-
       // Покращена пагінація: складання сторінок у прихованій A4-рамці (з точними полями)
       function performFrameBasedPagination(htmlContent, activeTab) {
         console.log("📄 🧠 FRAME-based A4 pagination starting…")
@@ -6267,9 +6571,6 @@ Anlagen:
                       </div>
                       <div class="name-container">
                         <h1>${lebenslaufFullName.toUpperCase()}</h1>
-                        <div class="header-info">
-                          ${position}
-                        </div>
                       </div>
                     </div>
 
@@ -6490,7 +6791,6 @@ Anlagen:
           showStatus(`Fehler: ${error.message}`, "error")
         }
       }
-
       // Print document function
       function printDocument() {
         console.log("printDocument function called")
@@ -7227,7 +7527,6 @@ Anlagen:
           showStatus(`PDF-Generierung fehlgeschlagen: ${error.message}`, "error")
         }
       }
-
       // Alternative PDF generation using print dialog
       function generatePDFAlternative(htmlContent, filename) {
         try {
@@ -7992,7 +8291,6 @@ Anlagen:
           await showPreview(currentActiveTab)
         }
       }
-
       // Translate form field values
       async function translateFormFields() {
         console.log("=== translateFormFields called ===")
@@ -8256,10 +8554,10 @@ Anlagen:
         updateThemeVariables(savedTheme)
 
         // Update theme toggle icon
-        const themeIcon = document.querySelector(".theme-icon")
-        if (themeIcon) {
-          themeIcon.textContent = savedTheme === "dark" ? "☀️" : "🌙"
-        }
+        const themeIcons = document.querySelectorAll(".theme-icon")
+        themeIcons.forEach(icon => {
+          icon.textContent = savedTheme === "dark" ? "☀️" : "🌙"
+        })
 
         // Add click event listener to theme toggle
         const themeToggle = document.getElementById("themeToggle")
@@ -8282,12 +8580,11 @@ Anlagen:
           document.documentElement.setAttribute("data-theme", newTheme)
           localStorage.setItem("theme", newTheme)
 
-          // Update icon
-          const themeIcon = document.querySelector(".theme-icon")
-          if (themeIcon) {
-            themeIcon.textContent = newTheme === "dark" ? "☀️" : "🌙"
-            console.log("Updated icon to:", themeIcon.textContent)
-          }
+          // Update all icons (header + mobile)
+          const themeIcons = document.querySelectorAll(".theme-icon")
+          themeIcons.forEach(icon => {
+            icon.textContent = newTheme === "dark" ? "☀️" : "🌙"
+          })
 
           // Update theme variables
           updateThemeVariables(newTheme)
@@ -8456,6 +8753,10 @@ Anlagen:
           mobileMenuBtn.innerHTML = "✕"
           document.body.style.overflow = "hidden"
 
+          // Після першого відкриття ховаємо підказку
+          mobileMenuBtn.classList.remove("hint")
+          localStorage.setItem("mobileMenuHintShown", "1")
+
           // Add animation
           setTimeout(() => {
             mobileMenuOverlay.classList.add("active")
@@ -8477,6 +8778,13 @@ Anlagen:
         // Event listeners
         mobileMenuBtn.addEventListener("click", toggleMobileMenu)
         mobileMenuOverlay.addEventListener("click", closeMobileMenu)
+
+        // Показати підказку один раз на малих екранах
+        if (window.innerWidth <= 640 && !localStorage.getItem("mobileMenuHintShown")) {
+          mobileMenuBtn.classList.add("hint")
+          // Авто-згасання підказки через 6 секунд, якщо не відкрили меню
+          setTimeout(() => mobileMenuBtn.classList.remove("hint"), 6000)
+        }
 
         // Close menu when clicking on mobile theme toggle
         if (mobileThemeToggle) {
@@ -8725,83 +9033,6 @@ Anlagen:
           return text
         }
       }
-
-      // Функція для перекладу вмісту поля вводу
-      async function translateInputField(element, targetLang) {
-        console.log(`🔍 translateInputField called with element:`, element)
-        console.log(`🔍 translateInputField called with targetLang:`, targetLang)
-
-        if (!element || !element.value) {
-          console.log(`🔍 translateInputField: element or value is missing`)
-          return
-        }
-
-        const originalText = element.value.trim()
-        if (originalText === "" || originalText.length < 2) {
-          console.log(`🔍 translateInputField: text too short: "${originalText}"`)
-          return
-        }
-
-        // Пропустити поля з датами, емейлами, телефонами
-        if (element.type === "email" || element.type === "tel" || element.type === "date") return
-        if (originalText.includes("@") || originalText.match(/^\+?[\d\s\-\(\)]+$/)) return
-
-        let isTranslating = false
-        // Зберігаємо оригінальні значення перед початком перекладу
-        const originalPlaceholder = element.placeholder || ""
-        const originalTitle = element.title || ""
-
-        // Додаткова діагностика
-        console.log(`🔍 translateInputField: originalTitle = "${originalTitle}"`)
-
-        try {
-          // Уникнути подвійного виконання
-          if (element.dataset.translating === "true") return
-          element.dataset.translating = "true"
-          isTranslating = true
-
-          // Показуємо індикатор завантаження
-          element.style.opacity = "0.7"
-          element.style.background = "#fff3cd"
-          element.title = "Переклад..."
-
-          const translatedText = await translateText(originalText, targetLang)
-
-          if (translatedText && translatedText !== originalText && translatedText.length > 1) {
-            element.value = translatedText
-
-            // Додати візуальну індикацію успішного перекладу
-            element.style.background = "#d1f2eb"
-            setTimeout(() => {
-              element.style.background = ""
-            }, 2000)
-
-            // Тригеримо подію для оновлення превью
-            element.dispatchEvent(new Event("input", {bubbles: true}))
-            console.log(`Translated: "${originalText}" -> "${translatedText}"`)
-          } else {
-            // Індикація що переклад не потрібен
-            element.style.background = "#f8f9fa"
-            setTimeout(() => {
-              element.style.background = ""
-            }, 1000)
-          }
-        } catch (error) {
-          console.log(`⚠️ Field translation error: ${error.message}`)
-          // Показати помилку
-          element.style.background = "#f8d7da"
-          setTimeout(() => {
-            element.style.background = ""
-          }, 2000)
-        } finally {
-          // Прибираємо індикатор завантаження
-          element.style.opacity = "1"
-          console.log(`🔍 Finally block: originalTitle = "${originalTitle}"`)
-          element.title = originalTitle || ""
-          element.dataset.translating = "false"
-        }
-      }
-
       // Функція для перекладу всіх текстових полів форми
       async function translateAllUserInputs(targetLang) {
         try {
@@ -8825,7 +9056,7 @@ Anlagen:
               return
             // Пропускаємо поля з номерами
             if (field.value.match(/^\d+$/) && field.value.length < 10) return
-            // Пропускаємо поля з адресами (містять цифри та короткі)
+            // Пропускаємо поля з адресами (містять цифри та коротші)
             if (field.value.match(/^\d+.*\d+/) && field.value.length < 20) return
             fieldsToTranslate.push(field)
           })
@@ -9015,6 +9246,9 @@ Anlagen:
         // Initialize mobile menu
         initializeMobileMenu()
 
+        // Initialize proportional page scale variable
+        updatePageScaleVar()
+
         // Try to load saved data first
         const dataLoaded = loadFormData()
 
@@ -9152,6 +9386,8 @@ Anlagen:
 
         // Show initial preview
         updatePreviewOnInput()
+        // Ensure scale is correct after initial render
+        setTimeout(updatePageScaleVar, 50)
 
         // Initialize form with default values and event listeners
         initializeForm()
@@ -9494,6 +9730,55 @@ Anlagen:
         }
       }
 
+      // Compute proportional A4 page scale so content stays positioned and only scales
+      function updatePageScaleVar() {
+        try {
+          const container = document.querySelector(".preview-container")
+          if (!container) return
+          const firstPage = container.querySelector(".document-page")
+          if (!firstPage) return
+
+          // Determine current scale applied to page
+          const cs = getComputedStyle(firstPage)
+          let currentScale = 1
+          const transform = cs.transform
+          if (transform && transform !== "none") {
+            const m = transform.match(/matrix\(([^)]+)\)/)
+            if (m) {
+              const parts = m[1].split(",").map(v => parseFloat(v.trim()))
+              if (!isNaN(parts[0])) currentScale = parts[0]
+            }
+          }
+          const rect = firstPage.getBoundingClientRect()
+          const naturalWidthPx = rect.width / currentScale
+          const naturalHeightPx = rect.height / currentScale
+
+          const availableWidth = container.clientWidth
+          const availableHeight = Math.max(0, window.innerHeight - 180)
+
+          const scaleByWidth = availableWidth / naturalWidthPx
+          const scaleByHeight =
+            availableHeight > 0 ? availableHeight / naturalHeightPx : scaleByWidth
+          const scale = Math.max(0.3, Math.min(0.95, Math.min(scaleByWidth, scaleByHeight)))
+
+          document.documentElement.style.setProperty("--page-scale", `scale(${scale})`)
+        } catch (e) {
+          console.warn("updatePageScaleVar failed:", e)
+        }
+      }
+
+      window.addEventListener("resize", () => {
+        updatePageScaleVar()
+      })
+
+      // Recalculate scale when the preview container size changes (sidebars/devtools/panels)
+      const __previewObserver = new ResizeObserver(() => {
+        updatePageScaleVar()
+      })
+      window.addEventListener("load", () => {
+        const c = document.querySelector(".preview-container")
+        if (c) __previewObserver.observe(c)
+      })
       // Debug function to analyze photo data overwriting issue
       window.debugPhotoOverwrite = function () {
         console.log("=== 🔍 ANALYZING PHOTO DATA OVERWRITING ===")
