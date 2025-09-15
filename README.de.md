@@ -21,7 +21,7 @@
 
 > Wenn dieser Generator Ihnen bei der Jobsuche geholfen hat, unterstützen Sie den Autor mit Kaffee! ☕
 
-# 📄 Bewerbung Document Generator
+# 📄 Bewerbung Dokument Generator
 
 Professioneller Bewerbungsdokument-Generator, optimiert für moderne Recruiting-Systeme 2025. Speziell konfiguriert für die Position **Mitarbeiter im Stationsservice** am Universitätsklinikum Magdeburg.
 
