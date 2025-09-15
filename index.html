@@ -1054,41 +1054,54 @@
         z-index: 1;
       }
 
-      /* Стилі для автоматично створених сторінок пагінацією */
+      /* Стилі для двох сторінок A4 */
       .document-page.page-1,
-      .document-page.page-2,
-      .document-page.page-3,
-      .document-page.page-4,
-      .document-page.page-5 {
-        margin-bottom: 40px; /* Збільшений відступ між сторінками */
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
+      .document-page.page-2 {
+        margin-bottom: 30px; /* Відступ між сторінками */
+        display: block;
+        position: relative;
+        background: #ffffff;
+        border: 1px solid #e1e8ed;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
       }
 
-      /* Покращене розташування контенту на сторінках */
+      /* Контент сторінки */
       .document-page .document-preview {
         height: 100%;
         overflow: visible;
-        display: flex;
-        flex-direction: column;
+        display: block;
+        padding: 25mm 20mm; /* Стандартні відступи A4 */
+        min-height: 247mm; /* Висота A4 мінус відступи */
+        box-sizing: border-box;
       }
 
-      /* Номер сторінки в правому нижньому куті для другої та наступних сторінок */
-      .document-page:not(.page-1)::after {
-        content: counter(page-number);
-        counter-increment: page-number;
+      /* Номер сторінки для другої сторінки */
+      .document-page.page-2::after {
+        content: "2";
         position: absolute;
         bottom: 15mm;
-        right: 15mm;
+        right: 20mm;
         font-size: 10pt;
         color: #666;
-        font-family: 'Times New Roman', serif;
+        font-family: "Times New Roman", serif;
+        z-index: 10;
       }
 
-      /* Ініціалізація лічильника сторінок */
-      #previewContent {
-        counter-reset: page-number 1;
+      /* Контейнер превью з правильним фоном */
+      .preview-container {
+        background: #f5f5f5 !important; /* Світло-сірий фон між сторінками */
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      /* Темна тема - фон між сторінками залишається світлим */
+      [data-theme="dark"] .preview-container {
+        background: #f5f5f5 !important;
       }
 
       /* Візуальний розрив між сторінками A4 - як горизонтальні марджини */
@@ -3583,7 +3596,7 @@ Anlagen:
       // Form data management
       let formData = {}
       let globalPhotoData = null // Global variable to store photo data
-      let currentPreviewType = "bewerbung" // Track current preview type
+      let currentPreviewType = "lebenslauf" // Track current preview type - default to lebenslauf as shown in photo
 
       // Save form data to localStorage
       function saveFormData() {
@@ -5293,15 +5306,31 @@ Anlagen:
       // Function to get current active form tab
       function getCurrentActiveTab() {
         const activeTab = document.querySelector(".form-tab-button.active")
+        console.log("Active tab element:", activeTab)
         if (activeTab) {
           const onclickAttr = activeTab.getAttribute("onclick")
-          if (onclickAttr.includes("bewerbung")) {
+          console.log("Active tab onclick:", onclickAttr)
+          if (onclickAttr && onclickAttr.includes("bewerbung")) {
             return "bewerbung"
-          } else if (onclickAttr.includes("lebenslauf")) {
+          } else if (onclickAttr && onclickAttr.includes("lebenslauf")) {
             return "lebenslauf"
           }
         }
-        return "bewerbung" // default
+
+        // Якщо не знайдено активну вкладку, перевіряємо яка вкладка видима
+        const lebenslaufSection = document.getElementById("lebenslaufSection")
+        const bewerbungSection = document.getElementById("bewerbungForm")
+
+        if (lebenslaufSection && lebenslaufSection.style.display !== "none") {
+          console.log("Lebenslauf section is visible, returning lebenslauf")
+          return "lebenslauf"
+        } else if (bewerbungSection && bewerbungSection.style.display !== "none") {
+          console.log("Bewerbung section is visible, returning bewerbung")
+          return "bewerbung"
+        }
+
+        console.log("No active tab found, defaulting to lebenslauf")
+        return "lebenslauf" // default to lebenslauf as shown in photo
       }
 
       // Function to get current form values dynamically based on active tab
@@ -5356,61 +5385,88 @@ Anlagen:
         return currentValues
       }
 
-      // Функція для автоматичної пагінації контенту
-      function paginateContent(htmlContent) {
+      // Функція для інтелектуальної пагінації контенту з заповненням сторінок по символах
+      function createTwoPageLayout(htmlContent) {
+        console.log("📄 Creating intelligent paginated layout")
+
         const CHARACTERS_PER_PAGE = 3000 // Максимальна кількість символів на сторінку Word A4
+
+        // Підрахунок символів у контенті (без HTML тегів)
         const tempDiv = document.createElement('div')
         tempDiv.innerHTML = htmlContent
         const textContent = tempDiv.textContent || tempDiv.innerText || ''
 
-        console.log('📄 Paginating content. Total characters:', textContent.length)
+        console.log('📄 Total characters in content:', textContent.length)
 
+        // Якщо контент поміщається на одну сторінку
         if (textContent.length <= CHARACTERS_PER_PAGE) {
           console.log('📄 Content fits on one page')
-          return '<div class="document-page page-1">' + htmlContent + '</div>'
+          return `
+            <div class="document-page page-1">
+              <div class="document-preview">
+                ${htmlContent}
+              </div>
+            </div>
+          `
         }
 
-        // Розділимо контент на логічні блоки (заголовки, параграфи, секції)
-        const contentBlocks = htmlContent.split(/(<h[1-6][^>]*>.*?<\/h[1-6]>|<p[^>]*>.*?<\/p>|<div[^>]*>.*?<\/div>|<ul[^>]*>.*?<\/ul>|<style[^>]*>.*?<\/style>)/gi).filter(block => block.trim() !== '')
-        let currentPageContent = ''
-        let currentPageLength = 0
-        let pageCount = 1
-        let paginatedContent = '<div class="document-page page-1">'
+        // Розбиваємо HTML на логічні блоки для розподілу між сторінками
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(`<div>${htmlContent}</div>`, 'text/html')
+        const container = doc.querySelector('div')
+        const elements = Array.from(container.children)
 
-        for (let i = 0; i < contentBlocks.length; i++) {
-          const block = contentBlocks[i] || ''
-          const blockText = block.replace(/<[^>]*>/g, '').trim() // Видаляємо HTML теги для підрахунку символів
+        let firstPageElements = []
+        let secondPageElements = []
+        let currentPageChars = 0
+        let isFirstPage = true
 
-          // Пропускаємо порожні блоки
-          if (!blockText && !block.includes('<style')) {
-            continue
+        // Спочатку витягуємо стилі для першої сторінки
+        const styleElement = elements.find(el => el.tagName === 'STYLE')
+        if (styleElement) {
+          firstPageElements.push(styleElement.outerHTML)
+        }
+
+        // Розподіляємо елементи між сторінками
+        elements.forEach((element) => {
+          if (element.tagName === 'STYLE') return // Стилі вже додані
+
+          const elementText = element.textContent || element.innerText || ''
+          const elementChars = elementText.length
+
+          // Якщо додавання цього елементу перевищить ліміт першої сторінки
+          if (isFirstPage && (currentPageChars + elementChars > CHARACTERS_PER_PAGE) && currentPageChars > 500) {
+            console.log('📄 Moving to page 2, current chars:', currentPageChars, 'element chars:', elementChars)
+            isFirstPage = false
+            currentPageChars = 0
           }
 
-          // Якщо це стилі, завжди додаємо на першу сторінку
-          if (block.includes('<style')) {
-            if (pageCount === 1) {
-              paginatedContent += block
-            }
-            continue
-          }
-
-          // Якщо додавання цього блоку перевищить ліміт сторінки
-          if (currentPageLength + blockText.length > CHARACTERS_PER_PAGE && currentPageLength > 500) {
-            // Закриваємо поточну сторінку і відкриваємо нову
-            paginatedContent += '</div><div class="document-page page-' + (++pageCount) + '">'
-            currentPageLength = blockText.length
-            console.log('📄 Creating page', pageCount, 'with content length:', blockText.length)
+          if (isFirstPage) {
+            firstPageElements.push(element.outerHTML)
+            currentPageChars += elementChars
           } else {
-            currentPageLength += blockText.length
+            secondPageElements.push(element.outerHTML)
           }
+        })
 
-          paginatedContent += block
-        }
+        const result = `
+          <div class="document-page page-1">
+            <div class="document-preview">
+              ${firstPageElements.join('')}
+            </div>
+          </div>
+          <div class="document-page page-2">
+            <div class="document-preview">
+              ${secondPageElements.join('')}
+            </div>
+          </div>
+        `
 
-        paginatedContent += '</div>'
-        console.log('📄 Total pages created:', pageCount)
+        console.log('📄 Created 2 pages with intelligent distribution')
+        console.log('📄 Page 1 elements:', firstPageElements.length)
+        console.log('📄 Page 2 elements:', secondPageElements.length)
 
-        return paginatedContent
+        return result
       }
 
       async function showPreview(type) {
@@ -5562,8 +5618,9 @@ Anlagen:
                     </div>
                 `
 
-            // Використовуємо функцію пагінації для автоматичного розбиття на сторінки
-            document.getElementById("previewContent").innerHTML = paginateContent(bewerbungContent)
+            // Використовуємо функцію розбиття на дві сторінки A4
+            document.getElementById("previewContent").innerHTML =
+              createTwoPageLayout(bewerbungContent)
           } else if (previewType === "lebenslauf") {
             console.log("Generating lebenslauf preview")
 
@@ -5595,7 +5652,6 @@ Anlagen:
             const additional = values.lebenslaufAdditional || ""
             // Створюємо HTML контент для lebenslauf з стилями
             const lebenslaufContent = `
-                  <div class="document-page">
                   <div class="document-preview">
                     <style>
                       .document-preview h1 {
@@ -5791,11 +5847,9 @@ Anlagen:
                     </ul>
 
                     </div>
-                    </div>
                   </div>
                   
-                  <div class="document-page">
-                    <div class="document-preview">
+                  <div class="document-preview">
                     <h2>${getTranslation("lebenslaufHeaders.workExperience") || "BERUFSERFAHRUNG"}</h2>
                     <div class="experience-item">
                       <div style="white-space: pre-line;">${experience}</div>
@@ -5820,11 +5874,12 @@ Anlagen:
                     <div class="date-info">
                       Magdeburg, ${new Date().toLocaleDateString("de-DE", {year: "numeric", month: "long"})}
                     </div>
-                    </div>
+                  </div>
                 `
 
-            // Використовуємо функцію пагінації для автоматичного розбиття на сторінки
-            document.getElementById("previewContent").innerHTML = paginateContent(lebenslaufContent)
+            // Використовуємо функцію розбиття на дві сторінки A4
+            document.getElementById("previewContent").innerHTML =
+              createTwoPageLayout(lebenslaufContent)
           }
         } catch (error) {
           console.error("Error in showPreview:", error)
