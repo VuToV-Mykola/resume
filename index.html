@@ -3713,6 +3713,29 @@ Anlagen:
         return null
       }
 
+      // Функція для видалення небажаного тексту "Station Service Angestellter" з localStorage
+      function removeUnwantedPositionText() {
+        try {
+          const savedData = localStorage.getItem("resumeFormData")
+          if (savedData) {
+            const parsedData = JSON.parse(savedData)
+            if (parsedData.formData && parsedData.formData.position === "Station Service Angestellter") {
+              parsedData.formData.position = ""
+              localStorage.setItem("resumeFormData", JSON.stringify(parsedData))
+              console.log("Видалено небажаний текст 'Station Service Angestellter' з localStorage")
+
+              // Також очистити поле в формі, якщо воно заповнене цим текстом
+              const positionField = document.getElementById("position")
+              if (positionField && positionField.value === "Station Service Angestellter") {
+                positionField.value = ""
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Помилка при видаленні небажаного тексту:", error)
+        }
+      }
+
       // Load data from JSON files based on current language and tab
       async function loadDataFromJSON() {
         try {
@@ -5152,6 +5175,9 @@ Anlagen:
       function initializeForm() {
         // Try to load saved data first
         const dataLoaded = loadFormData()
+
+        // Видаляємо небажаний текст "Station Service Angestellter"
+        removeUnwantedPositionText()
 
         if (!dataLoaded) {
           // If no saved data, initialize with form values
@@ -8991,6 +9017,9 @@ Anlagen:
 
         // Try to load saved data first
         const dataLoaded = loadFormData()
+
+        // Видаляємо небажаний текст "Station Service Angestellter"
+        removeUnwantedPositionText()
 
         // Initialize form tabs
         console.log("Initializing form tabs with currentPreviewType:", currentPreviewType)
