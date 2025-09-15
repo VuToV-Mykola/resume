@@ -7116,8 +7116,8 @@ Anlagen:
           document.documentElement.lang = newLang
 
           // Update active language flag
-          const languageFlags = document.querySelectorAll(".language-flag")
-          languageFlags.forEach(flag => {
+          const activeLanguageFlags = document.querySelectorAll(".language-flag")
+          activeLanguageFlags.forEach(flag => {
             flag.classList.remove("active")
             if (flag.getAttribute("data-lang") === newLang) {
               flag.classList.add("active")
@@ -8177,8 +8177,8 @@ Anlagen:
         document.documentElement.lang = "de"
 
         // Update active language flag
-        const languageFlags = document.querySelectorAll(".language-flag")
-        languageFlags.forEach(flag => {
+        const initLanguageFlags = document.querySelectorAll(".language-flag")
+        initLanguageFlags.forEach(flag => {
           flag.classList.remove("active")
           if (flag.getAttribute("data-lang") === "de") {
             flag.classList.add("active")
@@ -8245,13 +8245,13 @@ Anlagen:
         initializePhotoUpload()
 
         // Add click handlers for language flags
-        const languageFlags = document.querySelectorAll(".language-flag")
-        languageFlags.forEach(flag => {
+        const clickLanguageFlags = document.querySelectorAll(".language-flag")
+        clickLanguageFlags.forEach(flag => {
           flag.addEventListener("click", function () {
             const lang = this.getAttribute("data-lang")
 
             // Update active flag
-            languageFlags.forEach(f => f.classList.remove("active"))
+            clickLanguageFlags.forEach(f => f.classList.remove("active"))
             this.classList.add("active")
 
             // Change language
