@@ -244,5 +244,22 @@
     "documents": "📄 Документи",
     "actions": "⚡ Дії",
     "data": "💾 Дані"
+  },
+  "style": {
+    "selector": "Стиль резюме:",
+    "modern-professional": "Сучасний професійний",
+    "minimalist": "Мінімалістичний",
+    "creative-blue": "Креативний синій",
+    "elegant-serif": "Елегантний серіф",
+    "tech-modern": "Технологічний",
+    "classic-formal": "Класичний офіційний",
+    "artistic-gradient": "Художній градієнт",
+    "corporate-clean": "Корпоративний чистий",
+    "startup-bold": "Стартап сміливий",
+    "academic-traditional": "Академічний традиційний"
+  },
+  "layout": {
+    "single": "Одна колонка",
+    "two": "Дві колонки"
   }
 }

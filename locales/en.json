@@ -54,19 +54,19 @@
     "email": "vutov_nikola@icloud.com",
     "birthDate": "19.12.1985",
     "nationality": "Ukrainian",
-    "position": "Station Service Employee",
+    "position": "Employee",
     "company": "University Hospital Magdeburg A.ö.R.",
     "jobNumber": "",
     "contactName": "Mr. Frank Güllmeister",
     "contactAddress": "",
     "contactPhone": "",
     "contactEmail": "",
-    "subject": "Application for Station Service Employee Position",
+    "subject": "Application for Employee Position",
     "greeting": "Dear Mr. Frank Güllmeister,",
     "date": "Magdeburg, 14.09.2025",
     "jobNumberLabel": "Your Advertisement No.:",
     "jobNumberValue": "",
-    "position": "Station Service Employee",
+    "position": "Employee",
     "fullName": "Mykola Vutov",
     "birthDate": "19.12.1985",
     "address": "Am Unterhorstweg 1B, 39122 Magdeburg",
@@ -225,7 +225,7 @@
     "tasks": "The tasks mentioned in your posting - from food service to courier services and hygienic processing - exactly match my abilities. I understand the importance of these tasks for patient well-being and am ready to work with great care and empathy.",
     "future": "I find your offer of training opportunities and the prospect of a secure workplace particularly appealing. I am motivated to continuously develop and become a long-term part of your team.",
     "availability": "I am available immediately and am flexible regarding working hours. I would be very happy about the opportunity to present myself in a personal interview.",
-    "subject": "Application as Station Service Employee",
+    "subject": "Application as Employee",
     "closing": "Thank you in advance for your response!",
     "signature": "Sincerely,\n\n\n\nMykola Vutov\n\nAttachments:\n- Resume\n- Certificates"
   },
@@ -244,5 +244,22 @@
     "documents": "📄 Documents",
     "actions": "⚡ Actions",
     "data": "💾 Data"
+  },
+  "style": {
+    "selector": "Resume Style:",
+    "modern-professional": "Modern Professional",
+    "minimalist": "Minimalist",
+    "creative-blue": "Creative Blue",
+    "elegant-serif": "Elegant Serif",
+    "tech-modern": "Tech Modern",
+    "classic-formal": "Classic Formal",
+    "artistic-gradient": "Artistic Gradient",
+    "corporate-clean": "Corporate Clean",
+    "startup-bold": "Startup Bold",
+    "academic-traditional": "Academic Traditional"
+  },
+  "layout": {
+    "single": "Single Column",
+    "two": "Two Columns"
   }
 }

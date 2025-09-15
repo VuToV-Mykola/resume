@@ -34,7 +34,7 @@ Professioneller Bewerbungsdokument-Generator, optimiert für moderne Recruiting-
 - **💾 Mehrere Formate**: HTML, PDF, DOCX-Generierung
 - **🔄 Echtzeit-Vorschau**: Live-Vorschau der Dokumente während der Eingabe
 - **📋 Formularvalidierung**: Umfassende Formularvalidierung und Fehlerbehandlung
-- **🎯 Stationsservice-Fokus**: Speziell für Gesundheitspositionen zugeschnitten
+- **🎯 Gesundheitswesen-Fokus**: Speziell für Gesundheitspositionen zugeschnitten
 - **🤖 Google Translate**: Automatische Übersetzung von Formularfeldern
 - **💾 Lokale Speicherung**: Automatisches Speichern von Daten im Browser
 

@@ -34,7 +34,7 @@ Professional job application document generator optimized for modern recruiting 
 - **💾 Multiple Formats**: HTML, PDF, DOCX generation
 - **🔄 Real-time Preview**: Live preview of documents as you type
 - **📋 Form Validation**: Comprehensive form validation and error handling
-- **🎯 Station Service Focus**: Specifically tailored for healthcare positions
+- **🎯 Healthcare Focus**: Specifically tailored for healthcare positions
 - **🤖 Google Translate**: Automatic translation of form fields
 - **💾 Local Storage**: Automatic data saving in browser
 

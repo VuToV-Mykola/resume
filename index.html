@@ -119,79 +119,6 @@
         --color-hover: #3a3a3a;
       }
 
-      /* Молочний бекграунд превью для темної теми */
-      [data-theme="dark"] .preview-container {
-        background: linear-gradient(
-          135deg,
-          #f8f6f0 0%,
-          #faf8f3 25%,
-          #fcfaf5 50%,
-          #fefcf7 75%,
-          #fffef9 100%
-        );
-        border: 1px solid rgba(248, 246, 240, 0.8);
-        box-shadow:
-          0 8px 25px rgba(0, 0, 0, 0.15),
-          0 4px 12px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.9),
-          inset 0 0 20px rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-      }
-
-      [data-theme="dark"] .preview-section {
-        background: linear-gradient(135deg, #2d2d2d 0%, #333333 100%);
-        border: 1px solid #404040;
-      }
-
-      [data-theme="dark"] .preview-section h2 {
-        color: #ffffff;
-        border-bottom-color: #404040;
-      }
-
-      /* Паперовий ефект для документів в темній темі */
-      [data-theme="dark"] .document-page {
-        background: linear-gradient(
-          135deg,
-          #ffffff 0%,
-          #fefefe 25%,
-          #fdfdfd 50%,
-          #fcfcfc 75%,
-          #fbfbfb 100%
-        );
-        border: none;
-        box-shadow:
-          0 15px 35px rgba(0, 0, 0, 0.25),
-          0 8px 20px rgba(0, 0, 0, 0.15),
-          0 4px 8px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 1),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-        border-radius: 12px;
-      }
-
-      /* Покращені візуальні індикатори для темної теми */
-      [data-theme="dark"] .document-page:not(:last-child)::after {
-        background: linear-gradient(
-          90deg,
-          transparent 0%,
-          rgba(59, 130, 246, 0.2) 20%,
-          rgba(59, 130, 246, 0.4) 40%,
-          rgba(59, 130, 246, 0.6) 50%,
-          rgba(59, 130, 246, 0.4) 60%,
-          rgba(59, 130, 246, 0.2) 80%,
-          transparent 100%
-        );
-        box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
-        height: 8px;
-      }
-
-      [data-theme="dark"] .document-page::before {
-        background: rgba(59, 130, 246, 0.1);
-        border-color: rgba(59, 130, 246, 0.2);
-        color: rgba(59, 130, 246, 0.8);
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
-      }
-
       /* Theme transition */
       .theme-transitioning {
         transition: all 0.3s ease;
@@ -1106,104 +1033,169 @@
         padding: var(--spacing-sm) var(--spacing-md);
       }
 
-      /* Document preview styles */
-      .preview-container {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        align-items: center;
-        padding: 20px;
-        overflow-y: visible;
-        max-height: none;
-        width: 100%;
-      }
-
       .document-page {
         width: 210mm;
         min-height: 297mm;
         max-height: 297mm;
         background: white;
-        padding: 20mm;
+        padding: 25mm 20mm; /* Стандартні поля A4 */
         border: 1px solid #ddd;
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
         position: relative;
-        margin-bottom: 20px;
+        margin-bottom: 0;
         page-break-after: always;
         overflow: hidden;
         display: block;
+        transform: scale(0.85); /* Оптимальний розмір для відображення */
+        transform-origin: top center;
+        margin-left: auto;
+        margin-right: auto;
+        z-index: 1;
       }
 
-      /* Візуальне розділення сторінок по вертикалі */
-      .document-page::before {
-        content: "";
+      /* Стилі для автоматично створених сторінок пагінацією */
+      .document-page.page-1,
+      .document-page.page-2,
+      .document-page.page-3,
+      .document-page.page-4,
+      .document-page.page-5 {
+        margin-bottom: 40px; /* Збільшений відступ між сторінками */
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+
+      /* Покращене розташування контенту на сторінках */
+      .document-page .document-preview {
+        height: 100%;
+        overflow: visible;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Номер сторінки в правому нижньому куті для другої та наступних сторінок */
+      .document-page:not(.page-1)::after {
+        content: counter(page-number);
+        counter-increment: page-number;
         position: absolute;
-        left: -10px;
-        top: 10%;
-        bottom: 10%;
-        width: 2px;
-        background: linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(26, 84, 144, 0.1) 10%,
-          rgba(26, 84, 144, 0.3) 50%,
-          rgba(26, 84, 144, 0.1) 90%,
-          transparent 100%
-        );
-        border-radius: 1px;
+        bottom: 15mm;
+        right: 15mm;
+        font-size: 10pt;
+        color: #666;
+        font-family: 'Times New Roman', serif;
       }
 
-      .document-page::after {
-        content: "";
-        position: absolute;
-        right: -10px;
-        top: 10%;
-        bottom: 10%;
-        width: 2px;
-        background: linear-gradient(
-          180deg,
-          transparent 0%,
-          rgba(26, 84, 144, 0.1) 10%,
-          rgba(26, 84, 144, 0.3) 50%,
-          rgba(26, 84, 144, 0.1) 90%,
-          transparent 100%
-        );
-        border-radius: 1px;
+      /* Ініціалізація лічильника сторінок */
+      #previewContent {
+        counter-reset: page-number 1;
       }
 
-      /* Додаткові візуальні індикатори сторінок */
-      .document-page:not(:first-child)::before {
-        content: "";
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        width: 40px;
-        height: 2px;
-        transform: translateX(-50%);
-        background: linear-gradient(
-          90deg,
-          transparent 0%,
-          rgba(26, 84, 144, 0.4) 50%,
-          transparent 100%
-        );
-        border-radius: 1px;
-      }
-
+      /* Візуальний розрив між сторінками A4 - як горизонтальні марджини */
       .document-page:not(:last-child)::after {
         content: "";
         position: absolute;
-        bottom: -10px;
-        left: 50%;
-        width: 40px;
-        height: 2px;
-        transform: translateX(-50%);
-        background: linear-gradient(
-          90deg,
-          transparent 0%,
-          rgba(26, 84, 144, 0.4) 50%,
-          transparent 100%
-        );
-        border-radius: 1px;
+        bottom: -20px;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: #e0e0e0;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 0;
+      }
+
+      /* Для темної теми */
+      [data-theme="dark"] .document-page:not(:last-child)::after {
+        background: #e0e0e0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Розрив перед другою сторінкою */
+      .document-page:not(:first-child)::before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: #e0e0e0;
+        border-radius: 8px 8px 0 0;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 0;
+      }
+
+      /* Для темної теми - розрив перед другою сторінкою */
+      [data-theme="dark"] .document-page:not(:first-child)::before {
+        background: #e0e0e0;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Номери сторінок */
+      .document-page::after {
+        counter-increment: page-counter;
+        content: "Сторінка " counter(page-counter);
+        position: absolute;
+        bottom: -45px;
+        right: 15mm;
+        font-size: 9pt;
+        color: rgba(26, 84, 144, 0.6);
+        font-weight: 500;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 2px 6px;
+        border-radius: 8px;
+        border: 1px solid rgba(26, 84, 144, 0.1);
+        z-index: 2;
+      }
+
+      .preview-container {
+        counter-reset: page-counter;
+      }
+
+      /* Візуальне розділення на дві сторінки A4 для превью */
+      .preview-container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        align-items: center;
+        padding: 40px 20px;
+        background: #f5f5f5;
+        min-height: calc(100vh - 100px);
+        overflow-y: visible;
+        max-height: none;
+        width: 100%;
+        position: relative;
+      }
+
+      /* Сірий контейнер під сторінками */
+      .preview-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #e0e0e0;
+        z-index: -1;
+        border-radius: 12px;
+        margin: 20px;
+      }
+
+      /* Стилі для темної теми - два блоки A4 з марджинами */
+      [data-theme="dark"] .preview-container {
+        background: #f5f5f5;
+        gap: 30px;
+      }
+
+      [data-theme="dark"] .preview-container::before {
+        background: #e0e0e0;
+      }
+
+      [data-theme="dark"] .document-page {
+        background: white;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 0 auto;
       }
 
       /* Автоматичне розділення на сторінки */
@@ -1227,55 +1219,6 @@
 
       .document-page:last-child {
         margin-bottom: 40px;
-      }
-
-      /* Візуальний розрив між сторінками A4 */
-      .document-page {
-        margin-bottom: 35px;
-        border-radius: 12px;
-        position: relative;
-      }
-
-      .document-page:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        bottom: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100px;
-        height: 6px;
-        background: linear-gradient(
-          90deg,
-          transparent 0%,
-          rgba(26, 84, 144, 0.15) 20%,
-          rgba(26, 84, 144, 0.3) 40%,
-          rgba(26, 84, 144, 0.4) 50%,
-          rgba(26, 84, 144, 0.3) 60%,
-          rgba(26, 84, 144, 0.15) 80%,
-          transparent 100%
-        );
-        border-radius: 3px;
-        box-shadow: 0 2px 4px rgba(26, 84, 144, 0.1);
-      }
-
-      /* Номери сторінок */
-      .document-page::before {
-        counter-increment: page-counter;
-        content: "Сторінка " counter(page-counter);
-        position: absolute;
-        bottom: -30px;
-        right: 15mm;
-        font-size: 11px;
-        color: rgba(26, 84, 144, 0.6);
-        font-weight: 500;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 2px 8px;
-        border-radius: 12px;
-        border: 1px solid rgba(26, 84, 144, 0.1);
-      }
-
-      .preview-container {
-        counter-reset: page-counter;
       }
 
       .document-preview {
@@ -1311,8 +1254,15 @@
         }
       }
 
-      /* Стандартні відступи для друку */
+      /* Стандартні відступи для друку - БЕЗ A4 розділення */
       @media print {
+        .preview-container {
+          background: transparent !important;
+          gap: 0 !important;
+          padding: 0 !important;
+          display: block !important;
+        }
+
         .document-page {
           padding: 20mm 15mm;
           margin: 0;
@@ -1320,10 +1270,14 @@
           box-shadow: none;
           border-radius: 0;
           page-break-after: always;
+          width: auto;
+          min-height: auto;
+          max-height: none;
         }
-        .preview-container {
-          padding: 0;
-          gap: 0;
+
+        .document-page::before,
+        .document-page::after {
+          display: none !important;
         }
       }
 
@@ -2837,20 +2791,6 @@
           height: 1px;
         }
 
-        [data-theme="dark"] .preview-container {
-          background: linear-gradient(135deg, #f5f3ef 0%, #f8f6f2 50%, #faf8f4 100%);
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          margin: 8px;
-          padding: 12px;
-        }
-
-        [data-theme="dark"] .document-page {
-          box-shadow:
-            0 8px 20px rgba(0, 0, 0, 0.2),
-            0 4px 8px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
         /* Пливаюча кнопка для генерації */
         .floating-generate-btn {
           position: fixed;
@@ -2949,16 +2889,28 @@
         <div class="resume-style-selector">
           <label for="resumeStyle" data-translate="style.selector">Стиль резюме:</label>
           <select id="resumeStyle" class="style-dropdown">
-            <option value="modern-professional">Сучасний професійний</option>
-            <option value="minimalist">Мінімалістичний</option>
-            <option value="creative-blue">Креативний синій</option>
-            <option value="elegant-serif">Елегантний серіф</option>
-            <option value="tech-modern">Технологічний</option>
-            <option value="classic-formal">Класичний офіційний</option>
-            <option value="artistic-gradient">Художній градієнт</option>
-            <option value="corporate-clean">Корпоративний чистий</option>
-            <option value="startup-bold">Стартап сміливий</option>
-            <option value="academic-traditional">Академічний традиційний</option>
+            <option value="modern-professional" data-translate="style.modern-professional"
+              >Modern professionell</option
+            >
+            <option value="minimalist" data-translate="style.minimalist">Minimalistisch</option>
+            <option value="creative-blue" data-translate="style.creative-blue">Kreativ blau</option>
+            <option value="elegant-serif" data-translate="style.elegant-serif"
+              >Elegant serif</option
+            >
+            <option value="tech-modern" data-translate="style.tech-modern">Tech modern</option>
+            <option value="classic-formal" data-translate="style.classic-formal"
+              >Klassisch formal</option
+            >
+            <option value="artistic-gradient" data-translate="style.artistic-gradient"
+              >Künstlerisch Gradient</option
+            >
+            <option value="corporate-clean" data-translate="style.corporate-clean"
+              >Corporate sauber</option
+            >
+            <option value="startup-bold" data-translate="style.startup-bold">Startup mutig</option>
+            <option value="academic-traditional" data-translate="style.academic-traditional"
+              >Akademisch traditionell</option
+            >
           </select>
           <div class="layout-toggle">
             <label>
@@ -5404,6 +5356,63 @@ Anlagen:
         return currentValues
       }
 
+      // Функція для автоматичної пагінації контенту
+      function paginateContent(htmlContent) {
+        const CHARACTERS_PER_PAGE = 3000 // Максимальна кількість символів на сторінку Word A4
+        const tempDiv = document.createElement('div')
+        tempDiv.innerHTML = htmlContent
+        const textContent = tempDiv.textContent || tempDiv.innerText || ''
+
+        console.log('📄 Paginating content. Total characters:', textContent.length)
+
+        if (textContent.length <= CHARACTERS_PER_PAGE) {
+          console.log('📄 Content fits on one page')
+          return '<div class="document-page page-1">' + htmlContent + '</div>'
+        }
+
+        // Розділимо контент на логічні блоки (заголовки, параграфи, секції)
+        const contentBlocks = htmlContent.split(/(<h[1-6][^>]*>.*?<\/h[1-6]>|<p[^>]*>.*?<\/p>|<div[^>]*>.*?<\/div>|<ul[^>]*>.*?<\/ul>|<style[^>]*>.*?<\/style>)/gi).filter(block => block.trim() !== '')
+        let currentPageContent = ''
+        let currentPageLength = 0
+        let pageCount = 1
+        let paginatedContent = '<div class="document-page page-1">'
+
+        for (let i = 0; i < contentBlocks.length; i++) {
+          const block = contentBlocks[i] || ''
+          const blockText = block.replace(/<[^>]*>/g, '').trim() // Видаляємо HTML теги для підрахунку символів
+
+          // Пропускаємо порожні блоки
+          if (!blockText && !block.includes('<style')) {
+            continue
+          }
+
+          // Якщо це стилі, завжди додаємо на першу сторінку
+          if (block.includes('<style')) {
+            if (pageCount === 1) {
+              paginatedContent += block
+            }
+            continue
+          }
+
+          // Якщо додавання цього блоку перевищить ліміт сторінки
+          if (currentPageLength + blockText.length > CHARACTERS_PER_PAGE && currentPageLength > 500) {
+            // Закриваємо поточну сторінку і відкриваємо нову
+            paginatedContent += '</div><div class="document-page page-' + (++pageCount) + '">'
+            currentPageLength = blockText.length
+            console.log('📄 Creating page', pageCount, 'with content length:', blockText.length)
+          } else {
+            currentPageLength += blockText.length
+          }
+
+          paginatedContent += block
+        }
+
+        paginatedContent += '</div>'
+        console.log('📄 Total pages created:', pageCount)
+
+        return paginatedContent
+      }
+
       async function showPreview(type) {
         try {
           // Determine preview type based on active tab if not specified
@@ -5511,7 +5520,8 @@ Anlagen:
               contactName
             })
 
-            document.getElementById("previewContent").innerHTML = `
+            // Створюємо HTML контент для bewerbung
+            const bewerbungContent = `
                   <div class="document-preview">
                     <div class="sender-section">
                       <div class="sender-info">
@@ -5549,8 +5559,11 @@ Anlagen:
                       <p style="white-space: pre-line;">${signature}</p>
                     </div>
 
-                  </div>
+                    </div>
                 `
+
+            // Використовуємо функцію пагінації для автоматичного розбиття на сторінки
+            document.getElementById("previewContent").innerHTML = paginateContent(bewerbungContent)
           } else if (previewType === "lebenslauf") {
             console.log("Generating lebenslauf preview")
 
@@ -5580,7 +5593,9 @@ Anlagen:
             const certifications = values.lebenslaufCertifications || ""
             const languages = values.lebenslaufLanguages || ""
             const additional = values.lebenslaufAdditional || ""
-            document.getElementById("previewContent").innerHTML = `
+            // Створюємо HTML контент для lebenslauf з стилями
+            const lebenslaufContent = `
+                  <div class="document-page">
                   <div class="document-preview">
                     <style>
                       .document-preview h1 {
@@ -5775,6 +5790,12 @@ Anlagen:
                       <li>${skills}</li>
                     </ul>
 
+                    </div>
+                    </div>
+                  </div>
+                  
+                  <div class="document-page">
+                    <div class="document-preview">
                     <h2>${getTranslation("lebenslaufHeaders.workExperience") || "BERUFSERFAHRUNG"}</h2>
                     <div class="experience-item">
                       <div style="white-space: pre-line;">${experience}</div>
@@ -5800,8 +5821,10 @@ Anlagen:
                       Magdeburg, ${new Date().toLocaleDateString("de-DE", {year: "numeric", month: "long"})}
                     </div>
                     </div>
-                  </div>
                 `
+
+            // Використовуємо функцію пагінації для автоматичного розбиття на сторінки
+            document.getElementById("previewContent").innerHTML = paginateContent(lebenslaufContent)
           }
         } catch (error) {
           console.error("Error in showPreview:", error)
@@ -5812,6 +5835,46 @@ Anlagen:
                   </div>
                 `
         }
+      }
+
+      // Функція для розрахунку кількості рядків тексту
+      function calculateTextLines(text, maxWidth = 170) {
+        if (!text) return 0
+
+        // Приблизний розрахунок: 1 символ ≈ 0.6mm при 11pt шрифті
+        const charsPerLine = Math.floor(maxWidth / 0.6)
+        const lines = Math.ceil(text.length / charsPerLine)
+
+        // Мінімум 1 рядок для непустого тексту
+        return Math.max(1, lines)
+      }
+
+      // Функція для розподілу контенту на сторінки (42 рядки на сторінку)
+      function distributeContentToPages(content, maxLinesPerPage = 42) {
+        const pages = []
+        let currentPageLines = 0
+        let currentPageContent = []
+
+        for (const section of content) {
+          const sectionLines = section.lines
+
+          // Якщо секція не поміщається на поточну сторінку
+          if (currentPageLines + sectionLines > maxLinesPerPage && currentPageContent.length > 0) {
+            pages.push(currentPageContent)
+            currentPageContent = []
+            currentPageLines = 0
+          }
+
+          currentPageContent.push(section)
+          currentPageLines += sectionLines
+        }
+
+        // Додаємо останню сторінку
+        if (currentPageContent.length > 0) {
+          pages.push(currentPageContent)
+        }
+
+        return pages
       }
 
       // Generate documents (Vanilla JS version)
