@@ -389,6 +389,174 @@
         padding: var(--spacing-sm) var(--spacing-md);
       }
 
+      /* iPhone 11 Action Buttons Grid */
+      .iphone-action-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 12px;
+        padding: 16px;
+        background: var(--color-surface);
+        border-radius: 16px;
+        margin: 16px 0;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .iphone-action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 8px;
+        border: none;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        min-height: 80px;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* Material Design Colors for Dark Theme */
+      [data-theme="dark"] .iphone-action-btn {
+        background: var(--color-surface-light);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+      }
+
+      [data-theme="dark"] .iphone-action-btn:hover {
+        background: var(--color-primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      [data-theme="dark"] .iphone-action-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Material Design Colors for Light Theme */
+      [data-theme="light"] .iphone-action-btn {
+        background: #ffffff;
+        color: #333333;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      [data-theme="light"] .iphone-action-btn:hover {
+        background: #1976d2;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+      }
+
+      [data-theme="light"] .iphone-action-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(25, 118, 210, 0.2);
+      }
+
+      .iphone-action-btn .btn-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .iphone-action-btn .btn-text {
+        font-size: 12px;
+        text-align: center;
+        line-height: 1.2;
+        font-weight: 500;
+      }
+
+      /* Specific button colors */
+      .iphone-action-btn.create {
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+      }
+
+      .iphone-action-btn.pdf {
+        background: linear-gradient(135deg, #f44336, #d32f2f);
+        color: white;
+      }
+
+      .iphone-action-btn.word {
+        background: linear-gradient(135deg, #2196f3, #1976d2);
+        color: white;
+      }
+
+      .iphone-action-btn.print {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+      }
+
+      .iphone-action-btn.save {
+        background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+        color: white;
+      }
+
+      .iphone-action-btn.load {
+        background: linear-gradient(135deg, #00bcd4, #0097a7);
+        color: white;
+      }
+
+      .iphone-action-btn.clear {
+        background: linear-gradient(135deg, #607d8b, #455a64);
+        color: white;
+      }
+
+      .iphone-action-btn.info {
+        background: linear-gradient(135deg, #795548, #5d4037);
+        color: white;
+      }
+
+      /* iPhone 11 specific responsive design */
+      @media (max-width: 414px) {
+        .iphone-action-grid {
+          gap: 10px;
+          padding: 12px;
+        }
+        
+        .iphone-action-btn {
+          min-height: 70px;
+          padding: 12px 6px;
+        }
+        
+        .iphone-action-btn .btn-icon {
+          font-size: 20px;
+          margin-bottom: 6px;
+        }
+        
+        .iphone-action-btn .btn-text {
+          font-size: 11px;
+        }
+      }
+
+      @media (max-width: 375px) {
+        .iphone-action-grid {
+          gap: 8px;
+          padding: 10px;
+        }
+        
+        .iphone-action-btn {
+          min-height: 65px;
+          padding: 10px 4px;
+        }
+        
+        .iphone-action-btn .btn-icon {
+          font-size: 18px;
+          margin-bottom: 4px;
+        }
+        
+        .iphone-action-btn .btn-text {
+          font-size: 10px;
+        }
+      }
+
       .control-panel {
         background: var(--color-surface);
         padding: var(--spacing-lg);
@@ -2699,69 +2867,74 @@
 
         <div class="mobile-menu-section">
           <h4 data-translate="mobile.actions">⚡ Aktionen</h4>
-          <div class="mobile-menu-buttons">
+          <div class="iphone-action-grid">
             <button
-              class="btn btn-success"
+              class="iphone-action-btn create"
               onclick="generateDocuments()"
-              data-translate="buttons.generateDocuments">
-              📄 <span data-translate="buttons.create">Створити</span>
+              data-translate="buttons.generateDocuments"
+              title="Створити всі документи">
+              <span class="btn-icon">📄</span>
+              <span class="btn-text" data-translate="buttons.create">Створити</span>
             </button>
             <button
-              class="btn btn-danger"
+              class="iphone-action-btn pdf"
               onclick="generatePDFOnly()"
-              data-translate="buttons.createPDF">
-              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iMiIgZmlsbD0iI0VFMzMzNiIvPgo8cGF0aCBkPSJNNS41IDYuNUg4LjVWOC41SDUuNVY2LjVaTTUuNSA5LjVIOC41VjExLjVINS41VjkuNVpNNS41IDEyLjVIOC41VjE0LjVINS41VjEyLjVaTTEwLjUgNi41SDEzLjVWOC41SDEwLjVWNi41Wk0xMC41IDkuNUgxMy41VjExLjVIMTAuNVY5LjVaTTEwLjUgMTIuNUgxMy41VjE0LjVIMTAuNVYxMi41WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+" alt="PDF" style="width: 20px; height: 20px; margin-right: 5px;"> <span data-translate="buttons.pdf">PDF</span>
+              data-translate="buttons.createPDF"
+              title="Створити PDF документ">
+              <span class="btn-icon">📄</span>
+              <span class="btn-text" data-translate="buttons.pdf">PDF</span>
             </button>
             <button
-              class="btn btn-info"
+              class="iphone-action-btn word"
               onclick="generateDOCXOnly()"
-              data-translate="buttons.createWord">
-              <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iMiIgZmlsbD0iIzJCNzM5NiIvPgo8dGV4dCB4PSIxMCIgeT0iMTQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5XPC90ZXh0Pgo8L3N2Zz4=" alt="Word" style="width: 20px; height: 20px; margin-right: 5px;"> <span data-translate="buttons.word">Word</span>
+              data-translate="buttons.createWord"
+              title="Створити Word документ">
+              <span class="btn-icon">📝</span>
+              <span class="btn-text" data-translate="buttons.word">Word</span>
             </button>
             <button
-              class="btn btn-secondary"
+              class="iphone-action-btn print"
               onclick="printDocument()"
-              data-translate="buttons.printDocument">
-              🖨️ <span data-translate="buttons.print">Друк</span>
+              data-translate="buttons.printDocument"
+              title="Друкувати документ">
+              <span class="btn-icon">🖨️</span>
+              <span class="btn-text" data-translate="buttons.print">Друк</span>
+            </button>
+            <button
+              class="iphone-action-btn save"
+              onclick="saveLebenslaufData()"
+              data-translate="buttons.saveForm"
+              title="Зберегти дані форми">
+              <span class="btn-icon">💾</span>
+              <span class="btn-text" data-translate="buttons.save">Зберегти</span>
+            </button>
+            <button
+              class="iphone-action-btn load"
+              onclick="loadDataFromJSON()"
+              data-translate="buttons.loadForm"
+              title="Завантажити дані форми">
+              <span class="btn-icon">📂</span>
+              <span class="btn-text" data-translate="buttons.load">Завантажити</span>
+            </button>
+            <button
+              class="iphone-action-btn clear"
+              onclick="clearAllCache()"
+              data-translate="buttons.clearForm"
+              title="Очистити форму">
+              <span class="btn-icon">🗑️</span>
+              <span class="btn-text" data-translate="buttons.clear">Очистити</span>
+            </button>
+            <button
+              class="iphone-action-btn info"
+              onclick="showCurrentDataInfo()"
+              data-translate="buttons.showInfo"
+              title="Показати інформацію про дані">
+              <span class="btn-icon">ℹ️</span>
+              <span class="btn-text" data-translate="buttons.info">Інформація</span>
             </button>
           </div>
         </div>
 
-        <div class="mobile-menu-section">
-          <h4 data-translate="mobile.data">💾 Дані</h4>
-          <div class="mobile-menu-buttons">
-            <button
-              class="btn btn-success"
-              onclick="saveLebenslaufData()"
-              data-translate="buttons.saveForm">
-              💾 <span data-translate="buttons.save">Зберегти</span>
-            </button>
-            <button
-              class="btn btn-info"
-              onclick="loadDataFromJSON()"
-              data-translate="buttons.loadForm">
-              📂 <span data-translate="buttons.load">Завантажити</span>
-            </button>
-            <button
-              class="btn btn-warning"
-              onclick="clearAllCache()"
-              data-translate="buttons.clearCache">
-              🗑️ <span data-translate="buttons.clear">Очистити</span>
-            </button>
-            <button
-              class="btn btn-secondary"
-              onclick="showCurrentDataInfo()"
-              data-translate="buttons.currentData">
-              📄 <span data-translate="buttons.data">Дані</span>
-            </button>
-            <button
-              class="btn btn-info"
-              onclick="checkServerStatus()"
-              data-translate="buttons.checkServer">
-              🔍 <span data-translate="buttons.checkServer">Статус сервера</span>
-            </button>
-          </div>
-        </div>
       </div>
 
       <main class="main-content">
