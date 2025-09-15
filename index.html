@@ -1310,7 +1310,7 @@
         margin-right: auto;
         z-index: 1;
         /* Покращена адаптивність */
-        max-width: 100%;
+        max-width: none !important; /* не дозволяємо автостиснення елемента — масштабуємо тільки transform'ом */
         box-sizing: border-box;
       }
 
@@ -1374,7 +1374,7 @@
         /* Покращена адаптивність */
         max-width: 100%;
         box-sizing: border-box;
-        overflow-x: hidden;
+        overflow-x: auto; /* дозволити горизонтальний скрол якщо iOS WebView зменшує viewport */
       }
 
       /* Контейнер, що масштабує сторінки пропорційно без зсуву */
@@ -9745,11 +9745,15 @@ Anlagen:
           const naturalHeightPx = firstPage.offsetHeight
           firstPage.style.transform = prevTransform
 
-          const availableWidth = container.clientWidth
+          // Available width accounts for potential inner padding
+          const styles = getComputedStyle(container)
+          const paddingLeft = parseFloat(styles.paddingLeft) || 0
+          const paddingRight = parseFloat(styles.paddingRight) || 0
+          const availableWidth = container.clientWidth - paddingLeft - paddingRight
           // Try to fit vertically inside visible area of container section
           const containerRect = container.getBoundingClientRect()
           const viewportHeight = window.innerHeight || document.documentElement.clientHeight
-          const availableHeight = Math.max(0, viewportHeight - Math.max(160, containerRect.top))
+          const availableHeight = Math.max(0, viewportHeight - Math.max(140, containerRect.top))
 
           const scaleByWidth = availableWidth / naturalWidthPx
           const scaleByHeight =
