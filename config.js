@@ -50,7 +50,7 @@ const CONFIG = {
       AVAILABILITY:
         "Ich stehe Ihnen ab sofort zur Verfügung und bin flexibel bezüglich der Arbeitszeiten. Über die Möglichkeit, mich in einem persönlichen Gespräch vorstellen zu dürfen, würde ich mich sehr freuen.",
       CLOSING:
-        "Vielen Dank im Voraus für Ihre Antwort!\n\Mit freundlichen Grüßen\nMykola Vutov",
+        "Vielen Dank im Voraus für Ihre Antwort!\n\nMit freundlichen Grüßen\nMykola Vutov",
       SIGNATURE:
         "Anlagen:\n- Lebenslauf\n- Zeugnisse",
     },

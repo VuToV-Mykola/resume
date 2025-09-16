@@ -1053,6 +1053,37 @@
 
       /* Покращені адаптивні стилі для різних розмірів екранів */
 
+/* ===== Візуальні підписи ширини екрану для тестування в DevTools =====
+   Підпис автоматично показує:
+   - ширину viewport (window.innerWidth)
+   - ширину контейнера превью (preview-container.clientWidth)
+   - масштаб (--page-scale у відсотках)
+   Використовується для швидкої перевірки відповідності режиму DevTools -> друк -> великий екран.
+*/
+.screen-label {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  text-align: center;
+  background: rgba(0,0,0,0.03);
+  padding: 6px 12px;
+  border-radius: 10px;
+  display: inline-block;
+  min-width: 280px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+/* Підписи breakpoint-ів (коментарі поруч з @media) */
+/* 375px  — very small phones */
+/* 414px  — typical modern phones (iPhone 11/12/13) */
+/* 480px  — small phones */
+/* 640px  — larger phones / phablets */
+/* 768px  — tablets portrait */
+/* 992px  — tablets landscape / small laptops */
+/* 1200px — laptops */
+/* 1400px — large desktops */
+
+
       /* Великі екрани (Desktop) - 1400px+ */
       @media (min-width: 1400px) {
         .preview-content {
@@ -9901,7 +9932,7 @@ Anlagen:
           const rawScale = Math.min(scaleByWidth, scaleByHeight)
           const scale = Math.max(0.22, Math.min(1, rawScale * 0.96))
 
-          document.documentElement.style.setProperty("--page-scale", `scale(${scale})`)
+          document.documentElement.style.setProperty("--page-scale", String(scale))
         } catch (e) {
           console.warn("updatePageScaleVar failed:", e)
         }
@@ -9928,7 +9959,108 @@ Anlagen:
       window.addEventListener("load", () => {
         const c = document.querySelector(".preview-container")
         if (c) {
-          __previewMutObserver.observe(c, {childList: true, subtree: true})
+          __previewMutObserver.observe(c, {childList: true, subtree: true});
+      
+  // ===== РОЗШИРЕНА СИНХРОНІЗАЦІЯ ТА АННОТАЦІЯ ЕКРАНУ =====
+  /* 
+    1) updateScreenLabel - відображає поточний viewport, container width та масштаб
+    2) attachFormSync - підключає події input/focus до полів форми для синхронізації прев'ю
+    3) applyInputToPreview - намагається знайти елемент у прев'ю для певного name/id та оновити його
+  */
+
+  function getBreakpointName(width) {
+    if (width <= 375) return 'xx-small (≤375px)';
+    if (width <= 414) return 'small-phone (≤414px)';
+    if (width <= 480) return 'small (≤480px)';
+    if (width <= 640) return 'mobile (≤640px)';
+    if (width <= 768) return 'tablet-portrait (≤768px)';
+    if (width <= 992) return 'tablet-landscape (≤992px)';
+    if (width <= 1199) return 'laptop (≤1199px)';
+    if (width <= 1399) return 'desktop (≤1399px)';
+    return 'large-desktop (≥1400px)';
+  }
+
+  function updateScreenLabel(availableWidth, scale) {
+    try {
+      const container = document.querySelector('.preview-container');
+      if (!container) return;
+      let label = container.querySelector('.screen-label');
+      if (!label) {
+        label = document.createElement('div');
+        label.className = 'screen-label';
+        // Додаємо під preview-container, але перед сторінками для кращої видимості
+        container.insertAdjacentElement('afterend', label);
+      }
+      const vw = Math.round(window.innerWidth || document.documentElement.clientWidth);
+      const cW = Math.round(availableWidth || container.clientWidth);
+      const bp = getBreakpointName(vw);
+      label.innerHTML = `Viewport: <strong>${vw}px</strong> · Preview container: <strong>${cW}px</strong> · Scale: <strong>${Math.round(Number(scale)*100)}%</strong> · <em>[${bp}]</em>`;
+    } catch (e) {
+      console.warn('updateScreenLabel failed', e);
+    }
+  }
+
+  // Легка debounce-обгортка
+  function debounce(fn, ms){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; }
+
+  function applyInputToPreview(input) {
+    try {
+      if (!input || !input.name) return;
+      const name = input.name;
+      // Шукаємо відповідні елементи у документ-preview за data-field-name, id або класом
+      const previewRoot = document.querySelector('.document-preview');
+      if (!previewRoot) return;
+      const selectors = [
+        `[data-field-name="${name}"]`,
+        `#${CSS.escape(name)}`,
+        `.${CSS.escape(name.replace(/\s+/g,'-'))}`
+      ];
+      let target = null;
+      for (const s of selectors) {
+        target = previewRoot.querySelector(s);
+        if (target) break;
+      }
+      if (!target) return;
+      // Оновлення текстового вмісту (в ідеалі структури прев'ю мають відповідати name полів)
+      if (input.type === 'checkbox' || input.type === 'radio') {
+        target.textContent = input.checked ? (input.value || '✓') : '';
+      } else {
+        target.textContent = input.value;
+      }
+      // Після оновлення запустити перерахунок масштабу і пагінацію
+      requestAnimationFrame(()=>{ updatePageScaleVar(); });
+    } catch (e) {
+      console.warn('applyInputToPreview error', e);
+    }
+  }
+
+  function attachFormSync() {
+    try {
+      const inputs = document.querySelectorAll('input[name], textarea[name], select[name]');
+      if (!inputs || !inputs.length) return;
+      const debouncedApply = debounce((el)=>applyInputToPreview(el), 120);
+      inputs.forEach(inp=>{
+        inp.addEventListener('input', ()=>debouncedApply(inp), {passive:true});
+        // при зміні (change) теж
+        inp.addEventListener('change', ()=>{ applyInputToPreview(inp); }, {passive:true});
+        inp.addEventListener('focus', ()=>{ 
+          // при фокусі спробувати скролити прев'ю до відповідного елемента
+          const previewRoot = document.querySelector('.document-preview');
+          if (!previewRoot) return;
+          const target = previewRoot.querySelector(`[data-field-name="${inp.name}"], #${CSS.escape(inp.name)}`);
+          if (target && typeof target.scrollIntoView === 'function') {
+            try { target.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){ target.scrollIntoView(); }
+          }
+        });
+      });
+    } catch(e) { console.warn('attachFormSync failed', e); }
+  }
+
+  // Запускаємо attachFormSync після load
+  window.addEventListener('load', function(){ 
+    try { attachFormSync(); } catch(e){ console.warn(e); }
+  });
+
         }
       })
       // Debug function to analyze photo data overwriting issue
