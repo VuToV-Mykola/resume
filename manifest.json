@@ -1,0 +1,17 @@
+{
+  "name": "Bewerbung Document Generator",
+  "short_name": "Bewerbung Gen",
+  "description": "Професійний генератор документів для заявок на роботу",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1a5490",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
