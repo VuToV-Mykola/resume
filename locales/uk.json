@@ -45,7 +45,9 @@
     "greetingMale": "Шановний пане",
     "greetingFemale": "Шановна пані",
     "greeting": "Привітання *",
-    "greetingPlaceholder": "Шановний пане Франк Гюльмайстер,"
+    "greetingPlaceholder": "Шановний пане Франк Гюльмайстер,",
+    "letterCity": "Місто *",
+    "letterDate": "Дата *"
   },
   "fieldValues": {
     "fullName": "Микола Вутов",
@@ -64,6 +66,8 @@
     "subject": "Заявка на посаду співробітника станційного сервісу",
     "greeting": "Шановний пане Франк Гюльмайстер,",
     "date": "Магдебург, 14.09.2025",
+    "letterCity": "Магдебург",
+    "letterDate": "2025-09-14",
     "jobNumberLabel": "Ваше оголошення №:",
     "jobNumberValue": "",
     "position": "Співробітник станційного сервісу",

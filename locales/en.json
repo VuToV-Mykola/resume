@@ -45,7 +45,9 @@
     "greetingMale": "Dear Mr.",
     "greetingFemale": "Dear Ms.",
     "greeting": "Greeting *",
-    "greetingPlaceholder": "Dear Mr. Frank Güllmeister,"
+    "greetingPlaceholder": "Dear Mr. Frank Güllmeister,",
+    "letterCity": "City *",
+    "letterDate": "Date *"
   },
   "fieldValues": {
     "fullName": "Mykola Vutov",
@@ -64,6 +66,8 @@
     "subject": "Application for Employee Position",
     "greeting": "Dear Mr. Frank Güllmeister,",
     "date": "Magdeburg, 14.09.2025",
+    "letterCity": "Magdeburg",
+    "letterDate": "2025-09-14",
     "jobNumberLabel": "Your Advertisement No.:",
     "jobNumberValue": "",
     "position": "Employee",

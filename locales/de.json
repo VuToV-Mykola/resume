@@ -45,7 +45,9 @@
     "greetingMale": "Sehr geehrter",
     "greetingFemale": "Sehr geehrte",
     "greeting": "Anrede *",
-    "greetingPlaceholder": "Sehr geehrter Herr Frank Güllmeister,"
+    "greetingPlaceholder": "Sehr geehrter Herr Frank Güllmeister,",
+    "letterCity": "Stadt *",
+    "letterDate": "Datum *"
   },
   "fieldValues": {
     "fullName": "Mykola Vutov",
@@ -64,6 +66,8 @@
     "subject": "Bewerbung",
     "greeting": "Sehr geehrter Herr Frank Güllmeister,",
     "date": "Magdeburg, den 14.09.2025",
+    "letterCity": "Magdeburg",
+    "letterDate": "2025-09-14",
     "jobNumberLabel": "Ihre Ausschreibung Nr.:",
     "jobNumberValue": "",
     "position": "Position",

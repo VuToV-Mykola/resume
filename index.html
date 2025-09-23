@@ -363,8 +363,32 @@
                 id="greeting"
                 name="greeting"
                 required
+                autocomplete="off"
                 placeholder="Anrede"
                 data-translate="form.greetingPlaceholder">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="letterCity" data-translate="form.letterCity">Stadt *</label>
+                <input
+                  type="text"
+                  id="letterCity"
+                  name="letterCity"
+                  required
+                  autocomplete="address-level2"
+                  placeholder="Magdeburg"
+                  value="Magdeburg">
+              </div>
+              <div class="form-group">
+                <label for="letterDate" data-translate="form.letterDate">Datum *</label>
+                <input
+                  type="date"
+                  id="letterDate"
+                  name="letterDate"
+                  required
+                  autocomplete="off">
+              </div>
             </div>
 
             <div class="form-group">

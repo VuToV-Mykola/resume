@@ -2589,7 +2589,37 @@ async function showPreview(type) {
                       </div>
 
                       <div class="date">
-                        ${getTranslation("fieldValues.date") || `Magdeburg, den ${new Date().toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit", year: "numeric"})}`}
+                        ${(() => {
+                          const city = document.getElementById("letterCity")?.value || getTranslation("fieldValues.letterCity") || "Magdeburg";
+                          const dateInput = document.getElementById("letterDate")?.value;
+
+                          if (dateInput) {
+                            const dateObj = new Date(dateInput);
+                            const currentLang = localStorage.getItem("selectedLanguage") || "de";
+
+                            if (currentLang === "de") {
+                              const day = dateObj.getDate();
+                              const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+                              const month = monthNames[dateObj.getMonth()];
+                              const year = dateObj.getFullYear();
+                              return `${city}, den ${day}. ${month} ${year}`;
+                            } else if (currentLang === "en") {
+                              const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                              const month = monthNames[dateObj.getMonth()];
+                              const day = dateObj.getDate();
+                              const year = dateObj.getFullYear();
+                              return `${city}, ${month} ${day}, ${year}`;
+                            } else {
+                              const day = dateObj.getDate();
+                              const monthNames = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
+                              const month = monthNames[dateObj.getMonth()];
+                              const year = dateObj.getFullYear();
+                              return `${city}, ${day} ${month} ${year}`;
+                            }
+                          }
+
+                          return getTranslation("fieldValues.date") || `${city}, den ${new Date().toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit", year: "numeric"})}`;
+                        })()}
                       </div>
                     </div>
 
