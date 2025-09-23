@@ -4066,22 +4066,25 @@ async function generateDOCX(htmlContent, filename) {
     if (typeof htmlDocx === "undefined") {
       throw new Error("html-docx-js library not loaded. Please check your internet connection.")
     }
+
     const docxBlob = htmlDocx.asBlob(htmlContent)
     console.log("DOCX generated successfully, size:", docxBlob.size, "bytes")
 
-    // Try File System Access API first
+    // Try File System Access API first (працює тільки з user gesture)
     if ("showSaveFilePicker" in window) {
       try {
         const fileHandle = await window.showSaveFilePicker({
           suggestedName: filename,
           types: [
             {
-              description: "Word-Dokument",
+              description: "Word Document",
               accept: {
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"]
               }
             }
-          ]
+          ],
+          excludeAcceptAllOption: true,
+          startIn: 'downloads'
         })
 
         const writable = await fileHandle.createWritable()
@@ -4091,12 +4094,11 @@ async function generateDOCX(htmlContent, filename) {
         showStatus(`✅ DOCX gespeichert: ${filename}`, "success")
         return
       } catch (error) {
-        if (error.name !== "AbortError") {
-          console.warn("File System Access API failed, using fallback:", error)
-        } else {
+        if (error.name === "AbortError") {
           showStatus("DOCX-Speichern abgebrochen", "info")
           return
         }
+        console.warn("File System Access API failed, using fallback:", error)
       }
     }
 
@@ -4371,19 +4373,16 @@ async function generatePDFOnly() {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
     const name = formData.fullName ? formData.fullName.replace(/\s+/g, "_") : "Dokument"
 
-    // Use print dialog for PDF generation (more reliable)
-    showStatus("Verwende Druckdialog für PDF-Erstellung...", "info")
-
-    // Generate PDF only for active tab
+    // Generate PDF for active tab with File System Access API
     if (activeTab === "bewerbung") {
       const bewerbungHtml = generateBewerbungHTML(formData)
       console.log("Generated bewerbung HTML length:", bewerbungHtml.length)
-      generatePDFAlternative(bewerbungHtml, `Bewerbung_${name}_${timestamp}.pdf`)
+      await generatePDFWithSaveDialog(bewerbungHtml, `Bewerbung_${name}_${timestamp}.pdf`)
       showStatus("Bewerbung PDF erfolgreich erstellt!", "success")
     } else if (activeTab === "lebenslauf") {
       const lebenslaufHtml = generateLebenslaufHTML(formData)
       console.log("Generated lebenslauf HTML length:", lebenslaufHtml.length)
-      generatePDFAlternative(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.pdf`)
+      await generatePDFWithSaveDialog(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.pdf`)
       showStatus("Lebenslauf PDF erfolgreich erstellt!", "success")
     } else {
       showStatus("Bitte wählen Sie eine Registerkarte aus", "error")
@@ -4391,6 +4390,75 @@ async function generatePDFOnly() {
   } catch (error) {
     console.error("Error generating PDF:", error)
     showStatus(`Fehler beim Generieren der PDF-Dateien: ${error.message}`, "error")
+  }
+}
+
+async function generatePDFWithSaveDialog(htmlContent, suggestedName) {
+  try {
+    if ('showSaveFilePicker' in window) {
+      const fileHandle = await window.showSaveFilePicker({
+        suggestedName: suggestedName,
+        types: [{
+          description: 'PDF Document',
+          accept: { 'application/pdf': ['.pdf'] }
+        }]
+      });
+
+      // Відкриваємо діалог друку для збереження в PDF
+      const printWindow = window.open("", "_blank", "width=800,height=600");
+
+      if (!printWindow) {
+        showStatus("Popup wurde blockiert. Bitte erlauben Sie Popups für diese Seite.", "error");
+        return;
+      }
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>PDF - ${suggestedName}</title>
+          <style>
+            @page {
+              size: A4;
+              margin: 15mm;
+            }
+            ${getResumeStyleCSS(currentResumeStyle, currentLayout)}
+            body {
+              font-size: 11pt;
+              line-height: 1.5;
+              margin: 0;
+              padding: 0;
+            }
+            .document {
+              max-width: none;
+              margin: 0;
+            }
+          </style>
+        </head>
+        <body>
+          ${htmlContent}
+        </body>
+        </html>
+      `);
+
+      printWindow.document.close();
+
+      setTimeout(() => {
+        printWindow.print();
+        setTimeout(() => printWindow.close(), 500);
+      }, 500);
+
+      showStatus(`PDF wird gespeichert unter: ${suggestedName}`, "success");
+    } else {
+      // Fallback для старих браузерів
+      generatePDFAlternative(htmlContent, suggestedName);
+    }
+  } catch (error) {
+    console.error("File System Access API failed:", error);
+    // Fallback якщо користувач закрив діалог
+    generatePDFAlternative(htmlContent, suggestedName);
   }
 }
 
