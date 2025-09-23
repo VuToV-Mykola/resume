@@ -2252,8 +2252,47 @@ function performFrameBasedPagination(htmlContent, activeTab) {
 
           // Якщо елемент все ще не поміщається, розбиваємо його
           if (framePreview.scrollHeight > availableHeight) {
-            // Якщо це текстовий елемент (P, DIV тощо), пробуємо розбити по словах
-            if (childClone.textContent && childClone.textContent.trim().length > 0) {
+            // Перевіряємо чи елемент має вкладену структуру (наприклад, experience-item > div)
+            const hasNestedContent = childClone.children.length > 0;
+
+            if (hasNestedContent) {
+              // Якщо елемент має вкладені дочірні елементи, зберігаємо структуру
+              pageContainer.removeChild(childClone);
+
+              // Зберігаємо всі атрибути елемента
+              const childTag = childClone.tagName;
+              const childClasses = childClone.className;
+              const childStyle = childClone.getAttribute('style') || '';
+
+              let currentWrapper = document.createElement(childTag);
+              currentWrapper.className = childClasses;
+              if (childStyle) currentWrapper.setAttribute('style', childStyle);
+              pageContainer.appendChild(currentWrapper);
+
+              // Обробляємо кожен вкладений елемент
+              for (const nested of Array.from(childClone.children)) {
+                const nestedClone = nested.cloneNode(true);
+                currentWrapper.appendChild(nestedClone);
+
+                if (framePreview.scrollHeight > availableHeight) {
+                  currentWrapper.removeChild(nestedClone);
+
+                  // Створюємо нову сторінку
+                  pushPage();
+                  pageContainer = document.createElement(containerTag);
+                  pageContainer.className = containerClasses;
+                  if (containerStyle) pageContainer.setAttribute('style', containerStyle);
+                  framePreview.appendChild(pageContainer);
+
+                  currentWrapper = document.createElement(childTag);
+                  currentWrapper.className = childClasses;
+                  if (childStyle) currentWrapper.setAttribute('style', childStyle);
+                  pageContainer.appendChild(currentWrapper);
+                  currentWrapper.appendChild(nestedClone);
+                }
+              }
+            } else if (childClone.textContent && childClone.textContent.trim().length > 0) {
+              // Якщо це текстовий елемент без вкладених тегів, розбиваємо по словах
               pageContainer.removeChild(childClone)
               const words = childClone.textContent.trim().split(/\s+/)
 
