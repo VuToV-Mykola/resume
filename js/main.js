@@ -2232,6 +2232,7 @@ function performFrameBasedPagination(htmlContent, activeTab) {
         const childClone = child.cloneNode(true)
         pageContainer.appendChild(childClone)
 
+        // Перевіряємо переповнення після додавання
         if (framePreview.scrollHeight > availableHeight) {
           // Видаляємо елемент, що не поміщається
           pageContainer.removeChild(childClone)
@@ -2248,6 +2249,54 @@ function performFrameBasedPagination(htmlContent, activeTab) {
 
           // Додаємо елемент на нову сторінку
           pageContainer.appendChild(childClone)
+
+          // Якщо елемент все ще не поміщається, розбиваємо його
+          if (framePreview.scrollHeight > availableHeight) {
+            // Якщо це текстовий елемент (P, DIV тощо), пробуємо розбити по словах
+            if (childClone.textContent && childClone.textContent.trim().length > 0) {
+              pageContainer.removeChild(childClone)
+              const words = childClone.textContent.trim().split(/\s+/)
+
+              let currentText = ""
+              for (let i = 0; i < words.length; i++) {
+                const testText = currentText ? currentText + " " + words[i] : words[i]
+                const testEl = childClone.cloneNode(false)
+                testEl.textContent = testText
+                pageContainer.appendChild(testEl)
+
+                if (framePreview.scrollHeight > availableHeight && currentText) {
+                  // Зберігаємо поточну частину
+                  pageContainer.removeChild(testEl)
+                  const finalEl = childClone.cloneNode(false)
+                  finalEl.textContent = currentText
+                  pageContainer.appendChild(finalEl)
+
+                  // Створюємо нову сторінку
+                  pushPage()
+                  pageContainer = document.createElement(containerTag)
+                  pageContainer.className = containerClasses
+                  if (containerStyle) pageContainer.setAttribute('style', containerStyle)
+                  framePreview.appendChild(pageContainer)
+
+                  // Починаємо з поточного слова
+                  currentText = words[i]
+                  const newEl = childClone.cloneNode(false)
+                  newEl.textContent = currentText
+                  pageContainer.appendChild(newEl)
+                } else {
+                  currentText = testText
+                  pageContainer.removeChild(testEl)
+                }
+              }
+
+              // Додаємо залишок
+              if (currentText) {
+                const finalEl = childClone.cloneNode(false)
+                finalEl.textContent = currentText
+                pageContainer.appendChild(finalEl)
+              }
+            }
+          }
         }
       }
 

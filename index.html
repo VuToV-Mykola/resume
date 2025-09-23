@@ -210,29 +210,30 @@
                 id="fullName"
                 name="fullName"
                 required
+                autocomplete="name"
                 placeholder="Vollständiger Name *">
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label for="address" data-translate="form.address">Adresse *</label>
-                <input type="text" id="address" name="address" required placeholder="Adresse *">
+                <input type="text" id="address" name="address" required autocomplete="street-address" placeholder="Adresse *">
               </div>
               <div class="form-group">
                 <label for="phone" data-translate="form.phone">Telefon *</label>
-                <input type="tel" id="phone" name="phone" required placeholder="Telefon *">
+                <input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="Telefon *">
               </div>
             </div>
 
             <div class="form-group">
               <label for="email" data-translate="form.email">E-Mail *</label>
-              <input type="email" id="email" name="email" required placeholder="E-Mail *">
+              <input type="email" id="email" name="email" required autocomplete="email" placeholder="E-Mail *">
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label for="birthDate" data-translate="form.birthDate">Geburtsdatum *</label>
-                <input type="date" id="birthDate" name="birthDate" required>
+                <input type="date" id="birthDate" name="birthDate" required autocomplete="bday">
               </div>
               <div class="form-group">
                 <label for="nationality" data-translate="form.nationality"
@@ -243,6 +244,7 @@
                   id="nationality"
                   name="nationality"
                   required
+                  autocomplete="country-name"
                   placeholder="Staatsangehörigkeit *">
               </div>
             </div>
@@ -256,17 +258,18 @@
                 id="position"
                 name="position"
                 required
+                autocomplete="organization-title"
                 placeholder="Beworbene Position *">
             </div>
 
             <div class="form-group">
               <label for="company" data-translate="form.company">Unternehmen *</label>
-              <input type="text" id="company" name="company" required placeholder="Unternehmen *">
+              <input type="text" id="company" name="company" required autocomplete="organization" placeholder="Unternehmen *">
             </div>
 
             <div class="form-group">
               <label for="jobNumber" data-translate="form.jobNumber">Ausschreibungsnummer</label>
-              <input type="text" id="jobNumber" name="jobNumber" value="">
+              <input type="text" id="jobNumber" name="jobNumber" value="" autocomplete="off">
             </div>
 
             <h3 data-translate="form.contactPerson">👤 Kontaktperson</h3>
@@ -280,6 +283,7 @@
                 id="contactName"
                 name="contactName"
                 required
+                autocomplete="name"
                 placeholder="Kontaktperson">
             </div>
 
@@ -292,6 +296,7 @@
                 id="contactAddress"
                 name="contactAddress"
                 required
+                autocomplete="street-address"
                 placeholder="Adresse der Kontaktperson">
             </div>
 
@@ -304,6 +309,7 @@
                   type="tel"
                   id="contactPhone"
                   name="contactPhone"
+                  autocomplete="tel"
                   placeholder="Telefon der Kontaktperson">
               </div>
               <div class="form-group">
@@ -314,6 +320,7 @@
                   type="email"
                   id="contactEmail"
                   name="contactEmail"
+                  autocomplete="email"
                   placeholder="E-Mail der Kontaktperson">
               </div>
             </div>
@@ -540,31 +547,31 @@ Anlagen:
               <label for="lebenslaufFullName" data-translate="form.fullName"
                 >Vollständiger Name *</label
               >
-              <input type="text" id="lebenslaufFullName" name="lebenslaufFullName" required>
+              <input type="text" id="lebenslaufFullName" name="lebenslaufFullName" required autocomplete="name">
             </div>
             <div class="form-group">
               <label for="lebenslaufAddress" data-translate="form.address">Adresse *</label>
-              <input type="text" id="lebenslaufAddress" name="lebenslaufAddress" required>
+              <input type="text" id="lebenslaufAddress" name="lebenslaufAddress" required autocomplete="street-address">
             </div>
             <div class="form-group">
               <label for="lebenslaufPhone" data-translate="form.phone">Telefon *</label>
-              <input type="tel" id="lebenslaufPhone" name="lebenslaufPhone" required>
+              <input type="tel" id="lebenslaufPhone" name="lebenslaufPhone" required autocomplete="tel">
             </div>
             <div class="form-group">
               <label for="lebenslaufEmail" data-translate="form.email">E-Mail *</label>
-              <input type="email" id="lebenslaufEmail" name="lebenslaufEmail" required>
+              <input type="email" id="lebenslaufEmail" name="lebenslaufEmail" required autocomplete="email">
             </div>
             <div class="form-group">
               <label for="lebenslaufBirthDate" data-translate="form.birthDate"
                 >Geburtsdatum *</label
               >
-              <input type="date" id="lebenslaufBirthDate" name="lebenslaufBirthDate" required>
+              <input type="date" id="lebenslaufBirthDate" name="lebenslaufBirthDate" required autocomplete="bday">
             </div>
             <div class="form-group">
               <label for="lebenslaufNationality" data-translate="form.nationality"
                 >Staatsangehörigkeit *</label
               >
-              <input type="text" id="lebenslaufNationality" name="lebenslaufNationality" required>
+              <input type="text" id="lebenslaufNationality" name="lebenslaufNationality" required autocomplete="country-name">
             </div>
           </div>
 
