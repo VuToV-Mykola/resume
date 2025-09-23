@@ -1346,8 +1346,11 @@ main {
   box-sizing: border-box;
 
   /* Забезпечуємо правильний перенос тексту */
-  word-break: break-word;
-  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 /* Номер сторінки для другої сторінки */
@@ -1632,15 +1635,20 @@ main {
   box-shadow: none;
 
   /* Правильний перенос довгих слів */
-  word-break: break-word;
-  overflow-wrap: break-word;
   hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 /* Перенос тексту для всіх дочірніх елементів */
 .document-preview * {
-  word-break: break-word !important;
-  overflow-wrap: break-word !important;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
   max-width: 100%;
 }
 
@@ -1650,8 +1658,11 @@ input[type="text"],
 input[type="email"],
 .form-input,
 .editable-content {
-  word-break: break-all !important;
-  overflow-wrap: break-word !important;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
   white-space: pre-wrap !important;
 }
 
@@ -1663,8 +1674,11 @@ textarea[name*="Kernkompetenzen"],
 textarea[name*="Service"],
 textarea[name*="Berufserfahrung"],
 textarea[name*="Qualifikation"] {
-  word-break: break-all !important;
-  overflow-wrap: anywhere !important;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
   white-space: pre-wrap !important;
   overflow-x: hidden !important;
 }
@@ -1674,8 +1688,11 @@ textarea[name*="Qualifikation"] {
 .document-preview li,
 .document-preview td,
 .document-preview div {
-  word-break: break-all !important;
-  overflow-wrap: anywhere !important;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 /* Пагінація через CSS */

@@ -3481,10 +3481,34 @@ function generateLebenslaufHTML(data) {
       })
     : ""
 
-  const currentMonth = new Date().toLocaleDateString("de-DE", {
-    year: "numeric",
-    month: "long"
-  })
+  const currentMonth = (() => {
+    const city = currentValues.letterCity || getTranslation("fieldValues.letterCity") || "Magdeburg";
+    const dateInput = currentValues.letterDate;
+
+    if (dateInput) {
+      const dateObj = new Date(dateInput);
+      const currentLang = localStorage.getItem("selectedLanguage") || "de";
+
+      if (currentLang === "de") {
+        const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+        const month = monthNames[dateObj.getMonth()];
+        const year = dateObj.getFullYear();
+        return `${month} ${year}`;
+      } else if (currentLang === "en") {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const month = monthNames[dateObj.getMonth()];
+        const year = dateObj.getFullYear();
+        return `${month} ${year}`;
+      } else {
+        const monthNames = ["січень", "лютий", "березень", "квітень", "травень", "червень", "липень", "серпень", "вересень", "жовтень", "листопад", "грудень"];
+        const month = monthNames[dateObj.getMonth()];
+        const year = dateObj.getFullYear();
+        return `${month} ${year}`;
+      }
+    }
+
+    return new Date().toLocaleDateString("de-DE", { year: "numeric", month: "long" });
+  })()
 
   // Get lebenslauf specific values
   const fullName = currentValues.lebenslaufFullName || currentValues.fullName || ""
@@ -3682,7 +3706,10 @@ function generateLebenslaufHTML(data) {
           <div
             style="margin-top: 15mm; text-align: center; color: #666; font-size: 10pt"
           >
-            Magdeburg, ${currentMonth}
+            ${(() => {
+              const city = currentValues.letterCity || getTranslation("fieldValues.letterCity") || "Magdeburg";
+              return `${city}, ${currentMonth}`;
+            })()}
           </div>
         </body>
       </html>`
