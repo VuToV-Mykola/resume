@@ -1,7 +1,7 @@
-// Form data management
 let formData = {}
-let globalPhotoData = null // Global variable to store photo data
-let currentPreviewType = "lebenslauf" // Track current preview type - default to lebenslauf as shown in photo
+let globalPhotoData = null
+let currentPreviewType = "lebenslauf"
+let livePrintPreview = null
 
 // Save form data to localStorage
 function saveFormData() {
@@ -2688,10 +2688,18 @@ async function showPreview(type) {
                     </div>
                 `
 
-      // Використовуємо функцію розбиття на дві сторінки A4
       document.getElementById("previewContent").innerHTML =
         `<h2 data-translate="preview.title">📋 Live Preview</h2>
-               <div class="preview-container">${createDynamicPagination(bewerbungContent)}</div>`
+         <div class="preview-container" id="printPreviewViewport"></div>`
+
+      if (!livePrintPreview) {
+        livePrintPreview = new LivePrintPreview({
+          containerSelector: '#printPreviewViewport',
+          debounceDelay: 300
+        })
+      }
+
+      livePrintPreview.activate(bewerbungContent)
     } else if (previewType === "lebenslauf") {
       console.log("Generating lebenslauf preview")
 
@@ -2945,19 +2953,19 @@ async function showPreview(type) {
                   </div>
                 `
 
-      // Використовуємо функцію розбиття на дві сторінки A4
-      console.log("🎯 BEFORE calling createDynamicPagination for lebenslauf")
-      console.log("🎯 Content length:", lebenslaufContent.length)
-      const paginatedResult = createDynamicPagination(lebenslaufContent)
-      console.log(
-        "🎯 AFTER calling createDynamicPagination - result length:",
-        paginatedResult.length
-      )
-
       document.getElementById("previewContent").innerHTML = `
             <h2 data-translate="preview.title">📋 Live Preview</h2>
-            <div class="preview-container">${paginatedResult}</div>
-              `
+            <div class="preview-container" id="printPreviewViewport"></div>
+      `
+
+      if (!livePrintPreview) {
+        livePrintPreview = new LivePrintPreview({
+          containerSelector: '#printPreviewViewport',
+          debounceDelay: 300
+        })
+      }
+
+      livePrintPreview.activate(lebenslaufContent)
     }
   } catch (error) {
     console.error("Error in showPreview:", error)
