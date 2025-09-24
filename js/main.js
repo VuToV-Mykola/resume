@@ -3,45 +3,68 @@ let globalPhotoData = null
 let currentPreviewType = "lebenslauf"
 let livePrintPreview = null
 
-// Save form data to localStorage
+let stateManager = null
+let formHandler = null
+let validationService = null
+let exportService = null
+let performanceMonitor = null
+let accessibilityManager = null
+let domCache = null
+let eventManager = null
+
 function saveFormData() {
   try {
-    const dataToSave = {
-      formData: formData,
-      globalPhotoData: globalPhotoData,
-      currentPreviewType: currentPreviewType
+    if (stateManager) {
+      const dataToSave = {
+        formData: formData,
+        globalPhotoData: globalPhotoData,
+        currentPreviewType: currentPreviewType
+      };
+      stateManager.saveState(dataToSave);
+      console.log("Form data saved via StateManager");
+    } else {
+      const dataToSave = {
+        formData: formData,
+        globalPhotoData: globalPhotoData,
+        currentPreviewType: currentPreviewType
+      };
+      localStorage.setItem("resumeFormData", JSON.stringify(dataToSave));
+      console.log("Form data saved to localStorage (fallback)");
     }
-    localStorage.setItem("resumeFormData", JSON.stringify(dataToSave))
-    console.log("Form data saved to localStorage")
-    console.log("Saved data includes photo:", dataToSave.formData.lebenslaufPhoto ? "Yes" : "No")
-    console.log("Saved globalPhotoData:", dataToSave.globalPhotoData ? "Yes" : "No")
   } catch (error) {
-    console.error("Error saving form data:", error)
+    console.error("Error saving form data:", error);
   }
 }
 
-// Load form data from localStorage
 function loadFormData() {
   try {
-    const savedData = localStorage.getItem("resumeFormData")
-    if (savedData) {
-      const parsedData = JSON.parse(savedData)
-      formData = parsedData.formData || {}
-      globalPhotoData = parsedData.globalPhotoData || null
-      currentPreviewType = parsedData.currentPreviewType || "bewerbung"
-
-      // Restore form values
-      restoreFormValues()
-
-      console.log("Form data loaded from localStorage")
-      console.log("Loaded formData includes photo:", formData.lebenslaufPhoto ? "Yes" : "No")
-      console.log("Loaded globalPhotoData:", globalPhotoData ? "Yes" : "No")
-      return true
+    if (stateManager) {
+      const loaded = stateManager.loadState();
+      if (loaded) {
+        const state = stateManager.getState();
+        formData = state.formData || {};
+        globalPhotoData = state.globalPhotoData || null;
+        currentPreviewType = state.currentPreviewType || "bewerbung";
+        restoreFormValues();
+        console.log("Form data loaded via StateManager");
+        return true;
+      }
+    } else {
+      const savedData = localStorage.getItem("resumeFormData");
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        formData = parsedData.formData || {};
+        globalPhotoData = parsedData.globalPhotoData || null;
+        currentPreviewType = parsedData.currentPreviewType || "bewerbung";
+        restoreFormValues();
+        console.log("Form data loaded from localStorage (fallback)");
+        return true;
+      }
     }
   } catch (error) {
-    console.error("Error loading form data:", error)
+    console.error("Error loading form data:", error);
   }
-  return false
+  return false;
 }
 
 // Load data from localStorage if available
@@ -5597,10 +5620,29 @@ function getResumeStyleCSS(style, layout) {
 }
 
 // Initialize on page load
+function initializeModules() {
+  domCache = new DOMCache();
+  eventManager = new EventManager();
+  stateManager = new StateManager();
+  validationService = new ValidationService();
+  exportService = new ExportService();
+  performanceMonitor = new PerformanceMonitor();
+  accessibilityManager = new AccessibilityManager();
+
+  formHandler = new FormHandler({
+    stateManager: stateManager,
+    validationService: validationService
+  });
+
+  console.log('✅ Модулі ініціалізовано успішно');
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
   console.log("=== DOMContentLoaded event triggered ===")
   console.log("Current timestamp:", new Date().toISOString())
   console.log("Document ready state:", document.readyState)
+
+  initializeModules();
 
   // Load default language translations
   await loadTranslations("de")
