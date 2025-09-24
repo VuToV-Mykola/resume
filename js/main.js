@@ -4675,8 +4675,25 @@ document.addEventListener("DOMContentLoaded", async function () {
   initializeModules();
 
   // Initialize TranslationService with default language
-  await translationService.changeLanguage("de");
-  currentLanguage = translationService.getCurrentLanguage();
+  logger.log("🌍 Initializing TranslationService with German language");
+  try {
+    const success = await translationService.changeLanguage("de");
+    logger.log("🌍 Language change result:", success);
+    currentLanguage = translationService.getCurrentLanguage();
+    logger.log("🌍 Current language after init:", currentLanguage);
+
+    // Перевіряємо чи завантажені переклади
+    const hasTranslations = translationService.hasTranslations("de");
+    logger.log("🌍 Has German translations:", hasTranslations);
+
+    if (!hasTranslations) {
+      logger.error("❌ German translations not loaded, trying manual load");
+      const manualLoad = await translationService.loadTranslations("de");
+      logger.log("🔧 Manual load result:", manualLoad);
+    }
+  } catch (error) {
+    logger.error("❌ TranslationService initialization failed:", error);
+  }
 
   // Update active language flag
   const initLanguageFlags = document.querySelectorAll(".language-flag")

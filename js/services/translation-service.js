@@ -73,16 +73,20 @@ class TranslationService {
    * @returns {Promise<boolean>} Успішність завантаження
    */
   async loadTranslations(lang) {
-    this.log(`Loading translations for: ${lang}`);
+    this.log(`🌍 Loading translations for: ${lang}`);
+    this.log(`🔗 Fetching URL: locales/${lang}.json?v=20250914`);
 
     try {
       const response = await fetch(`locales/${lang}.json?v=20250914`);
+      this.log(`📡 Response status:`, response.status, response.statusText);
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      this.translations[lang] = await response.json();
-      this.log(`Translations loaded for ${lang}:`, this.translations[lang]);
+      const data = await response.json();
+      this.translations[lang] = data;
+      this.log(`✅ Translations loaded for ${lang}, keys:`, Object.keys(data).slice(0, 5));
 
       // Затримка для повного завантаження
       await new Promise(resolve => setTimeout(resolve, 100));

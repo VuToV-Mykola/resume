@@ -17,20 +17,41 @@ HOST = 'localhost'
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     """Custom handler to serve files with proper MIME types"""
-    
+
+    def do_GET(self):
+        """Handle GET requests with custom endpoints"""
+        if self.path == '/health':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+
+            import json
+            import datetime
+            response = {
+                'status': 'OK',
+                'timestamp': datetime.datetime.now().isoformat(),
+                'server': 'Resume Generator Python Server',
+                'port': PORT
+            }
+            self.wfile.write(json.dumps(response).encode())
+            return
+
+        # Use parent method for other requests
+        super().do_GET()
+
     def end_headers(self):
         # Add CORS headers for local development
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
-    
+
     def guess_type(self, path):
         """Override to set correct MIME types"""
         # Ensure JSON files are served with correct MIME type
         if path.endswith('.json'):
             return 'application/json'
-        
+
         # Use parent method for other files
         return super().guess_type(path)
 
