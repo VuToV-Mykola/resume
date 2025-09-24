@@ -21,14 +21,21 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Bewerbung Gen">
 
-    <!-- Preload critical fonts -->
+    <!-- Preconnect для Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Preload критичних шрифтів -->
     <link
       rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&v=20250914"
-      as="style">
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&v=20250914">
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&v=20250914">
+    </noscript>
     <!--!!! MODERN NORMALIZE !!!-->
     <link
       rel="stylesheet"
@@ -39,9 +46,19 @@
     <link class="link" rel="stylesheet" href="./css/styles.css">
   </head>
   <body>
+    <!-- Skip navigation для accessibility -->
+    <a href="#main-content" class="skip-link">Перейти до основного вмісту</a>
+
     <div class="container">
-      <header class="header">
-        <button class="mobile-menu-btn" id="mobileMenuBtn" title="Menu öffnen"> ☰ </button>
+      <header class="header" role="banner">
+        <button
+          class="mobile-menu-btn"
+          id="mobileMenuBtn"
+          aria-label="Відкрити мобільне меню"
+          aria-expanded="false"
+          aria-controls="mobileMenuPanel">
+          ☰
+        </button>
         <div class="header-controls">
           <div class="control-group">
             <button id="themeToggle" class="theme-toggle" title="Theme wechseln">
@@ -198,10 +215,10 @@
         </div>
       </header>
 
-      <main class="main-content">
+      <main class="main-content" id="main-content" role="main">
         <!-- Form Tabs -->
 
-        <section class="form-section" id="bewerbungFormSection">
+        <section class="form-section" id="bewerbungFormSection" aria-label="Форма Anschreiben">
           <h2 data-translate="form.personalData">📝 Persönliche Daten</h2>
           <form id="bewerbungForm">
             <div class="form-group">
@@ -768,11 +785,24 @@ Anlagen:
       </footer>
 
       <!-- Mobile Menu Overlay -->
-      <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+      <div
+        class="mobile-menu-overlay"
+        id="mobileMenuOverlay"
+        aria-hidden="true"></div>
 
       <!-- Mobile Menu Panel -->
-      <div class="mobile-menu-panel" id="mobileMenuPanel">
-        <h3 data-translate="mobile.menu">📱 Menu</h3>
+      <nav
+        class="mobile-menu-panel"
+        id="mobileMenuPanel"
+        role="navigation"
+        aria-label="Мобільне меню"
+        aria-hidden="true">
+        <h3 data-translate="mobile.menu" id="mobile-menu-title">📱 Menu</h3>
+        <button
+          class="mobile-menu-close"
+          aria-label="Закрити мобільне меню">
+          ✕
+        </button>
 
         <div class="mobile-menu-section">
           <h4 data-translate="mobile.language">🌐 Sprache</h4>
@@ -886,7 +916,7 @@ Anlagen:
             </button>
           </div>
         </div>
-      </div>
+      </nav>
       <div
         id="statusMessage"
         class="status-message"
@@ -894,6 +924,18 @@ Anlagen:
         onclick="clearStatus()"
         title="Klicken zum Schließen"></div>
     </div>
+    <!-- Core modules -->
+    <script src="./js/core/state-management.js"></script>
+    <script src="./js/core/form-handler.js"></script>
+
+    <!-- Services -->
+    <script src="./js/services/validation-service.js"></script>
+    <script src="./js/services/export-service.js"></script>
+    <script src="./js/services/performance-monitor.js"></script>
+
+    <!-- UI components -->
+    <script src="./js/ui/accessibility.js"></script>
+
     <!-- Configuration and Utilities -->
     <script src="./js/config.js"></script>
     <script src="./js/utils.js"></script>
@@ -904,8 +946,26 @@ Anlagen:
     <!-- HTML to DOCX conversion library -->
     <script src="./html-docx.js"></script>
 
-    <!-- Translation API - використовуємо MyMemory API напряму -->
+    <!-- Translation API -->
     <script src="./js/check-html-docx.js"></script>
+
+    <!-- Main application logic -->
     <script src="./js/main.js"></script>
+
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js')
+            .then(registration => {
+              console.log('✅ SW registered:', registration.scope);
+            })
+            .catch(error => {
+              console.error('❌ SW registration failed:', error);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

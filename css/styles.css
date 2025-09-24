@@ -188,6 +188,71 @@ html {
   }
 }
 
+/* Skip navigation link для accessibility */
+.skip-link {
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  background: var(--color-primary);
+  position: absolute;
+  top: -40px;
+  left: 0;
+  z-index: 10000;
+  padding: 8px 16px;
+  border-radius: 0 0 4px;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Screen reader only utility */
+.sr-only {
+  position: absolute;
+  left: -10000px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  width: 1px;
+  height: 1px;
+}
+
+/* Error messages styling */
+.error-message {
+  font-size: 0.875rem;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+input.error,
+textarea.error,
+select.error {
+  border-color: #ef4444;
+}
+
+/* Mobile menu close button */
+.mobile-menu-close {
+  font-size: 24px;
+  color: var(--color-text);
+  background: transparent;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mobile-menu-close:hover,
+.mobile-menu-close:focus {
+  background-color: var(--color-surface-light);
+}
+
 /* Typography */
 h1,
 h2,
@@ -1347,8 +1412,6 @@ main {
 
   /* Забезпечуємо правильний перенос тексту */
   hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -1619,13 +1682,6 @@ main {
   color: #000;
   background: transparent;
   position: relative;
-
-  /* Правильні переноси тексту */
-  hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
-  overflow-wrap: normal;
-  word-break: normal;
   max-width: none;
   height: fit-content;
   margin: 0;
@@ -1634,22 +1690,20 @@ main {
   border-radius: 0;
   box-shadow: none;
 
+  /* Правильні переноси тексту */
+
   /* Правильний перенос довгих слів */
   hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
   overflow-wrap: normal;
   word-break: normal;
 }
 
 /* Перенос тексту для всіх дочірніх елементів */
 .document-preview * {
+  max-width: 100%;
   hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
   overflow-wrap: normal;
   word-break: normal;
-  max-width: 100%;
 }
 
 /* Спеціальні правила для textarea та полів вводу */
@@ -1659,8 +1713,6 @@ input[type="email"],
 .form-input,
 .editable-content {
   hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
   overflow-wrap: normal;
   word-break: normal;
   white-space: pre-wrap !important;
@@ -1674,13 +1726,11 @@ textarea[name*="Kernkompetenzen"],
 textarea[name*="Service"],
 textarea[name*="Berufserfahrung"],
 textarea[name*="Qualifikation"] {
+  overflow-x: hidden !important;
   hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
   overflow-wrap: normal;
   word-break: normal;
   white-space: pre-wrap !important;
-  overflow-x: hidden !important;
 }
 
 /* Перенос для довгих неперервних рядків */
@@ -1689,8 +1739,6 @@ textarea[name*="Qualifikation"] {
 .document-preview td,
 .document-preview div {
   hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
   overflow-wrap: normal;
   word-break: normal;
 }
@@ -1781,44 +1829,53 @@ textarea[name*="Qualifikation"] {
 
 /* Print Preview Viewport - основний контейнер */
 .print-preview-viewport {
-  container-type: inline-size;
-  width: 100%;
-  min-height: 100vh;
-  padding: 20px;
   background: #f5f5f5;
-  overflow: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  overflow: auto;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  container-type: inline-size;
 }
 
-/* А4 сторінка з попіксельними розмірами */
+/* А4 сторінка з попіксельними розмірами та підтримкою page-break */
 .a4-page {
-  width: 794px; /* 210mm при 96 DPI */
-  height: 1123px; /* 297mm при 96 DPI */
   background: white;
-  margin: 0 auto 10mm;
-  padding: 76px; /* 20mm */
-  box-sizing: border-box;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1), 0 8px 24px rgba(0, 0, 0, 0.15);
-  transform-origin: top center;
   position: relative;
-  page-break-after: always;
+  width: 794px;
+  height: 1123px;
+  margin: 0 auto 10mm;
+  padding: 76px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%), 0 8px 24px rgb(0 0 0 / 15%);
+  box-sizing: border-box;
+  transform-origin: top center;
   break-after: page;
-
-  /* Правильні переноси тексту */
   hyphens: auto;
-  -webkit-hyphens: auto;
-  -ms-hyphens: auto;
-  overflow-wrap: normal;
+  overflow-wrap: break-word;
   word-break: normal;
+
+  orphans: 3;
+  widows: 3;
 }
 
-/* Адаптивне масштабування через CSS змінну */
-.a4-page {
-  transform: scale(var(--page-scale, 1));
+.a4-page:not(:last-child) {
+  margin-bottom: 20px;
 }
+
+.a4-page.rendered {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.a4-page:not(.rendered) {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Адаптивне масштабування вже визначене вище в .a4-page */
 
 /* Container Queries для адаптивності */
 @container (max-width: 850px) {
@@ -1870,51 +1927,51 @@ textarea[name*="Qualifikation"] {
 }
 
 /* Safari specific fixes */
-@media screen and (-webkit-min-device-pixel-ratio: 1) {
+@media screen and (min-device-pixel-ratio: 1) {
   .a4-page {
-    -webkit-transform-origin: top center;
+    transform-origin: top center;
     -webkit-font-smoothing: antialiased;
   }
 }
 
 /* Separator між сторінками */
 .page-separator {
+  background: #e0e0e0;
   width: 100%;
   height: 1px;
-  background: #e0e0e0;
   margin: 10mm 0;
 }
 
 /* Індикатор розриву сторінки */
 .page-break-indicator {
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #999;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   gap: 10px;
   padding: 5px 0;
-  color: #999;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .page-break-indicator::before,
 .page-break-indicator::after {
-  content: '';
+  background: linear-gradient(to right, transparent, #ddd, transparent);
   flex: 1;
   height: 1px;
-  background: linear-gradient(to right, transparent, #ddd, transparent);
+  content: "";
 }
 
 /* Номер сторінки */
 .a4-page[data-page]::after {
-  content: attr(data-page);
-  position: absolute;
-  bottom: 10mm;
-  right: 15mm;
+  font-family: "Times New Roman", serif;
   font-size: 10pt;
-  color: rgba(0, 0, 0, 0.4);
-  font-family: 'Times New Roman', serif;
+  color: rgb(0 0 0 / 40%);
+  position: absolute;
+  right: 15mm;
+  bottom: 10mm;
+  content: attr(data-page);
 }
 
 /* Приховуємо номер при друку */
@@ -1929,8 +1986,8 @@ textarea[name*="Qualifikation"] {
   }
 
   .a4-page {
-    box-shadow: none;
     margin: 0;
+    box-shadow: none;
     transform: none !important;
   }
 }

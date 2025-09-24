@@ -8,10 +8,18 @@
     "start": "python -m http.server 8000",
     "server": "node server.js",
     "dev": "concurrently \"npm run server\" \"npm run start\"",
-    "build": "echo 'No build step required for static site'",
-    "deploy": "gh-pages -d .",
+    "build": "npm run build:css && echo 'Build complete'",
+    "build:css": "postcss css/styles.css -o css/styles.min.css",
+    "deploy": "npm run build && gh-pages -d .",
     "setup-libs": "node setup-libs.js",
-    "postinstall": "npm run setup-libs"
+    "postinstall": "npm run setup-libs",
+    "lint": "eslint js/**/*.js --fix",
+    "lint:check": "eslint js/**/*.js",
+    "format": "prettier --write \"**/*.{js,css,html,md}\"",
+    "format:check": "prettier --check \"**/*.{js,css,html,md}\"",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "validate": "npm run lint:check && npm run format:check && npm run test"
   },
   "keywords": [
     "bewerbung",
@@ -27,7 +35,17 @@
   "author": "Mykola Vutov",
   "license": "MIT",
   "devDependencies": {
-    "gh-pages": "^6.0.0"
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "autoprefixer": "^10.4.20",
+    "babel-jest": "^30.1.2",
+    "cssnano": "^7.0.6",
+    "eslint": "^9.35.0",
+    "gh-pages": "^6.0.0",
+    "jest": "^29.7.0",
+    "postcss": "^8.4.49",
+    "postcss-cli": "^11.0.0",
+    "prettier": "^3.4.2"
   },
   "dependencies": {
     "concurrently": "^8.2.2",
