@@ -5,7 +5,7 @@
 
 class ExportService {
   constructor() {
-    this.serverUrl = 'http://localhost:3001';
+    this.serverUrl = 'http://localhost:8000';
     this.isServerAvailable = false;
     this.checkServerStatus();
   }
@@ -15,13 +15,20 @@ class ExportService {
    */
   async checkServerStatus() {
     try {
+      // Тихо перевіряємо сервер без логування помилок
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1000);
+
       const response = await fetch(`${this.serverUrl}/health`, {
         method: 'GET',
-        timeout: 3000
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
       this.isServerAvailable = response.ok;
       return this.isServerAvailable;
     } catch (error) {
+      // Тихо встановлюємо false - це нормально для frontend-only режиму
       this.isServerAvailable = false;
       return false;
     }

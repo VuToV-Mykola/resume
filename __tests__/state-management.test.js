@@ -16,92 +16,21 @@ const localStorageMock = (() => {
 })();
 
 global.localStorage = localStorageMock;
+global.console.log = jest.fn();
+global.console.error = jest.fn();
 
-// Імпорт модуля
-const StateManager = require('../js/core/state-management.js');
+const stateManager = require('../js/core/state-management.js');
 
 describe('StateManager', () => {
-  let stateManager;
 
   beforeEach(() => {
     localStorage.clear();
-    // Створюємо новий екземпляр перед кожним тестом
-    class TestStateManager {
-      constructor() {
-        this.state = {
-          formData: {},
-          globalPhotoData: null,
-          currentPreviewType: 'lebenslauf'
-        };
-        this.listeners = new Map();
-      }
-
-      saveState(data) {
-        try {
-          this.state = { ...this.state, ...data };
-          localStorage.setItem('resumeFormData', JSON.stringify(this.state));
-          this.notifyListeners('state:updated', this.state);
-          return true;
-        } catch (error) {
-          return false;
-        }
-      }
-
-      loadState() {
-        try {
-          const savedData = localStorage.getItem('resumeFormData');
-          if (savedData) {
-            this.state = JSON.parse(savedData);
-            this.notifyListeners('state:loaded', this.state);
-            return true;
-          }
-        } catch (error) {
-          return false;
-        }
-        return false;
-      }
-
-      getState() {
-        return { ...this.state };
-      }
-
-      updateState(key, value) {
-        this.state[key] = value;
-        this.saveState(this.state);
-      }
-
-      clearState() {
-        this.state = {
-          formData: {},
-          globalPhotoData: null,
-          currentPreviewType: 'lebenslauf'
-        };
-        localStorage.removeItem('resumeFormData');
-        this.notifyListeners('state:cleared');
-      }
-
-      subscribe(event, callback) {
-        if (!this.listeners.has(event)) {
-          this.listeners.set(event, []);
-        }
-        this.listeners.get(event).push(callback);
-
-        return () => {
-          const callbacks = this.listeners.get(event);
-          const index = callbacks.indexOf(callback);
-          if (index > -1) {
-            callbacks.splice(index, 1);
-          }
-        };
-      }
-
-      notifyListeners(event, data) {
-        const callbacks = this.listeners.get(event) || [];
-        callbacks.forEach(callback => callback(data));
-      }
-    }
-
-    stateManager = new TestStateManager();
+    stateManager.state = {
+      formData: {},
+      globalPhotoData: null,
+      currentPreviewType: 'lebenslauf'
+    };
+    stateManager.listeners = new Map();
   });
 
   describe('saveState', () => {

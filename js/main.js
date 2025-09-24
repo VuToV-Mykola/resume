@@ -3,11 +3,11 @@ let globalPhotoData = null
 let currentPreviewType = "lebenslauf"
 let livePrintPreview = null
 
-let stateManager = null
+// stateManager доступний глобально з state-management.js
 let formHandler = null
-let validationService = null
-let exportService = null
-let performanceMonitor = null
+// validationService доступний глобально з validation-service.js
+// exportService доступний глобально з export-service.js
+// performanceMonitor доступний глобально з performance-monitor.js
 let accessibilityManager = null
 let domCache = null
 let eventManager = null
@@ -21,7 +21,7 @@ function saveFormData() {
         currentPreviewType: currentPreviewType
       };
       stateManager.saveState(dataToSave);
-      console.log("Form data saved via StateManager");
+      logger.log("Form data saved via StateManager");
     } else {
       const dataToSave = {
         formData: formData,
@@ -29,10 +29,10 @@ function saveFormData() {
         currentPreviewType: currentPreviewType
       };
       localStorage.setItem("resumeFormData", JSON.stringify(dataToSave));
-      console.log("Form data saved to localStorage (fallback)");
+      logger.log("Form data saved to localStorage (fallback)");
     }
   } catch (error) {
-    console.error("Error saving form data:", error);
+    logger.error("Error saving form data:", error);
   }
 }
 
@@ -46,7 +46,7 @@ function loadFormData() {
         globalPhotoData = state.globalPhotoData || null;
         currentPreviewType = state.currentPreviewType || "bewerbung";
         restoreFormValues();
-        console.log("Form data loaded via StateManager");
+        logger.log("Form data loaded via StateManager");
         return true;
       }
     } else {
@@ -57,12 +57,12 @@ function loadFormData() {
         globalPhotoData = parsedData.globalPhotoData || null;
         currentPreviewType = parsedData.currentPreviewType || "bewerbung";
         restoreFormValues();
-        console.log("Form data loaded from localStorage (fallback)");
+        logger.log("Form data loaded from localStorage (fallback)");
         return true;
       }
     }
   } catch (error) {
-    console.error("Error loading form data:", error);
+    logger.error("Error loading form data:", error);
   }
   return false;
 }
@@ -75,7 +75,7 @@ function loadFromLocalStorage(type, lang) {
     try {
       return JSON.parse(data)
     } catch (e) {
-      console.error("Error parsing localStorage data:", e)
+      logger.error("Error parsing localStorage data:", e)
     }
   }
   return null
@@ -90,7 +90,7 @@ function removeUnwantedPositionText() {
       if (parsedData.formData && parsedData.formData.position === "Station Service Angestellter") {
         parsedData.formData.position = ""
         localStorage.setItem("resumeFormData", JSON.stringify(parsedData))
-        console.log("Видалено небажаний текст 'Station Service Angestellter' з localStorage")
+        logger.log("Видалено небажаний текст 'Station Service Angestellter' з localStorage")
 
         // Також очистити поле в формі, якщо воно заповнене цим текстом
         const positionField = document.getElementById("position")
@@ -100,7 +100,7 @@ function removeUnwantedPositionText() {
       }
     }
   } catch (error) {
-    console.error("Помилка при видаленні небажаного тексту:", error)
+    logger.error("Помилка при видаленні небажаного тексту:", error)
   }
 }
 
@@ -160,7 +160,7 @@ async function loadDataFromJSON() {
           throw new Error(`Failed to load data: ${response.status}`)
         }
       } catch (fetchError) {
-        console.warn("Server not available, trying localStorage:", fetchError.message)
+        logger.warn("Server not available, trying localStorage:", fetchError.message)
 
         // Try to load from localStorage
         const localData = loadFromLocalStorage("lebenslauf", currentLang)
@@ -221,7 +221,7 @@ async function loadDataFromJSON() {
           throw new Error(`Failed to load data: ${response.status}`)
         }
       } catch (fetchError) {
-        console.warn("Server not available, trying localStorage:", fetchError.message)
+        logger.warn("Server not available, trying localStorage:", fetchError.message)
 
         // Try to load from localStorage
         const localData = loadFromLocalStorage("anschreiben", currentLang)
@@ -252,7 +252,7 @@ async function loadDataFromJSON() {
       return
     }
   } catch (error) {
-    console.error("Error loading data from JSON:", error)
+    logger.error("Error loading data from JSON:", error)
     const currentLang = currentLanguage || "uk"
     const errorMessage =
       currentLang === "uk"
@@ -268,7 +268,7 @@ async function loadDataFromJSON() {
 // Restore form values from formData
 function restoreFormValues() {
   // Restore main form values
-  const form = document.getElementById("bewerbungForm")
+  const form = DOM.bewerbungForm
   if (form) {
     Object.keys(formData).forEach(key => {
       const input = form.querySelector(`[name="${key}"]`)
@@ -279,7 +279,7 @@ function restoreFormValues() {
   }
 
   // Restore Lebenslauf form values
-  const lebenslaufSection = document.getElementById("lebenslaufSection")
+  const lebenslaufSection = DOM.lebenslaufSection
   if (lebenslaufSection) {
     Object.keys(formData).forEach(key => {
       const input = lebenslaufSection.querySelector(`[name="${key}"]`)
@@ -291,18 +291,18 @@ function restoreFormValues() {
 
   // Restore photo if exists
   if (globalPhotoData && typeof globalPhotoData === "string") {
-    console.log("Restoring photo from globalPhotoData:", globalPhotoData.substring(0, 50) + "...")
-    const photoPreview = document.getElementById("photoPreview")
+    logger.log("Restoring photo from globalPhotoData:", globalPhotoData.substring(0, 50) + "...")
+    const photoPreview = DOM.photoPreview
     if (photoPreview) {
       photoPreview.innerHTML = `<img src="${globalPhotoData}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
-      const removePhotoBtn = document.getElementById("removePhoto")
+      const removePhotoBtn = DOM.removePhoto
       if (removePhotoBtn) {
         removePhotoBtn.style.display = "block"
       }
-      console.log("✅ Photo restored in left menu")
+      logger.log("✅ Photo restored in left menu")
     }
   } else {
-    console.log("No globalPhotoData to restore or not a string:", typeof globalPhotoData)
+    logger.log("No globalPhotoData to restore or not a string:", typeof globalPhotoData)
 
     // Try to load photo from formData
     if (
@@ -310,16 +310,16 @@ function restoreFormValues() {
       typeof formData.lebenslaufPhoto === "string" &&
       formData.lebenslaufPhoto.startsWith("data:image/")
     ) {
-      console.log("Found photo in formData.lebenslaufPhoto, restoring...")
+      logger.log("Found photo in formData.lebenslaufPhoto, restoring...")
       globalPhotoData = formData.lebenslaufPhoto
-      const photoPreview = document.getElementById("photoPreview")
+      const photoPreview = DOM.photoPreview
       if (photoPreview) {
         photoPreview.innerHTML = `<img src="${formData.lebenslaufPhoto}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
-        const removePhotoBtn = document.getElementById("removePhoto")
+        const removePhotoBtn = DOM.removePhoto
         if (removePhotoBtn) {
           removePhotoBtn.style.display = "block"
         }
-        console.log("✅ Photo restored from formData")
+        logger.log("✅ Photo restored from formData")
       }
     }
   }
@@ -364,7 +364,7 @@ async function saveLebenslaufData() {
 
   // Get current language
   const currentLang = currentLanguage || "uk"
-  console.log("Saving Lebenslauf data for language:", currentLang)
+  logger.log("Saving Lebenslauf data for language:", currentLang)
 
   // Get photo data from input if not already available
   let photoData = globalPhotoData || formData.lebenslaufPhoto || null
@@ -374,37 +374,37 @@ async function saveLebenslaufData() {
 
   // If no valid photo data but input has file, try to read it
   if (!isValidPhotoData) {
-    console.log("📸 No valid photo data found, checking input...")
-    const photoInput = document.getElementById("lebenslaufPhoto")
+    logger.log("📸 No valid photo data found, checking input...")
+    const photoInput = DOM.lebenslaufPhoto
     if (photoInput && photoInput.files && photoInput.files.length > 0) {
-      console.log("📸 Photo file found in input, reading...")
+      logger.log("📸 Photo file found in input, reading...")
       const file = photoInput.files[0]
 
       // Read file asynchronously using FileReader
       photoData = await new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onload = function (e) {
-          console.log("📸 Photo read successfully:", e.target.result.length, "characters")
+          logger.log("📸 Photo read successfully:", e.target.result.length, "characters")
           resolve(e.target.result)
         }
         reader.onerror = function (e) {
-          console.error("📸 Error reading photo:", e)
+          logger.error("📸 Error reading photo:", e)
           reject(e)
         }
         reader.readAsDataURL(file)
       })
     } else {
-      console.log("📸 No photo file found in input")
+      logger.log("📸 No photo file found in input")
     }
   } else {
-    console.log("📸 Valid photo data already exists")
+    logger.log("📸 Valid photo data already exists")
   }
 
   // Update globalPhotoData and formData with the correct photo data
   if (photoData && photoData.startsWith("data:image/")) {
     globalPhotoData = photoData
     formData.lebenslaufPhoto = photoData
-    console.log("📸 Updated globalPhotoData and formData with correct photo")
+    logger.log("📸 Updated globalPhotoData and formData with correct photo")
   }
 
   const lebenslaufData = {
@@ -427,45 +427,45 @@ async function saveLebenslaufData() {
     lang: currentLang
   }
 
-  console.log("Saving data for language:", currentLang, "Data:", lebenslaufData)
-  console.log("Photo data check:")
-  console.log("  globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("  formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-  console.log("  isValidPhotoData:", isValidPhotoData)
-  console.log("  photoData (final):", photoData ? "Present" : "Missing")
-  console.log("  Final photo value:", lebenslaufData.photo ? "Present" : "Missing")
+  logger.log("Saving data for language:", currentLang, "Data:", lebenslaufData)
+  logger.log("Photo data check:")
+  logger.log("  globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("  formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("  isValidPhotoData:", isValidPhotoData)
+  logger.log("  photoData (final):", photoData ? "Present" : "Missing")
+  logger.log("  Final photo value:", lebenslaufData.photo ? "Present" : "Missing")
 
   // Детальна діагностика фото
   if (globalPhotoData) {
-    console.log("  globalPhotoData type:", typeof globalPhotoData)
-    console.log("  globalPhotoData length:", globalPhotoData.length)
-    console.log(
+    logger.log("  globalPhotoData type:", typeof globalPhotoData)
+    logger.log("  globalPhotoData length:", globalPhotoData.length)
+    logger.log(
       "  globalPhotoData starts with data:image/:",
       globalPhotoData.startsWith("data:image/")
     )
   }
   if (formData.lebenslaufPhoto) {
-    console.log("  formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
-    console.log("  formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
-    console.log(
+    logger.log("  formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
+    logger.log("  formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
+    logger.log(
       "  formData.lebenslaufPhoto starts with data:image/:",
       formData.lebenslaufPhoto.startsWith("data:image/")
     )
   }
   if (photoData) {
-    console.log("  photoData type:", typeof photoData)
-    console.log("  photoData length:", photoData.length)
-    console.log("  photoData starts with data:image/:", photoData.startsWith("data:image/"))
+    logger.log("  photoData type:", typeof photoData)
+    logger.log("  photoData length:", photoData.length)
+    logger.log("  photoData starts with data:image/:", photoData.startsWith("data:image/"))
   }
 
   try {
-    console.log(`Saving Lebenslauf data for language: ${currentLang}`)
+    logger.log(`Saving Lebenslauf data for language: ${currentLang}`)
 
     // Save data locally (no server needed for dynamic preview)
     try {
       // Save to localStorage for persistence
       localStorage.setItem("lebenslaufData", JSON.stringify(lebenslaufData))
-      console.log("Lebenslauf data saved locally:", lebenslaufData)
+      logger.log("Lebenslauf data saved locally:", lebenslaufData)
 
       // Show success message in current language
       const successMessage =
@@ -478,7 +478,7 @@ async function saveLebenslaufData() {
 
       showStatus(successMessage, "success")
     } catch (error) {
-      console.error("Failed to save Lebenslauf data locally:", error)
+      logger.error("Failed to save Lebenslauf data locally:", error)
       const errorMessage =
         currentLang === "uk"
           ? "❌ Помилка збереження даних Lebenslauf"
@@ -488,7 +488,7 @@ async function saveLebenslaufData() {
       showStatus(errorMessage, "error")
     }
   } catch (error) {
-    console.error("Error saving Lebenslauf data:", error)
+    logger.error("Error saving Lebenslauf data:", error)
     const errorMessage =
       getTranslation("messages.saveError") ||
       (currentLang === "uk"
@@ -540,7 +540,7 @@ async function saveAnschreibenData() {
 
   // Get current language
   const currentLang = currentLanguage || "uk"
-  console.log("Saving Anschreiben data for language:", currentLang)
+  logger.log("Saving Anschreiben data for language:", currentLang)
 
   // Collect Anschreiben data from form fields
   const anschreibenData = {
@@ -575,7 +575,7 @@ async function saveAnschreibenData() {
     lang: currentLang
   }
 
-  console.log("Saving Anschreiben data for language:", currentLang, "Data:", anschreibenData)
+  logger.log("Saving Anschreiben data for language:", currentLang, "Data:", anschreibenData)
 
   try {
     // Try to save to server first
@@ -590,7 +590,7 @@ async function saveAnschreibenData() {
 
       if (response.ok) {
         const result = await response.json()
-        console.log("Anschreiben data saved to server:", result)
+        logger.log("Anschreiben data saved to server:", result)
 
         const successMessage =
           getTranslation("messages.dataSaved") ||
@@ -603,15 +603,15 @@ async function saveAnschreibenData() {
         showStatus(successMessage, "success")
         return
       } else {
-        console.warn("Server save failed, falling back to local storage")
+        logger.warn("Server save failed, falling back to local storage")
         throw new Error("Server save failed")
       }
     } catch (serverError) {
-      console.log("Server not available, saving locally:", serverError.message)
+      logger.log("Server not available, saving locally:", serverError.message)
 
       // Fallback to localStorage
       localStorage.setItem("anschreibenData", JSON.stringify(anschreibenData))
-      console.log("Anschreiben data saved locally:", anschreibenData)
+      logger.log("Anschreiben data saved locally:", anschreibenData)
 
       const successMessage =
         getTranslation("messages.dataSavedLocally") ||
@@ -624,7 +624,7 @@ async function saveAnschreibenData() {
       showStatus(successMessage, "success")
     }
   } catch (error) {
-    console.error("Error saving Anschreiben data:", error)
+    logger.error("Error saving Anschreiben data:", error)
     const errorMessage =
       getTranslation("messages.saveError") ||
       (currentLang === "uk"
@@ -642,7 +642,7 @@ async function showCurrentDataInfo() {
 
   try {
     // Show current form data instead of file info
-    console.log("Showing current form data info")
+    logger.log("Showing current form data info")
 
     const currentValues = getCurrentFormValues()
     const activeTab = getCurrentActiveTab()
@@ -687,7 +687,7 @@ async function showCurrentDataInfo() {
 
     showStatus(infoMessage, "info")
   } catch (error) {
-    console.error("Error loading data info:", error)
+    logger.error("Error loading data info:", error)
 
     const errorMessage =
       currentLang === "uk"
@@ -705,7 +705,7 @@ async function checkServerStatus() {
 
   try {
     // Skip API call since we're using dynamic preview
-    console.log("Skipping server status check - using dynamic preview instead")
+    logger.log("Skipping server status check - using dynamic preview instead")
 
     const statusMessage =
       currentLang === "uk"
@@ -715,7 +715,7 @@ async function checkServerStatus() {
           : "✅ Dynamic preview active"
     showStatus(statusMessage, "success")
   } catch (error) {
-    console.error("Status check failed:", error)
+    logger.error("Status check failed:", error)
     showStatus("❌ Помилка перевірки статусу", "error")
   }
 }
@@ -740,7 +740,7 @@ function clearAllCache() {
     })
 
     // Clear photo preview
-    const photoPreview = document.getElementById("photoPreview")
+    const photoPreview = DOM.photoPreview
     if (photoPreview) {
       photoPreview.innerHTML = '<div class="photo-placeholder">📷<br>Kein Foto</div>'
     }
@@ -751,7 +751,7 @@ function clearAllCache() {
       removePhotoBtn.style.display = "none"
     }
 
-    console.log("All cache cleared and form reset")
+    logger.log("All cache cleared and form reset")
 
     // Show success message in current language
     const currentLang = currentLanguage || "uk"
@@ -768,7 +768,7 @@ function clearAllCache() {
     // Update preview
     showPreview(currentPreviewType)
   } catch (error) {
-    console.error("Error clearing cache:", error)
+    logger.error("Error clearing cache:", error)
     showStatus("Помилка очищення кешу", "error")
   }
 }
@@ -800,21 +800,21 @@ function updateThemeVariables(theme) {
 
 // Populate form with Anschreiben data
 async function populateFormWithAnschreibenData(data) {
-  console.log("=== populateFormWithAnschreibenData called ===")
-  console.log("Data received:", data)
+  logger.log("=== populateFormWithAnschreibenData called ===")
+  logger.log("Data received:", data)
 
   try {
     // Switch to Bewerbung tab
-    console.log("Switching to bewerbung tab...")
+    logger.log("Switching to bewerbung tab...")
     await switchFormTab("bewerbung")
-    console.log("Switched to bewerbung tab successfully")
+    logger.log("Switched to bewerbung tab successfully")
   } catch (switchError) {
-    console.error("Error switching to bewerbung tab:", switchError)
-    console.log("Continuing without tab switch...")
+    logger.error("Error switching to bewerbung tab:", switchError)
+    logger.log("Continuing without tab switch...")
   }
 
   // Populate main form fields - direct data structure (not nested)
-  console.log("Populating Anschreiben fields...")
+  logger.log("Populating Anschreiben fields...")
 
   // Personal data
   setFormValue(document, "fullName", data.fullName)
@@ -845,52 +845,52 @@ async function populateFormWithAnschreibenData(data) {
   // Update form data
   updateFormData()
 
-  console.log("Form data after populateFormWithAnschreibenData:", formData)
-  console.log("Full name after update:", formData.fullName)
-  console.log("Address after update:", formData.address)
+  logger.log("Form data after populateFormWithAnschreibenData:", formData)
+  logger.log("Full name after update:", formData.fullName)
+  logger.log("Address after update:", formData.address)
 
   // Show preview
-  console.log("About to show preview for bewerbung")
+  logger.log("About to show preview for bewerbung")
   await showPreview("bewerbung")
 
   // Re-add event listeners after data loading
-  console.log("Re-adding event listeners after Anschreiben data loading...")
+  logger.log("Re-adding event listeners after Anschreiben data loading...")
   addFormEventListeners()
-  console.log("Event listeners re-added successfully")
+  logger.log("Event listeners re-added successfully")
 }
 
 // Populate form with Lebenslauf data
 async function populateFormWithLebenslaufData(data) {
-  console.log("=== populateFormWithLebenslaufData called ===")
-  console.log("Current language:", currentLanguage)
-  console.log("Data received:", data)
-  console.log("Data type:", typeof data)
-  console.log("Data keys:", Object.keys(data))
-  console.log("Sample data values:")
-  console.log("  fullName:", data.fullName)
-  console.log("  nationality:", data.nationality)
-  console.log("  summary:", data.summary?.substring(0, 50) + "...")
-  console.log("Stack trace:", new Error().stack)
+  logger.log("=== populateFormWithLebenslaufData called ===")
+  logger.log("Current language:", currentLanguage)
+  logger.log("Data received:", data)
+  logger.log("Data type:", typeof data)
+  logger.log("Data keys:", Object.keys(data))
+  logger.log("Sample data values:")
+  logger.log("  fullName:", data.fullName)
+  logger.log("  nationality:", data.nationality)
+  logger.log("  summary:", data.summary?.substring(0, 50) + "...")
+  logger.log("Stack trace:", new Error().stack)
 
   try {
     // Switch to Lebenslauf tab
-    console.log("Switching to lebenslauf tab...")
+    logger.log("Switching to lebenslauf tab...")
     await switchFormTab("lebenslauf")
-    console.log("Switched to lebenslauf tab successfully")
+    logger.log("Switched to lebenslauf tab successfully")
   } catch (switchError) {
-    console.error("Error switching to lebenslauf tab:", switchError)
+    logger.error("Error switching to lebenslauf tab:", switchError)
     // Don't throw the error, just log it and continue
-    console.log("Continuing without tab switch...")
+    logger.log("Continuing without tab switch...")
   }
 
   // Personal info - populate both forms (data is direct, not nested in personalInfo)
-  console.log("Checking data.fullName:", data.fullName)
+  logger.log("Checking data.fullName:", data.fullName)
   if (data.fullName) {
-    console.log("Populating personal info fields...")
+    logger.log("Populating personal info fields...")
 
     // Bewerbung form
-    const bewerbungForm = document.getElementById("bewerbungForm")
-    console.log("Bewerbung form found:", !!bewerbungForm)
+    const bewerbungForm = DOM.bewerbungForm
+    logger.log("Bewerbung form found:", !!bewerbungForm)
 
     setFormValue(bewerbungForm, "fullName", data.fullName)
     setFormValue(bewerbungForm, "address", data.address)
@@ -901,7 +901,7 @@ async function populateFormWithLebenslaufData(data) {
     setFormValue(bewerbungForm, "residenceStatus", data.residenceStatus)
 
     // Lebenslauf form
-    console.log("Populating Lebenslauf form fields...")
+    logger.log("Populating Lebenslauf form fields...")
     setFormValue(document, "lebenslaufFullName", data.fullName)
     setFormValue(document, "lebenslaufAddress", data.address)
     setFormValue(document, "lebenslaufPhone", data.phone)
@@ -909,89 +909,89 @@ async function populateFormWithLebenslaufData(data) {
     setFormValue(document, "lebenslaufBirthDate", data.birthDate)
     setFormValue(document, "lebenslaufNationality", data.nationality)
 
-    console.log("Personal info fields populated")
+    logger.log("Personal info fields populated")
   } else {
-    console.log("No fullName found in data, skipping personal info")
+    logger.log("No fullName found in data, skipping personal info")
   }
 
   // Professional summary
-  console.log("Checking data.summary:", data.summary)
+  logger.log("Checking data.summary:", data.summary)
   if (data.summary) {
-    console.log("Setting summary field")
+    logger.log("Setting summary field")
     setFormValue(document, "lebenslaufSummary", data.summary)
   }
 
   // Skills
-  console.log("Checking data.skills:", data.skills)
+  logger.log("Checking data.skills:", data.skills)
   if (data.skills) {
     const skillsText = Array.isArray(data.skills) ? data.skills.join("\n") : data.skills
-    console.log("Setting skills field:", skillsText)
+    logger.log("Setting skills field:", skillsText)
     setFormValue(document, "lebenslaufSkills", skillsText)
   }
 
   // Experience
-  console.log("Checking data.experience:", data.experience)
+  logger.log("Checking data.experience:", data.experience)
   if (data.experience) {
     const experienceText = Array.isArray(data.experience)
       ? data.experience
           .map(exp => `${exp.position} | ${exp.company}\n${exp.period}\n${exp.description}`)
           .join("\n\n")
       : data.experience
-    console.log("Setting experience field:", experienceText)
+    logger.log("Setting experience field:", experienceText)
     setFormValue(document, "lebenslaufExperience", experienceText)
   }
 
   // Education
-  console.log("Checking data.education:", data.education)
+  logger.log("Checking data.education:", data.education)
   if (data.education) {
     const educationText = Array.isArray(data.education)
       ? data.education.map(edu => `${edu.degree}\n${edu.institution}\n${edu.period}`).join("\n\n")
       : data.education
-    console.log("Setting education field:", educationText)
+    logger.log("Setting education field:", educationText)
     setFormValue(document, "lebenslaufEducation", educationText)
   }
 
   // Certifications
-  console.log("Checking data.certifications:", data.certifications)
+  logger.log("Checking data.certifications:", data.certifications)
   if (data.certifications) {
     const certificationsText = Array.isArray(data.certifications)
       ? data.certifications.join("\n")
       : data.certifications
-    console.log("Setting certifications field:", certificationsText)
+    logger.log("Setting certifications field:", certificationsText)
     setFormValue(document, "lebenslaufCertifications", certificationsText)
   }
 
   // Languages
-  console.log("Checking data.languages:", data.languages)
+  logger.log("Checking data.languages:", data.languages)
   if (data.languages) {
     const languagesText = Array.isArray(data.languages)
       ? data.languages.map(lang => `${lang.language} - ${lang.level}`).join("\n")
       : data.languages
-    console.log("Setting languages field:", languagesText)
+    logger.log("Setting languages field:", languagesText)
     setFormValue(document, "lebenslaufLanguages", languagesText)
   }
 
   // Additional qualifications
-  console.log("Checking data.additional:", data.additional)
+  logger.log("Checking data.additional:", data.additional)
   if (data.additional) {
     const additionalText = Array.isArray(data.additional)
       ? data.additional.join("\n")
       : data.additional
-    console.log("Setting additional field:", additionalText)
+    logger.log("Setting additional field:", additionalText)
     setFormValue(document, "lebenslaufAdditional", additionalText)
   }
 
   // Photo - Handle photo from JSON data
-  console.log("=== PHOTO HANDLING IN populateFormWithLebenslaufData ===")
-  console.log("Checking data.photo:", data.photo ? "Photo exists" : "No photo")
-  console.log("Current globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("Current formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("=== PHOTO HANDLING IN populateFormWithLebenslaufData ===")
+  logger.log("Checking data.photo:", data.photo ? "Photo exists" : "No photo")
+  logger.log("Current globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("Current formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
 
   if (data.photo && typeof data.photo === "string") {
-    console.log("=== LOADING PHOTO FROM JSON DATA ===")
-    console.log("Photo data type:", typeof data.photo)
-    console.log("Photo data length:", data.photo.length)
-    console.log("Photo starts with data:image/:", data.photo.startsWith("data:image/"))
+    logger.log("=== LOADING PHOTO FROM JSON DATA ===")
+    logger.log("Photo data type:", typeof data.photo)
+    logger.log("Photo data length:", data.photo.length)
+    logger.log("Photo starts with data:image/:", data.photo.startsWith("data:image/"))
 
     // Save photo to global variable and formData
     globalPhotoData = data.photo
@@ -999,31 +999,31 @@ async function populateFormWithLebenslaufData(data) {
     formData.photo = data.photo
 
     // Display photo in preview
-    const photoPreview = document.getElementById("photoPreview")
+    const photoPreview = DOM.photoPreview
     if (photoPreview) {
-      console.log("Updating photo preview with loaded image")
+      logger.log("Updating photo preview with loaded image")
       photoPreview.innerHTML = `<img src="${data.photo}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
 
       // Show remove button
-      const removePhotoBtn = document.getElementById("removePhoto")
+      const removePhotoBtn = DOM.removePhoto
       if (removePhotoBtn) {
         removePhotoBtn.style.display = "block"
-        console.log("Remove photo button shown")
+        logger.log("Remove photo button shown")
       }
     } else {
-      console.log("Photo preview element not found")
+      logger.log("Photo preview element not found")
     }
 
-    console.log("Photo loaded from JSON and saved to globalPhotoData and formData")
+    logger.log("Photo loaded from JSON and saved to globalPhotoData and formData")
     saveFormData() // Save to localStorage
   } else {
-    console.log("=== NO PHOTO IN JSON DATA ===")
-    console.log("Preserving existing photo data...")
+    logger.log("=== NO PHOTO IN JSON DATA ===")
+    logger.log("Preserving existing photo data...")
 
     // Preserve existing photo if no photo in JSON data
     if (globalPhotoData || formData.lebenslaufPhoto) {
       const existingPhoto = globalPhotoData || formData.lebenslaufPhoto
-      console.log("Preserving existing photo:", existingPhoto ? "Present" : "Missing")
+      logger.log("Preserving existing photo:", existingPhoto ? "Present" : "Missing")
 
       // Ensure photo is in both variables
       globalPhotoData = existingPhoto
@@ -1031,39 +1031,39 @@ async function populateFormWithLebenslaufData(data) {
       formData.photo = existingPhoto
 
       // Update photo preview
-      const photoPreview = document.getElementById("photoPreview")
+      const photoPreview = DOM.photoPreview
       if (photoPreview && existingPhoto) {
-        console.log("Updating photo preview with existing image")
+        logger.log("Updating photo preview with existing image")
         photoPreview.innerHTML = `<img src="${existingPhoto}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
 
         // Show remove button
-        const removePhotoBtn = document.getElementById("removePhoto")
+        const removePhotoBtn = DOM.removePhoto
         if (removePhotoBtn) {
           removePhotoBtn.style.display = "block"
-          console.log("Remove photo button shown")
+          logger.log("Remove photo button shown")
         }
       }
 
-      console.log("Existing photo preserved and displayed")
+      logger.log("Existing photo preserved and displayed")
     } else {
-      console.log("No existing photo to preserve")
+      logger.log("No existing photo to preserve")
     }
   }
 
   // Update preview
-  console.log("Updating preview...")
+  logger.log("Updating preview...")
   try {
     await showPreview("lebenslauf")
-    console.log("Preview updated successfully")
+    logger.log("Preview updated successfully")
   } catch (previewError) {
-    console.error("Error updating preview:", previewError)
+    logger.error("Error updating preview:", previewError)
     throw previewError
   }
 
   // Re-add event listeners after data loading
-  console.log("Re-adding event listeners after data loading...")
+  logger.log("Re-adding event listeners after data loading...")
   addFormEventListeners()
-  console.log("Event listeners re-added successfully")
+  logger.log("Event listeners re-added successfully")
 }
 
 // Helper function to set form values
@@ -1077,43 +1077,43 @@ function setFormValue(form, fieldName, value) {
 
   if (field) {
     const oldValue = field.value
-    console.log(`🔄 setFormValue: ${fieldName}`)
-    console.log(`   Old value: "${oldValue}"`)
-    console.log(`   New value: "${value}"`)
-    console.log(`   Current language: ${currentLanguage}`)
-    console.log(`   Stack trace:`, new Error().stack.split("\n")[1])
+    logger.log(`🔄 setFormValue: ${fieldName}`)
+    logger.log(`   Old value: "${oldValue}"`)
+    logger.log(`   New value: "${value}"`)
+    logger.log(`   Current language: ${currentLanguage}`)
+    logger.log(`   Stack trace:`, new Error().stack.split("\n")[1])
     field.value = value
     // Trigger input event to update form data
     field.dispatchEvent(new Event("input", {bubbles: true}))
-    console.log(`Field ${fieldName} value after setting:`, field.value)
+    logger.log(`Field ${fieldName} value after setting:`, field.value)
   } else {
-    console.log(`Field ${fieldName} not found`)
+    logger.log(`Field ${fieldName} not found`)
   }
 }
 
 // Switch between form tabs
 async function switchFormTab(tabName) {
-  console.log("Switching to tab:", tabName)
+  logger.log("Switching to tab:", tabName)
 
   // Update tab buttons
   const tabButtons = document.querySelectorAll(".form-tab-button")
-  console.log("Found tab buttons:", tabButtons.length)
+  logger.log("Found tab buttons:", tabButtons.length)
   tabButtons.forEach(button => button.classList.remove("active"))
 
   const activeButton = document.querySelector(
     `[onclick="switchFormTab('${tabName}').catch(console.error)"]`
   )
-  console.log("Active button found:", activeButton)
+  logger.log("Active button found:", activeButton)
   if (activeButton) {
     activeButton.classList.add("active")
   }
 
   // Show/hide form sections
   const bewerbungSection = document.getElementById("bewerbungFormSection")
-  const lebenslaufSection = document.getElementById("lebenslaufSection")
+  const lebenslaufSection = DOM.lebenslaufSection
 
-  console.log("Bewerbung section:", bewerbungSection)
-  console.log("Lebenslauf section:", lebenslaufSection)
+  logger.log("Bewerbung section:", bewerbungSection)
+  logger.log("Lebenslauf section:", lebenslaufSection)
 
   if (tabName === "bewerbung") {
     if (bewerbungSection) bewerbungSection.style.display = "block"
@@ -1127,9 +1127,9 @@ async function switchFormTab(tabName) {
   currentPreviewType = tabName
 
   // Update preview to show corresponding document
-  console.log("About to show preview for tab:", tabName)
-  console.log("Current preview type set to:", currentPreviewType)
-  console.log("Current formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("About to show preview for tab:", tabName)
+  logger.log("Current preview type set to:", currentPreviewType)
+  logger.log("Current formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
 
   // Update form data before showing preview
   updateFormData()
@@ -1139,35 +1139,35 @@ async function switchFormTab(tabName) {
 
   // Immediately update preview for the active tab
   setTimeout(async () => {
-    console.log("About to show preview for tab:", tabName)
-    console.log("Current active tab after switch:", getCurrentActiveTab())
+    logger.log("About to show preview for tab:", tabName)
+    logger.log("Current active tab after switch:", getCurrentActiveTab())
     await showPreview(tabName)
   }, 100)
 }
 
 // Update form data from all form inputs
 function updateFormData() {
-  console.log("=== updateFormData called ===")
+  logger.log("=== updateFormData called ===")
 
   // Preserve existing photo data before updating
   const existingPhoto = formData.lebenslaufPhoto || globalPhotoData
 
-  console.log("Existing photo data:", existingPhoto ? "Present" : "Missing")
+  logger.log("Existing photo data:", existingPhoto ? "Present" : "Missing")
 
-  console.log("Global photo data:", globalPhotoData ? "Present" : "Missing")
+  logger.log("Global photo data:", globalPhotoData ? "Present" : "Missing")
 
   // Update from main form
-  const form = document.getElementById("bewerbungForm")
+  const form = DOM.bewerbungForm
   if (form) {
     const formDataObj = new FormData(form)
     const newFormData = Object.fromEntries(formDataObj)
-    console.log("Main form data:", newFormData)
-    console.log("FormData entries:")
+    logger.log("Main form data:", newFormData)
+    logger.log("FormData entries:")
     for (let [key, value] of formDataObj.entries()) {
-      console.log(`${key}: ${value}`)
+      logger.log(`${key}: ${value}`)
     }
     formData = {...formData, ...newFormData}
-    console.log("Updated formData:", formData)
+    logger.log("Updated formData:", formData)
   }
 
   // Also update by ID for specific Anschreiben fields
@@ -1198,18 +1198,18 @@ function updateFormData() {
     const element = document.getElementById(fieldId)
     if (element) {
       formData[fieldId] = element.value
-      console.log(`Updated Anschreiben field ${fieldId}:`, element.value)
+      logger.log(`Updated Anschreiben field ${fieldId}:`, element.value)
     }
   })
 
   // Update from Lebenslauf section
-  const lebenslaufSection = document.getElementById("lebenslaufSection")
+  const lebenslaufSection = DOM.lebenslaufSection
   if (lebenslaufSection) {
     const lebenslaufInputs = lebenslaufSection.querySelectorAll("input, textarea, select")
-    console.log("Found Lebenslauf inputs:", lebenslaufInputs.length)
+    logger.log("Found Lebenslauf inputs:", lebenslaufInputs.length)
     lebenslaufInputs.forEach(input => {
       if (input.name) {
-        console.log(`Updating ${input.name}:`, input.value)
+        logger.log(`Updating ${input.name}:`, input.value)
         formData[input.name] = input.value
 
         // Also map to main form fields for compatibility
@@ -1233,31 +1233,31 @@ function updateFormData() {
   // Restore photo data if it existed
   if (existingPhoto) {
     formData.lebenslaufPhoto = existingPhoto
-    console.log("Photo data restored:", formData.lebenslaufPhoto ? "Yes" : "No")
-    console.log("Restored photo data:", formData.lebenslaufPhoto)
-    console.log("Restored photo data type:", typeof formData.lebenslaufPhoto)
-    console.log(
+    logger.log("Photo data restored:", formData.lebenslaufPhoto ? "Yes" : "No")
+    logger.log("Restored photo data:", formData.lebenslaufPhoto)
+    logger.log("Restored photo data type:", typeof formData.lebenslaufPhoto)
+    logger.log(
       "Restored photo data length:",
       formData.lebenslaufPhoto ? formData.lebenslaufPhoto.length : 0
     )
   } else {
-    console.log("No existing photo to restore")
+    logger.log("No existing photo to restore")
   }
 
-  console.log("=== UPDATE FORM DATA DEBUG ===")
-  console.log("Final formData after updateFormData:", formData)
-  console.log("Final globalPhotoData after updateFormData:", globalPhotoData)
-  console.log("Photo in formData after updateFormData:", formData.lebenslaufPhoto)
-  console.log("Photo exists check:", formData.lebenslaufPhoto ? "Yes" : "No")
-  console.log("Photo type:", typeof formData.lebenslaufPhoto)
-  console.log("Photo length:", formData.lebenslaufPhoto ? formData.lebenslaufPhoto.length : 0)
-  console.log(
+  logger.log("=== UPDATE FORM DATA DEBUG ===")
+  logger.log("Final formData after updateFormData:", formData)
+  logger.log("Final globalPhotoData after updateFormData:", globalPhotoData)
+  logger.log("Photo in formData after updateFormData:", formData.lebenslaufPhoto)
+  logger.log("Photo exists check:", formData.lebenslaufPhoto ? "Yes" : "No")
+  logger.log("Photo type:", typeof formData.lebenslaufPhoto)
+  logger.log("Photo length:", formData.lebenslaufPhoto ? formData.lebenslaufPhoto.length : 0)
+  logger.log(
     "Photo starts with data:image/:",
     formData.lebenslaufPhoto && typeof formData.lebenslaufPhoto === "string"
       ? formData.lebenslaufPhoto.startsWith("data:image/")
       : false
   )
-  console.log(
+  logger.log(
     "Photo starts with blob:",
     formData.lebenslaufPhoto && typeof formData.lebenslaufPhoto === "string"
       ? formData.lebenslaufPhoto.startsWith("blob:")
@@ -1283,18 +1283,18 @@ function debounce(func, wait) {
 
 // Auto-update preview when user types
 async function updatePreviewOnInput() {
-  console.log("=== 🔄 updatePreviewOnInput called ===")
-  console.log("Timestamp:", new Date().toISOString())
-  console.log("Stack trace:", new Error().stack)
+  logger.log("=== 🔄 updatePreviewOnInput called ===")
+  logger.log("Timestamp:", new Date().toISOString())
+  logger.log("Stack trace:", new Error().stack)
 
   try {
     // Update form data from all input fields using the new function
-    console.log("🔄 Calling getCurrentFormValues()...")
+    logger.log("🔄 Calling getCurrentFormValues()...")
     const currentValues = getCurrentFormValues()
     formData = currentValues
 
-    console.log("🎯 Current preview type:", currentPreviewType)
-    console.log("📊 Form data after update:", {
+    logger.log("🎯 Current preview type:", currentPreviewType)
+    logger.log("📊 Form data after update:", {
       fullName: formData.fullName,
       address: formData.address,
       email: formData.email,
@@ -1303,79 +1303,79 @@ async function updatePreviewOnInput() {
       lebenslaufPhoto: formData.lebenslaufPhoto ? "Present" : "Missing"
     })
 
-    console.log("📸 Global photo data:", globalPhotoData ? "Present" : "Missing")
+    logger.log("📸 Global photo data:", globalPhotoData ? "Present" : "Missing")
 
     // Detailed photo analysis
     if (formData.lebenslaufPhoto) {
-      console.log("Lebenslauf photo details:")
-      console.log("- Type:", typeof formData.lebenslaufPhoto)
-      console.log("- Length:", formData.lebenslaufPhoto.length)
+      logger.log("Lebenslauf photo details:")
+      logger.log("- Type:", typeof formData.lebenslaufPhoto)
+      logger.log("- Length:", formData.lebenslaufPhoto.length)
       if (typeof formData.lebenslaufPhoto === "string") {
-        console.log(
+        logger.log(
           "- Starts with data:image/:",
           formData.lebenslaufPhoto.startsWith("data:image/")
         )
-        console.log("- Starts with blob:", formData.lebenslaufPhoto.startsWith("blob:"))
+        logger.log("- Starts with blob:", formData.lebenslaufPhoto.startsWith("blob:"))
       } else {
-        console.log("- Not a string, cannot check startsWith")
+        logger.log("- Not a string, cannot check startsWith")
       }
     }
 
     // Determine which preview to show based on active tab
     const activeTab = getCurrentActiveTab()
-    console.log("Active tab determined:", activeTab)
-    console.log("Current form values:", getCurrentFormValues())
+    logger.log("Active tab determined:", activeTab)
+    logger.log("Current form values:", getCurrentFormValues())
 
     // Update preview with current data using the active tab
     await showPreview(activeTab)
     // Recalculate proportional scale after preview updates
     setTimeout(updatePageScaleVar, 0)
-    console.log("✅ Preview updated successfully")
+    logger.log("✅ Preview updated successfully")
   } catch (error) {
-    console.error("❌ Error in updatePreviewOnInput:", error)
+    logger.error("❌ Error in updatePreviewOnInput:", error)
   }
 }
 
 // Debounced version of preview update
 const debouncedUpdatePreview = debounce(() => {
-  console.log("🔄 ⚡ REAL-TIME debouncedUpdatePreview called")
+  logger.log("🔄 ⚡ REAL-TIME debouncedUpdatePreview called")
   updatePreviewOnInput()
 }, 150) // Зменшили з 300ms до 150ms для швидшого відгуку пагінації
 // Photo upload functionality
 function initializePhotoUpload() {
-  console.log("=== initializePhotoUpload called ===")
-  console.log("Current timestamp:", new Date().toISOString())
-  console.log("Document ready state:", document.readyState)
+  logger.log("=== initializePhotoUpload called ===")
+  logger.log("Current timestamp:", new Date().toISOString())
+  logger.log("Document ready state:", document.readyState)
 
-  const photoInput = document.getElementById("lebenslaufPhoto")
-  const photoPreview = document.getElementById("photoPreview")
-  const removePhotoBtn = document.getElementById("removePhoto")
+  const photoInput = DOM.lebenslaufPhoto
+  const photoPreview = DOM.photoPreview
+  const removePhotoBtn = DOM.removePhoto
 
-  console.log("Photo input found:", !!photoInput)
-  console.log("Photo input element:", photoInput)
-  console.log("Photo preview found:", !!photoPreview)
-  console.log("Photo preview element:", photoPreview)
-  console.log("Remove photo button found:", !!removePhotoBtn)
-  console.log("Remove photo button element:", removePhotoBtn)
+  logger.log("Photo input found:", !!photoInput)
+  logger.log("Photo input element:", photoInput)
+  logger.log("Photo preview found:", !!photoPreview)
+  logger.log("Photo preview element:", photoPreview)
+  logger.log("Remove photo button found:", !!removePhotoBtn)
+  logger.log("Remove photo button element:", removePhotoBtn)
 
   // Check if elements are in DOM
-  console.log("Photo input in DOM:", document.contains(photoInput))
-  console.log("Photo preview in DOM:", document.contains(photoPreview))
+  logger.log("Photo input in DOM:", document.contains(photoInput))
+  logger.log("Photo preview in DOM:", document.contains(photoPreview))
 
   if (photoInput && photoPreview) {
-    console.log("✅ Photo input and preview found, adding event listener")
-    console.log("Photo input ID:", photoInput.id)
-    console.log("Photo input type:", photoInput.type)
-    console.log("Photo input name:", photoInput.name)
+    logger.log("✅ Photo input and preview found, adding event listener")
+    logger.log("Photo input ID:", photoInput.id)
+    logger.log("Photo input type:", photoInput.type)
+    logger.log("Photo input name:", photoInput.name)
     photoInput.addEventListener("change", function (e) {
-      console.log("=== PHOTO INPUT CHANGE EVENT TRIGGERED ===")
-      console.log("Event:", e)
-      console.log("Target:", e.target)
-      console.log("Files:", e.target.files)
-      console.log("Files length:", e.target.files ? e.target.files.length : "no files")
+      logger.log("=== PHOTO INPUT CHANGE EVENT TRIGGERED ===")
+      logger.log("Event:", e)
+      logger.log("Target:", e.target)
+      logger.log("Files:", e.target.files)
+      logger.log("Files length:", e.target.files ? e.target.files.length : "no files")
 
       const file = e.target.files[0]
-      console.log("Selected file:", file)
+      logger.log("Selected file:", file)
       if (file) {
         // Show loading indicator
         photoPreview.innerHTML = `
@@ -1408,17 +1408,17 @@ function initializePhotoUpload() {
           return
         }
 
-        console.log("Processing photo file:", file.name, file.type, file.size)
+        logger.log("Processing photo file:", file.name, file.type, file.size)
 
         const reader = new FileReader()
 
         reader.onload = function (e) {
           try {
-            console.log("=== PHOTO LOADED SUCCESSFULLY ===")
-            console.log("Event:", e)
-            console.log("Target:", e.target)
-            console.log("Result type:", typeof e.target.result)
-            console.log("Result length:", e.target.result ? e.target.result.length : "no result")
+            logger.log("=== PHOTO LOADED SUCCESSFULLY ===")
+            logger.log("Event:", e)
+            logger.log("Target:", e.target)
+            logger.log("Result type:", typeof e.target.result)
+            logger.log("Result length:", e.target.result ? e.target.result.length : "no result")
 
             const result = e.target.result
 
@@ -1427,8 +1427,8 @@ function initializePhotoUpload() {
               throw new Error("Invalid image data received")
             }
 
-            console.log("Photo data URL length:", result.length)
-            console.log("Photo data URL starts with:", result.substring(0, 50))
+            logger.log("Photo data URL length:", result.length)
+            logger.log("Photo data URL starts with:", result.substring(0, 50))
 
             // Show success indicator
             photoPreview.innerHTML = `
@@ -1440,39 +1440,39 @@ function initializePhotoUpload() {
 
             // Wait a moment then show the actual image
             setTimeout(() => {
-              console.log("=== DISPLAYING PHOTO ===")
-              console.log("Setting photoPreview.innerHTML with image")
+              logger.log("=== DISPLAYING PHOTO ===")
+              logger.log("Setting photoPreview.innerHTML with image")
               photoPreview.innerHTML = `<img src="${result}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
-              console.log("Photo preview updated, checking if image is visible")
+              logger.log("Photo preview updated, checking if image is visible")
 
               // Check if image is actually visible
               const img = photoPreview.querySelector("img")
-              console.log("Image element:", img)
-              console.log("Image src:", img ? img.src : "no image")
-              console.log("Image complete:", img ? img.complete : "no image")
-              console.log("Image naturalWidth:", img ? img.naturalWidth : "no image")
-              console.log("Image naturalHeight:", img ? img.naturalHeight : "no image")
+              logger.log("Image element:", img)
+              logger.log("Image src:", img ? img.src : "no image")
+              logger.log("Image complete:", img ? img.complete : "no image")
+              logger.log("Image naturalWidth:", img ? img.naturalWidth : "no image")
+              logger.log("Image naturalHeight:", img ? img.naturalHeight : "no image")
 
               if (removePhotoBtn) {
                 removePhotoBtn.style.display = "block"
-                console.log("Remove photo button shown")
+                logger.log("Remove photo button shown")
               }
             }, 1000)
 
             // Update form data with photo
             formData.lebenslaufPhoto = result
             globalPhotoData = result // Also save to global variable
-            console.log("=== PHOTO UPLOAD DEBUG ===")
-            console.log("Photo uploaded and saved to formData and globalPhotoData")
-            console.log("Current formData after photo upload:", formData)
-            console.log("Current globalPhotoData after photo upload:", globalPhotoData)
-            console.log("Photo type:", typeof result)
-            console.log("Photo length:", result.length)
-            console.log("Photo starts with data:image/:", result.startsWith("data:image/"))
+            logger.log("=== PHOTO UPLOAD DEBUG ===")
+            logger.log("Photo uploaded and saved to formData and globalPhotoData")
+            logger.log("Current formData after photo upload:", formData)
+            logger.log("Current globalPhotoData after photo upload:", globalPhotoData)
+            logger.log("Photo type:", typeof result)
+            logger.log("Photo length:", result.length)
+            logger.log("Photo starts with data:image/:", result.startsWith("data:image/"))
             saveFormData() // Save to localStorage
             updatePreviewOnInput()
           } catch (error) {
-            console.error("Error displaying photo:", error)
+            logger.error("Error displaying photo:", error)
             const errorMsg =
               getTranslation("errors.photoDisplayError") || "Помилка при відображенні фото"
             alert(errorMsg)
@@ -1480,27 +1480,27 @@ function initializePhotoUpload() {
         }
 
         reader.onerror = function (error) {
-          console.error("Error reading file:", error)
+          logger.error("Error reading file:", error)
           const errorMsg = getTranslation("errors.fileReadError") || "Помилка при читанні файлу"
           alert(errorMsg)
         }
 
         reader.onabort = function (error) {
-          console.error("File read aborted:", error)
+          logger.error("File read aborted:", error)
           alert("Читання файлу перервано")
         }
 
         try {
-          console.log("Starting to read file as data URL...")
+          logger.log("Starting to read file as data URL...")
           reader.readAsDataURL(file)
         } catch (error) {
-          console.error("Error starting file read:", error)
+          logger.error("Error starting file read:", error)
 
           // Fallback: try using URL.createObjectURL
           try {
-            console.log("Trying fallback method with URL.createObjectURL...")
+            logger.log("Trying fallback method with URL.createObjectURL...")
             const objectURL = URL.createObjectURL(file)
-            console.log("Object URL created:", objectURL)
+            logger.log("Object URL created:", objectURL)
 
             photoPreview.innerHTML = `<img src="${objectURL}" alt="Uploaded photo" />`
             if (removePhotoBtn) {
@@ -1510,13 +1510,13 @@ function initializePhotoUpload() {
             // Update form data with object URL
             formData.lebenslaufPhoto = objectURL
             globalPhotoData = objectURL // Also save to global variable
-            console.log("Photo uploaded using fallback method and saved to globalPhotoData")
-            console.log("Current formData after fallback photo upload:", formData)
-            console.log("Current globalPhotoData after fallback photo upload:", globalPhotoData)
+            logger.log("Photo uploaded using fallback method and saved to globalPhotoData")
+            logger.log("Current formData after fallback photo upload:", formData)
+            logger.log("Current globalPhotoData after fallback photo upload:", globalPhotoData)
             saveFormData() // Save to localStorage
             updatePreviewOnInput()
           } catch (fallbackError) {
-            console.error("Fallback method also failed:", fallbackError)
+            logger.error("Fallback method also failed:", fallbackError)
             const errorMsg =
               getTranslation("errors.fileUploadError") || "Помилка при завантаженні файлу"
             alert(errorMsg)
@@ -1555,21 +1555,21 @@ function initializePhotoUpload() {
     })
   }
 
-  console.log("=== initializePhotoUpload completed ===")
-  console.log("Event listener added:", photoInput ? "Yes" : "No")
-  console.log("Photo preview element ready:", photoPreview ? "Yes" : "No")
+  logger.log("=== initializePhotoUpload completed ===")
+  logger.log("Event listener added:", photoInput ? "Yes" : "No")
+  logger.log("Photo preview element ready:", photoPreview ? "Yes" : "No")
 
   if (!photoInput || !photoPreview) {
-    console.log("❌ Photo upload initialization failed:")
-    console.log("  Photo input found:", !!photoInput)
-    console.log("  Photo preview found:", !!photoPreview)
+    logger.log("❌ Photo upload initialization failed:")
+    logger.log("  Photo input found:", !!photoInput)
+    logger.log("  Photo preview found:", !!photoPreview)
     if (!photoInput) {
-      console.log(
+      logger.log(
         "  ❌ Photo input element not found - check if element with ID 'lebenslaufPhoto' exists"
       )
     }
     if (!photoPreview) {
-      console.log(
+      logger.log(
         "  ❌ Photo preview element not found - check if element with ID 'photoPreview' exists"
       )
     }
@@ -1584,7 +1584,7 @@ function initializeForm() {
 
   if (!dataLoaded) {
     // If no saved data, initialize with form values
-    const form = document.getElementById("bewerbungForm")
+    const form = DOM.bewerbungForm
     const formDataObj = new FormData(form)
     formData = Object.fromEntries(formDataObj)
   }
@@ -1595,15 +1595,15 @@ function initializeForm() {
 
 // Add event listeners to form fields for real-time updates
 function addFormEventListeners() {
-  console.log("=== addFormEventListeners called ===")
+  logger.log("=== addFormEventListeners called ===")
 
   // Remove existing listeners first to avoid duplicates
   removeFormEventListeners()
 
   // Add listeners to all forms and sections
   const sections = [
-    document.getElementById("bewerbungForm"),
-    document.getElementById("lebenslaufSection")
+    DOM.bewerbungForm,
+    DOM.lebenslaufSection
   ]
 
   let totalListenersAdded = 0
@@ -1611,27 +1611,27 @@ function addFormEventListeners() {
   sections.forEach(section => {
     if (section) {
       const inputs = section.querySelectorAll("input, textarea, select")
-      console.log(`Adding listeners to ${section.id}:`, inputs.length, "inputs")
+      logger.log(`Adding listeners to ${section.id}:`, inputs.length, "inputs")
 
       inputs.forEach(input => {
         // Add multiple event listeners for better tracking
         input.addEventListener("input", e => {
-          console.log(`🔄 Input event on ${input.name || input.id}:`, e.target.value)
-          console.log(`🔄 Calling debouncedUpdatePreview from input event`)
+          logger.log(`🔄 Input event on ${input.name || input.id}:`, e.target.value)
+          logger.log(`🔄 Calling debouncedUpdatePreview from input event`)
           debouncedUpdatePreview()
         })
         input.addEventListener("change", e => {
-          console.log(`🔄 Change event on ${input.name || input.id}:`, e.target.value)
-          console.log(`🔄 Calling debouncedUpdatePreview from change event`)
+          logger.log(`🔄 Change event on ${input.name || input.id}:`, e.target.value)
+          logger.log(`🔄 Calling debouncedUpdatePreview from change event`)
           debouncedUpdatePreview()
         })
         input.addEventListener("keyup", e => {
-          console.log(`🔄 Keyup event on ${input.name || input.id}:`, e.target.value)
-          console.log(`🔄 Calling debouncedUpdatePreview from keyup event`)
+          logger.log(`🔄 Keyup event on ${input.name || input.id}:`, e.target.value)
+          logger.log(`🔄 Calling debouncedUpdatePreview from keyup event`)
           debouncedUpdatePreview()
         })
         input.addEventListener("paste", () => {
-          console.log(`🔄 Paste event on ${input.name || input.id}`)
+          logger.log(`🔄 Paste event on ${input.name || input.id}`)
           // Small delay to allow paste content to be processed
           setTimeout(debouncedUpdatePreview, 10)
         })
@@ -1639,7 +1639,7 @@ function addFormEventListeners() {
         // Additional listeners for better synchronization
         if (input.type === "radio" || input.type === "checkbox") {
           input.addEventListener("click", e => {
-            console.log(`🔄 Click event on ${input.name || input.id}:`, e.target.checked)
+            logger.log(`🔄 Click event on ${input.name || input.id}:`, e.target.checked)
             debouncedUpdatePreview()
           })
         }
@@ -1647,10 +1647,10 @@ function addFormEventListeners() {
         // For select elements
         if (input.tagName.toLowerCase() === "select") {
           input.addEventListener("focus", () => {
-            console.log(`🔄 Focus event on ${input.name || input.id}`)
+            logger.log(`🔄 Focus event on ${input.name || input.id}`)
           })
           input.addEventListener("blur", () => {
-            console.log(`🔄 Blur event on ${input.name || input.id}`)
+            logger.log(`🔄 Blur event on ${input.name || input.id}`)
             debouncedUpdatePreview()
           })
         }
@@ -1658,19 +1658,19 @@ function addFormEventListeners() {
         totalListenersAdded++
       })
     } else {
-      console.log(`❌ Section not found: ${section ? section.id : "undefined"}`)
+      logger.log(`❌ Section not found: ${section ? section.id : "undefined"}`)
     }
   })
 
-  console.log(`✅ Total event listeners added: ${totalListenersAdded}`)
-  console.log("=== addFormEventListeners completed ===")
+  logger.log(`✅ Total event listeners added: ${totalListenersAdded}`)
+  logger.log("=== addFormEventListeners completed ===")
 }
 
 // Remove existing event listeners to prevent duplicates
 function removeFormEventListeners() {
   const sections = [
-    document.getElementById("bewerbungForm"),
-    document.getElementById("lebenslaufSection")
+    DOM.bewerbungForm,
+    DOM.lebenslaufSection
   ]
 
   sections.forEach(section => {
@@ -1687,7 +1687,7 @@ function removeFormEventListeners() {
 
 // Show status message
 function showStatus(message, type = "info") {
-  const statusEl = document.getElementById("statusMessage")
+  const statusEl = DOM.statusMessage
 
   // Clear any existing timeout
   if (statusEl.timeoutId) {
@@ -1707,7 +1707,7 @@ function showStatus(message, type = "info") {
 
 // Clear status message immediately
 function clearStatus() {
-  const statusEl = document.getElementById("statusMessage")
+  const statusEl = DOM.statusMessage
   if (statusEl.timeoutId) {
     clearTimeout(statusEl.timeoutId)
     statusEl.timeoutId = null
@@ -1718,7 +1718,7 @@ function clearStatus() {
 
 // Generate preview
 async function generatePreview() {
-  const form = document.getElementById("bewerbungForm")
+  const form = DOM.bewerbungForm
   const formDataObj = new FormData(form)
   formData = Object.fromEntries(formDataObj)
 
@@ -1790,190 +1790,19 @@ function createMultiPagePreview(content) {
 }
 
 // Function to get current active form tab
+// getCurrentActiveTab - DELEGATED TO PreviewService
 function getCurrentActiveTab() {
-  const activeTab = document.querySelector(".form-tab-button.active")
-  console.log("Active tab element:", activeTab)
-  if (activeTab) {
-    const onclickAttr = activeTab.getAttribute("onclick")
-    console.log("Active tab onclick:", onclickAttr)
-    if (onclickAttr && onclickAttr.includes("bewerbung")) {
-      return "bewerbung"
-    } else if (onclickAttr && onclickAttr.includes("lebenslauf")) {
-      return "lebenslauf"
-    }
-  }
-
-  // Якщо не знайдено активну вкладку, перевіряємо яка вкладка видима
-  const lebenslaufSection = document.getElementById("lebenslaufSection")
-  const bewerbungSection = document.getElementById("bewerbungForm")
-
-  if (lebenslaufSection && lebenslaufSection.style.display !== "none") {
-    console.log("Lebenslauf section is visible, returning lebenslauf")
-    return "lebenslauf"
-  } else if (bewerbungSection && bewerbungSection.style.display !== "none") {
-    console.log("Bewerbung section is visible, returning bewerbung")
-    return "bewerbung"
-  }
-
-  console.log("No active tab found, defaulting to lebenslauf")
-  return "lebenslauf" // default to lebenslauf as shown in photo
+  return previewService.getCurrentActiveTab();
 }
-
 // Function to get current form values dynamically based on active tab
+// getCurrentFormValues - DELEGATED TO PreviewService
 function getCurrentFormValues() {
-  const activeTab = getCurrentActiveTab()
-
-  // Get values from both sections regardless of visibility
-  const bewerbungSection = document.getElementById("bewerbungForm")
-  const lebenslaufSection = document.getElementById("lebenslaufSection")
-
-  const currentValues = {}
-
-  // Read from bewerbung section
-  if (bewerbungSection) {
-    const bewerbungInputs = bewerbungSection.querySelectorAll("input, textarea, select")
-    console.log("Found bewerbung inputs:", bewerbungInputs.length)
-    bewerbungInputs.forEach(input => {
-      if (input.name && input.type !== "file") {
-        currentValues[input.name] = input.value
-        console.log(`Bewerbung ${input.name}:`, input.value)
-      }
-    })
-
-    // Also read by ID for specific Anschreiben fields
-    const anschreibenFields = [
-      "fullName",
-      "address",
-      "phone",
-      "email",
-      "birthDate",
-      "nationality",
-      "position",
-      "company",
-      "jobNumber",
-      "contactName",
-      "contactAddress",
-      "contactPhone",
-      "contactEmail",
-      "subject",
-      "motivation",
-      "qualifications",
-      "experience",
-      "education",
-      "languages",
-      "additional"
-    ]
-
-    anschreibenFields.forEach(fieldId => {
-      const element = document.getElementById(fieldId)
-      if (element && element.value) {
-        currentValues[fieldId] = element.value
-        console.log(`Anschreiben field ${fieldId}:`, element.value)
-      }
-    })
-  } else {
-    console.log("Bewerbung section not found!")
-  }
-
-  // Read from lebenslauf section
-  if (lebenslaufSection) {
-    const lebenslaufInputs = lebenslaufSection.querySelectorAll("input, textarea, select")
-    console.log("Found lebenslauf inputs:", lebenslaufInputs.length)
-    lebenslaufInputs.forEach(input => {
-      if (input.name && input.type !== "file") {
-        currentValues[input.name] = input.value
-        console.log(`Lebenslauf ${input.name}:`, input.value)
-      }
-    })
-  } else {
-    console.log("Lebenslauf section not found!")
-  }
-
-  // Add photo data if available
-  if (globalPhotoData) {
-    currentValues.lebenslaufPhoto = globalPhotoData
-  }
-
-  // Add active tab info
-  currentValues.activeTab = activeTab
-
-  console.log("Current active tab:", activeTab)
-  console.log("Form values for tab:", activeTab, currentValues)
-
-  return currentValues
-}
-
-// Функція для динамічної пагінації в реальному часі з урахуванням активної вкладки
-function createDynamicPagination(htmlContent) {
-  console.log("📄 🚀 Creating REAL-TIME dynamic pagination")
-
-  // Визначаємо активну вкладку для різних лімітів символів
-  const activeTab = getCurrentActiveTab()
-  console.log("📄 Active tab for pagination:", activeTab)
-
-  // Різні ліміти для різних типів документів
-  let CHARACTERS_PER_PAGE
-  if (activeTab === "bewerbung") {
-    CHARACTERS_PER_PAGE = 3500 // Ліміт для листів
-  } else {
-    CHARACTERS_PER_PAGE = 2500 // Оптимальний ліміт для резюме (6029 символів / 2 = ~3000)
-  }
-
-  // Підрахунок символів у контенті (зберігаючи пробіли та переноси)
-  const tempDiv = document.createElement("div")
-  tempDiv.innerHTML = htmlContent
-
-  // Отримуємо текст зберігаючи пробіли та переноси рядків
-  let textContent = tempDiv.textContent || tempDiv.innerText || ""
-
-  // Зберігаємо пробіли та переноси: без глобального trim і без схлопування
-  textContent = textContent.replace(/\r\n/g, "\n") // уніфікуємо перенос рядка
-
-  // Підрахунок різних типів символів для debug
-  const spaceCount = (textContent.match(/\s/g) || []).length
-  const newlineCount = (textContent.match(/\n/g) || []).length
-  const specialCharsCount = (textContent.match(/[^\w\s\u0400-\u04FF]/g) || []).length // латинка + кирилиця + спецсимволи
-  const totalChars = textContent.length
-
-  console.log("🔤 Character analysis for pagination:")
-  console.log("📝 Total characters:", totalChars)
-  console.log("🔤   - Spaces:", spaceCount)
-  console.log("🔤   - New lines:", newlineCount)
-  console.log("🔤   - Special chars:", specialCharsCount)
-  console.log("📝 Text preview (first 200 chars):", textContent.substring(0, 200) + "...")
-
-  console.log("📄 ⚡ Real-time pagination stats:")
-  console.log(`📄    Active tab: ${activeTab}`)
-  console.log(`📄    Characters per page limit: ${CHARACTERS_PER_PAGE}`)
-  console.log(`📄    Total characters: ${textContent.length}`)
-  console.log(`📄    Needs pagination: ${textContent.length > CHARACTERS_PER_PAGE}`)
-  console.log(
-    `📄    🎯 CALCULATION: ${textContent.length} > ${CHARACTERS_PER_PAGE} = ${textContent.length > CHARACTERS_PER_PAGE}`
-  )
-
-  // Якщо контент поміщається на одну сторінку
-  if (textContent.length <= CHARACTERS_PER_PAGE) {
-    console.log("📄 ✅ Content fits on single page - no pagination needed")
-    console.log(`📄 🔥 REASON: ${textContent.length} <= ${CHARACTERS_PER_PAGE}`)
-    return `
-            <div class="document-page print-like">
-              <div class="document-preview">
-                ${htmlContent}
-              </div>
-            </div>
-          `
-  }
-
-  console.log("📄 🔥 Content REQUIRES pagination - proceeding to performIntelligentPagination")
-  console.log(`📄 🔥 REASON: ${textContent.length} > ${CHARACTERS_PER_PAGE}`)
-
-  // Розумна пагінація з перерозподілом (FRAME-based для точних полів A4)
-  return performFrameBasedPagination(htmlContent, activeTab)
+  return previewService.getCurrentFormValues();
 }
 
 // Нова покращена методика динамічної пагінації на основі висоти A4
 function performIntelligentPagination(htmlContent, charactersPerPage, activeTab) {
-  console.log("📄 🧠 NEW Height-based A4 pagination method starting")
+  logger.log("📄 🧠 NEW Height-based A4 pagination method starting")
 
   try {
     // Створюємо прихований контейнер для вимірювання висоти
@@ -2003,14 +1832,14 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
     const allElements = Array.from(measureContainer.children)
 
     if (allElements.length === 0) {
-      console.log("📄 ⚠️ No elements found in content")
+      logger.log("📄 ⚠️ No elements found in content")
       document.body.removeChild(measureContainer)
       return wrapInPage(htmlContent, 1)
     }
 
-    console.log(`📄 📊 Analysis:`)
-    console.log(`📄   Total elements: ${allElements.length}`)
-    console.log(`📄   Container height: ${measureContainer.scrollHeight}px`)
+    logger.log(`📄 📊 Analysis:`)
+    logger.log(`📄   Total elements: ${allElements.length}`)
+    logger.log(`📄   Container height: ${measureContainer.scrollHeight}px`)
 
     // A4 висота в пікселях (приблизно 1122px при 96 DPI мінус поля)
     // Залишаємо місце для полів: верх 15mm, низ 15mm = 30mm = ~113px
@@ -2046,14 +1875,14 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
           pages.push([...currentPage])
           currentPage = [element]
           currentPageHeight = elementHeight
-          console.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
+          logger.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
         }
         // Якщо це важлива секція і вона не поміститься - переносимо
         else if (isSection && elementHeight > MAX_PAGE_HEIGHT * 0.4) {
           pages.push([...currentPage])
           currentPage = [element]
           currentPageHeight = elementHeight
-          console.log(`📄   Page ${pages.length} completed (section break): ${currentPageHeight}px`)
+          logger.log(`📄   Page ${pages.length} completed (section break): ${currentPageHeight}px`)
         }
         // Інакше намагаємось помістити, якщо не дуже великий
         else if (elementHeight < MAX_PAGE_HEIGHT * 0.3) {
@@ -2065,7 +1894,7 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
           pages.push([...currentPage])
           currentPage = [element]
           currentPageHeight = elementHeight
-          console.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
+          logger.log(`📄   Page ${pages.length} completed: ${currentPageHeight}px`)
         }
       } else {
         // Додаємо елемент на поточну сторінку
@@ -2073,7 +1902,7 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
         currentPageHeight += elementHeight
       }
 
-      console.log(
+      logger.log(
         `📄   Element: ${element.tagName}, height: ${elementHeight}px, page height: ${currentPageHeight}px`
       )
     }
@@ -2081,7 +1910,7 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
     // Додаємо останню сторінку
     if (currentPage.length > 0) {
       pages.push(currentPage)
-      console.log(`📄   Last page completed: ${currentPageHeight}px`)
+      logger.log(`📄   Last page completed: ${currentPageHeight}px`)
     }
 
     // Видаляємо тимчасові контейнери
@@ -2090,11 +1919,11 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
 
     // Якщо отримали тільки одну сторінку - повертаємо як є
     if (pages.length <= 1) {
-      console.log("📄 ✅ Content fits on single page")
+      logger.log("📄 ✅ Content fits on single page")
       return wrapInPage(htmlContent, 1)
     }
 
-    console.log(`📄   Total pages created: ${pages.length}`)
+    logger.log(`📄   Total pages created: ${pages.length}`)
 
     // Генеруємо HTML для кожної сторінки
     let paginatedHTML = ""
@@ -2102,7 +1931,7 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
       const pageElements = pages[i]
       const pageContent = pageElements.map(el => el.outerHTML).join("\n")
 
-      console.log(`📄   Page ${i + 1}: ${pageElements.length} elements`)
+      logger.log(`📄   Page ${i + 1}: ${pageElements.length} elements`)
 
       paginatedHTML += `
               <div class="document-page print-like page-${i + 1}" data-page="${i + 1}" data-total-pages="${pages.length}">
@@ -2114,10 +1943,10 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
             `
     }
 
-    console.log(`📄 ✅ Height-based pagination complete: ${pages.length} pages created`)
+    logger.log(`📄 ✅ Height-based pagination complete: ${pages.length} pages created`)
     return paginatedHTML
   } catch (error) {
-    console.error("📄 ❌ Error in height-based pagination:", error)
+    logger.error("📄 ❌ Error in height-based pagination:", error)
 
     // Cleanup якщо виникла помилка
     const tempContainers = document.querySelectorAll('div[style*="visibility: hidden"]')
@@ -2133,7 +1962,7 @@ function performIntelligentPagination(htmlContent, charactersPerPage, activeTab)
 }
 // Покращена пагінація: складання сторінок у прихованій A4-рамці (з точними полями)
 function performFrameBasedPagination(htmlContent, activeTab) {
-  console.log("📄 🧠 FRAME-based A4 pagination starting…")
+  logger.log("📄 🧠 FRAME-based A4 pagination starting…")
 
   // Парсимо HTML та відокремлюємо стилі, щоб інлайнити їх на кожній сторінці
   const parser = document.createElement("div")
@@ -2486,7 +2315,7 @@ function performFrameBasedPagination(htmlContent, activeTab) {
     document.body.removeChild(frame)
   }
 
-  console.log(`📄 ✅ FRAME-based pagination complete: ${pagesHTML.length} pages`)
+  logger.log(`📄 ✅ FRAME-based pagination complete: ${pagesHTML.length} pages`)
   return pagesHTML.join("") || wrapInPage(htmlContent, 1)
 }
 
@@ -2502,504 +2331,7 @@ function wrapInPage(content, pageNum) {
 }
 
 async function showPreview(type) {
-  try {
-    // Determine preview type based on active tab if not specified
-    const activeTab = getCurrentActiveTab()
-    const previewType = type || activeTab
-
-    // Update current preview type
-    currentPreviewType = previewType
-
-    console.log(
-      "showPreview called with type:",
-      type,
-      "active tab:",
-      activeTab,
-      "final preview type:",
-      previewType,
-      "currentLanguage:",
-      currentLanguage
-    )
-
-    // Ensure translations are loaded
-    if (!translations[currentLanguage]) {
-      console.log("Loading translations for", currentLanguage)
-      await loadTranslations(currentLanguage)
-    }
-
-    // Double check that translations are loaded
-    if (!translations[currentLanguage]) {
-      console.error("Failed to load translations for", currentLanguage)
-      return
-    }
-
-    // Add delay to ensure translations are fully loaded
-    console.log("Waiting for translations to be fully loaded...")
-    await new Promise(resolve => setTimeout(resolve, 150))
-
-    // Debug translations
-    console.log("Available translations:", Object.keys(translations))
-    console.log("Current language translations:", translations[currentLanguage])
-    if (translations[currentLanguage]) {
-      console.log("lebenslaufInputValues:", translations[currentLanguage].lebenslaufInputValues)
-    }
-
-    // Get current form values dynamically
-    const currentFormValues = getCurrentFormValues()
-    console.log("Current form values:", currentFormValues)
-
-    // Save current state
-    saveFormData()
-    const tabs = document.querySelectorAll(".preview-tab")
-    tabs.forEach(tab => tab.classList.remove("active"))
-
-    // Find the correct tab and activate it
-    const targetTab = Array.from(tabs).find(tab =>
-      tab.textContent.includes(previewType === "bewerbung" ? "Anschreiben" : "Lebenslauf")
-    )
-    console.log("targetTab found:", targetTab)
-    if (targetTab) {
-      targetTab.classList.add("active")
-    }
-
-    if (previewType === "bewerbung") {
-      const previewTitle = getTranslation("preview.letter") || "Vorschau des Anschreibens"
-
-      // Use current form values instead of stored formData
-      const values = currentFormValues
-
-      // Get content from form inputs - use actual values or fallback to translations
-      const motivation = values.motivation || getTranslation("content.motivation") || ""
-      const qualifications = values.qualifications || getTranslation("content.qualifications") || ""
-      const tasks = values.tasks || getTranslation("content.tasks") || ""
-      const future = values.future || getTranslation("content.future") || ""
-      const availability = values.availability || getTranslation("content.availability") || ""
-      const greeting = values.greeting || getTranslation("form.greetingPlaceholder") || ""
-      const closing = values.closing || getTranslation("contentValues.closing") || ""
-      const signature = values.signature || getTranslation("contentValues.signature") || ""
-
-      console.log("Updating previewContent with bewerbung content")
-      console.log("Current form values:", values)
-
-      // Use actual form values for personal information
-      const fullName = values.fullName || ""
-      const address = values.address || ""
-      const email = values.email || ""
-      const phone = values.phone || ""
-      const company = values.company || ""
-      const contactName = values.contactName || ""
-      const contactAddress = values.contactAddress || ""
-      const contactPhone = values.contactPhone || ""
-      const contactEmail = values.contactEmail || ""
-      const subject = values.subject || ""
-      const jobNumber = values.jobNumber || ""
-      const subjectColor = values.subjectColor || "#1a5490"
-
-      console.log("Personal info for preview:", {
-        fullName,
-        address,
-        email,
-        phone,
-        company,
-        contactName
-      })
-
-      // Створюємо HTML контент для bewerbung з правильною структурою
-      const bewerbungContent = `
-                  <div class="document-preview">
-                    <style>
-                      .document-preview .sender-section {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-bottom: 20mm;
-                      }
-                      .document-preview .sender-info {
-                        font-size: 10pt;
-                      }
-                      .document-preview .date {
-                        font-size: 10pt;
-                        text-align: right;
-                      }
-                      .document-preview .recipient {
-                        margin-bottom: 10mm;
-                        font-size: 10pt;
-                      }
-                      .document-preview .subject {
-                        color: ${subjectColor};
-                        font-weight: bold;
-                        font-size: 14pt;
-                        margin: 15mm 0;
-                        text-align: left;
-                      }
-                      .document-preview .content p {
-                        margin-bottom: 4mm;
-                        text-align: justify;
-                      }
-                      .document-preview .signature {
-                        margin-top: 10mm;
-                      }
-                      .document-preview .signature p {
-                        margin-bottom: 3mm;
-                      }
-                    </style>
-                    <div class="sender-section">
-                      <div class="sender-info">
-                        <strong>${fullName}</strong><br>
-                        ${address}<br>
-                        ${email}<br>
-                        Tel: ${phone}
-                      </div>
-
-                      <div class="date">
-                        ${(() => {
-                          const city = document.getElementById("letterCity")?.value || getTranslation("fieldValues.letterCity") || "Magdeburg";
-                          const dateInput = document.getElementById("letterDate")?.value;
-
-                          if (dateInput) {
-                            const dateObj = new Date(dateInput);
-                            const currentLang = localStorage.getItem("selectedLanguage") || "de";
-
-                            if (currentLang === "de") {
-                              const day = dateObj.getDate();
-                              const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
-                              const month = monthNames[dateObj.getMonth()];
-                              const year = dateObj.getFullYear();
-                              return `${city}, den ${day}. ${month} ${year}`;
-                            } else if (currentLang === "en") {
-                              const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-                              const month = monthNames[dateObj.getMonth()];
-                              const day = dateObj.getDate();
-                              const year = dateObj.getFullYear();
-                              return `${city}, ${month} ${day}, ${year}`;
-                            } else {
-                              const day = dateObj.getDate();
-                              const monthNames = ["січня", "лютого", "березня", "квітня", "травня", "червня", "липня", "серпня", "вересня", "жовтня", "листопада", "грудня"];
-                              const month = monthNames[dateObj.getMonth()];
-                              const year = dateObj.getFullYear();
-                              return `${city}, ${day} ${month} ${year}`;
-                            }
-                          }
-
-                          return getTranslation("fieldValues.date") || `${city}, den ${new Date().toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit", year: "numeric"})}`;
-                        })()}
-                      </div>
-                    </div>
-
-                    <div class="recipient">
-                      <strong>${company}</strong><br>
-                      ${contactName}<br>
-                      ${contactAddress}<br>
-                      ${contactPhone ? `Tel: ${contactPhone}` : ""}<br>
-                      ${contactEmail ? `E-Mail: ${contactEmail}` : ""}
-                    </div>
-
-                    <div class="subject" style="color: ${subjectColor}; font-weight: bold; font-size: 14pt; margin: 15mm 0 0 0; text-align: left;">
-                      ${subject}<br>
-                      ${jobNumber && jobNumber.length > 0 ? `${getTranslation("fieldValues.jobNumberLabel") || "Ihre Ausschreibung Nr.:"} ${jobNumber}` : ""}
-                    </div>
-                    <div class="content">
-                      <p>${greeting}</p>
-                      <p>${motivation}</p>
-                      <p>${qualifications}</p>
-                      <p>${tasks}</p>
-                      ${future ? `<p>${future}</p>` : ""}
-                      <p>${availability}</p>
-                      <p style="white-space: pre-line;">${closing}</p>
-                      <p style="white-space: pre-line;">${signature}</p>
-                    </div>
-
-                    </div>
-                `
-
-      document.getElementById("previewContent").innerHTML =
-        `<h2 data-translate="preview.title">📋 Live Preview</h2>
-         <div class="preview-container" id="printPreviewViewport"></div>`
-
-      if (!livePrintPreview) {
-        livePrintPreview = new LivePrintPreview({
-          containerSelector: '#printPreviewViewport',
-          debounceDelay: 300
-        })
-      }
-
-      livePrintPreview.activate(bewerbungContent)
-    } else if (previewType === "lebenslauf") {
-      console.log("Generating lebenslauf preview")
-
-      // Use current form values instead of stored formData
-      const values = currentFormValues
-
-      console.log("Current form values for lebenslauf:", values)
-      console.log("Global photo data:", globalPhotoData)
-      console.log("Photo data:", values.lebenslaufPhoto ? "Present" : "Missing")
-      console.log("Photo value:", values.lebenslaufPhoto)
-
-      const previewTitle = getTranslation("preview.cv") || "Vorschau des Lebenslaufs"
-      console.log("Updating previewContent with lebenslauf content")
-
-      // Get lebenslauf specific values from form
-      const lebenslaufFullName = values.lebenslaufFullName || values.fullName || ""
-      const lebenslaufAddress = values.lebenslaufAddress || values.address || ""
-      const lebenslaufPhone = values.lebenslaufPhone || values.phone || ""
-      const lebenslaufEmail = values.lebenslaufEmail || values.email || ""
-      const lebenslaufBirthDate = values.lebenslaufBirthDate || values.birthDate || ""
-      const lebenslaufNationality = values.lebenslaufNationality || values.nationality || ""
-      const position = values.position || ""
-      const summary = values.lebenslaufSummary || ""
-      const skills = values.lebenslaufSkills || ""
-      const experience = values.lebenslaufExperience || ""
-      const education = values.lebenslaufEducation || ""
-      const certifications = values.lebenslaufCertifications || ""
-      const languages = values.lebenslaufLanguages || ""
-      const additional = values.lebenslaufAdditional || ""
-      // Створюємо HTML контент для lebenslauf з стилями
-      const lebenslaufContent = `
-                  <div class="document-preview">
-                    <style>
-                      .document-preview h1 {
-                        color: #1a5490;
-                        font-size: 24pt;
-                        border-bottom: 3px solid #1a5490;
-                        padding-bottom: 5mm;
-                        text-align: left;
-                      }
-                      .document-preview .header-with-photo {
-                        display: flex;
-                        align-items: flex-start;
-                        gap: 10mm;
-                        margin-bottom: 10mm;
-                      }
-                      .document-preview .photo-container {
-                        flex-shrink: 0;
-                        width: 40mm;
-                        height: 50mm;
-                        position: relative;
-                        overflow: hidden;
-                      }
-                      .document-preview .photo-container img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        border-radius: 2mm;
-                        border: 1px solid #ddd;
-                        display: block;
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                      }
-                      .document-preview .photo-placeholder {
-                        width: 100%;
-                        height: 100%;
-                        background: #f0f0f0;
-                        border: 2px dashed #ccc;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        color: #666;
-                        font-size: 10pt;
-                        border-radius: 2mm;
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                      }
-                      .document-preview .name-container {
-                        flex: 1;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                      }
-                      .document-preview h2 {
-                        color: #2c5aa0;
-                        font-size: 14pt;
-                        margin-top: 8mm;
-                        border-bottom: 1px solid #2c5aa0;
-                        padding-bottom: 2mm;
-                        text-align: left;
-                      }
-                      .document-preview .header-info {
-                        color: #666;
-                        font-size: 12pt;
-                        margin-bottom: 10mm;
-                        text-align: left;
-                      }
-                      .document-preview .grid {
-                        display: grid;
-                        grid-template-columns: 50mm auto;
-                        gap: 5mm;
-                        margin: 5mm 0;
-                      }
-                      .document-preview .label {
-                        font-weight: bold;
-                        color: #555;
-                        text-align: left;
-                      }
-                      .document-preview .grid > div:not(.label) {
-                        text-align: left;
-                      }
-                      .document-preview ul {
-                        margin: 5mm 0;
-                        padding-left: 6mm;
-                        text-align: left;
-                      }
-                      .document-preview li {
-                        margin: 2mm 0;
-                        text-align: left;
-                      }
-                      .document-preview .experience-item {
-                        margin-bottom: 8mm;
-                        padding: 3mm;
-                        background: #f8f8f8;
-                        border-left: 3px solid #2c5aa0;
-                        text-align: left;
-                      }
-                      .document-preview p {
-                        text-align: left;
-                      }
-                      .document-preview .date-info {
-                        margin-top: 15mm;
-                        text-align: center;
-                        color: #666;
-                        font-size: 10pt;
-                      }
-                    </style>
-                    <div class="header-with-photo">
-                      <div class="photo-container">
-                         ${(() => {
-                           console.log("=== PHOTO DISPLAY DEBUG START ===")
-                           console.log("values:", values)
-                           console.log("globalPhotoData:", globalPhotoData)
-
-                           const photoUrl = globalPhotoData || values.lebenslaufPhoto
-                           console.log("Selected photoUrl:", photoUrl)
-                           console.log("PhotoUrl type:", typeof photoUrl)
-
-                           if (!photoUrl) {
-                             console.log("No photo URL found - showing placeholder")
-                             return `<div class="photo-placeholder">Kein Foto</div>`
-                           }
-
-                           // Ensure photoUrl is a string
-                           if (typeof photoUrl !== "string") {
-                             console.log(
-                               "PhotoUrl is not a string, type:",
-                               typeof photoUrl,
-                               "value:",
-                               photoUrl
-                             )
-                             return `<div class="photo-placeholder">Kein Foto</div>`
-                           }
-
-                           const isValidUrl =
-                             photoUrl.startsWith("data:image/") || photoUrl.startsWith("blob:")
-                           console.log("Is valid URL:", isValidUrl)
-
-                           if (isValidUrl) {
-                             console.log(
-                               "Rendering IMG element with URL:",
-                               photoUrl.substring(0, 50) + "..."
-                             )
-                             return `<img src="${photoUrl}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover; border-radius: 2mm; border: 1px solid #ddd; display: block; position: absolute; top: 0; left: 0;" />`
-                           } else {
-                             console.log("Invalid URL - showing placeholder")
-                             return `<div class="photo-placeholder">Kein Foto</div>`
-                           }
-                         })()}
-                      </div>
-                      <div class="name-container">
-                        <h1>${lebenslaufFullName.toUpperCase()}</h1>
-                      </div>
-                    </div>
-
-                    <h2>${(() => {
-                      const translation = getTranslation("lebenslaufHeaders.personalData")
-                      console.log(
-                        "Personal Data Translation:",
-                        translation,
-                        "Current Language:",
-                        currentLanguage
-                      )
-                      return translation || "PERSÖNLICHE DATEN"
-                    })()}</h2>
-                    <div class="grid">
-                      <div class="label">${getTranslation("lebenslaufLabels.birthDate") || "Geburtsdatum:"}</div>
-                      <div>${lebenslaufBirthDate ? new Date(lebenslaufBirthDate).toLocaleDateString("de-DE", {day: "2-digit", month: "2-digit", year: "numeric"}) : ""}</div>
-                      <div class="label">${getTranslation("lebenslaufLabels.address") || "Adresse:"}</div>
-                      <div>${lebenslaufAddress}</div>
-                      <div class="label">${getTranslation("lebenslaufLabels.phone") || "Telefon:"}</div>
-                      <div>${lebenslaufPhone}</div>
-                      <div class="label">${getTranslation("lebenslaufLabels.email") || "E-Mail:"}</div>
-                      <div>${lebenslaufEmail}</div>
-                      <div class="label">${getTranslation("lebenslaufLabels.nationality") || "Staatsangehörigkeit:"}</div>
-                      <div>${lebenslaufNationality}</div>
-                      <div class="label">${getTranslation("lebenslaufLabels.residenceStatus") || "Aufenthaltsstatus:"}</div>
-                      <div>${getTranslation("fieldValues.residenceStatus") || getTranslation("lebenslaufLabels.residenceStatusValue") || "Aufenthaltserlaubnis vorhanden"}</div>
-                    </div>
-
-                    <h2>${getTranslation("lebenslaufHeaders.professionalQualification") || "BERUFLICHE QUALIFIKATION"}</h2>
-                    <p>
-                      ${summary}
-                    </p>
-
-                    <h2>${getTranslation("lebenslaufHeaders.coreCompetencies") || "KERNKOMPETENZEN"}</h2>
-                    <ul>
-                      <li>${skills}</li>
-                    </ul>
-
-                    </div>
-                  </div>
-                  
-                  <div class="document-preview">
-                    <h2>${getTranslation("lebenslaufHeaders.workExperience") || "BERUFSERFAHRUNG"}</h2>
-                    <div class="experience-item">
-                      <div style="white-space: pre-line;">${experience}</div>
-                    </div>
-
-                    <h2>${getTranslation("lebenslaufHeaders.education") || "AUSBILDUNG"}</h2>
-                    <div class="experience-item">
-                      <div style="white-space: pre-line;">${education}</div>
-                    </div>
-
-                    <h2>${getTranslation("lebenslaufHeaders.certifications") || "ZERTIFIZIERUNGEN & KURSE"}</h2>
-                    <div class="experience-item">
-                      <div style="white-space: pre-line;">${certifications}</div>
-                    </div>
-
-                    <h2>${getTranslation("lebenslaufHeaders.languageSkills") || "SPRACHKENNTNISSE"}</h2>
-                    <div style="white-space: pre-line;">${languages}</div>
-
-                    <h2>${getTranslation("lebenslaufHeaders.additionalQualifications") || "ZUSÄTZLICHE QUALIFIKATIONEN"}</h2>
-                    <div style="white-space: pre-line;">${additional}</div>
-
-                    <div class="date-info">
-                      Magdeburg, ${new Date().toLocaleDateString("de-DE", {year: "numeric", month: "long"})}
-                    </div>
-                  </div>
-                `
-
-      document.getElementById("previewContent").innerHTML = `
-            <h2 data-translate="preview.title">📋 Live Preview</h2>
-            <div class="preview-container" id="printPreviewViewport"></div>
-      `
-
-      if (!livePrintPreview) {
-        livePrintPreview = new LivePrintPreview({
-          containerSelector: '#printPreviewViewport',
-          debounceDelay: 300
-        })
-      }
-
-      livePrintPreview.activate(lebenslaufContent)
-    }
-  } catch (error) {
-    console.error("Error in showPreview:", error)
-    document.getElementById("previewContent").innerHTML = `
-           <h2 data-translate="preview.title">📋 Live Preview</h2>
-                  <div class="status-error">
-                    <h3>Fehler beim Laden der Vorschau</h3>
-                    <p>Es ist ein Fehler beim Laden der Vorschau aufgetreten: ${error.message}</p>
-                  </div>
-                `
-  }
+  return await previewService.showPreview(type, globalPhotoData);
 }
 
 // Функція для розрахунку кількості рядків тексту
@@ -3044,7 +2376,7 @@ function distributeContentToPages(content, maxLinesPerPage = 42) {
 
 // Generate documents (Vanilla JS version)
 async function generateDocuments() {
-  const form = document.getElementById("bewerbungForm")
+  const form = DOM.bewerbungForm
   const formDataObj = new FormData(form)
   formData = Object.fromEntries(formDataObj)
 
@@ -3054,7 +2386,7 @@ async function generateDocuments() {
     formData.lebenslaufPhoto = globalPhotoData
   }
 
-  console.log("Generate Documents - FormData with photo:", {
+  logger.log("Generate Documents - FormData with photo:", {
     hasPhoto: !!formData.photo,
     hasLebenslaufPhoto: !!formData.lebenslaufPhoto,
     globalPhotoData: !!globalPhotoData
@@ -3065,7 +2397,7 @@ async function generateDocuments() {
   try {
     // Get current active tab
     const activeTab = getCurrentActiveTab()
-    console.log("Generating documents for active tab:", activeTab)
+    logger.log("Generating documents for active tab:", activeTab)
 
     // Generate HTML content only for active tab
     let htmlContent = ""
@@ -3111,7 +2443,7 @@ async function generateDocuments() {
     )
 
     // Update status message
-    const statusEl = document.getElementById("statusMessage")
+    const statusEl = DOM.statusMessage
     statusEl.innerHTML = `
                   <div style="margin-top: 10px;">
                     <strong>✅ ${documentType} erfolgreich erstellt:</strong><br>
@@ -3123,17 +2455,17 @@ async function generateDocuments() {
                   </div>
                 `
   } catch (error) {
-    console.error("Error generating documents:", error)
+    logger.error("Error generating documents:", error)
     showStatus(`Fehler: ${error.message}`, "error")
   }
 }
 // Print document function
 function printDocument() {
-  console.log("printDocument function called")
+  logger.log("printDocument function called")
 
   // Get current active form tab
   const activeTab = getCurrentActiveTab()
-  console.log("Active form tab:", activeTab)
+  logger.log("Active form tab:", activeTab)
 
   if (!activeTab) {
     showStatus("Bitte wählen Sie zuerst eine Registerkarte aus", "error")
@@ -3142,19 +2474,19 @@ function printDocument() {
 
   // Get current form values
   const currentValues = getCurrentFormValues()
-  console.log("Current form values:", currentValues)
+  logger.log("Current form values:", currentValues)
 
   // Create a new window for printing
-  console.log("Creating print window...")
+  logger.log("Creating print window...")
   const printWindow = window.open("", "_blank", "width=800,height=600,scrollbars=yes,resizable=yes")
 
   if (!printWindow) {
-    console.error("Failed to open print window - popup blocked?")
+    logger.error("Failed to open print window - popup blocked?")
     showStatus("Popup wurde blockiert. Bitte erlauben Sie Popups für diese Seite.", "error")
     return
   }
 
-  console.log("Print window created:", printWindow)
+  logger.log("Print window created:", printWindow)
   printWindow.document.write(`
                 <!DOCTYPE html>
                 <html lang="${currentLanguage}">
@@ -3329,23 +2661,23 @@ function printDocument() {
   printWindow.document.close()
 
   // Immediately try to focus the window
-  console.log("Attempting to focus print window immediately...")
+  logger.log("Attempting to focus print window immediately...")
   try {
     printWindow.focus()
-    console.log("Window focused successfully")
+    logger.log("Window focused successfully")
   } catch (e) {
-    console.log("Could not focus window immediately:", e)
+    logger.log("Could not focus window immediately:", e)
   }
 
   // Wait for content to load, then print
   printWindow.onload = function () {
-    console.log("Print window loaded, attempting to focus...")
+    logger.log("Print window loaded, attempting to focus...")
 
     // Multiple attempts to focus the window
     const focusWindow = () => {
       try {
         printWindow.focus()
-        console.log("Window focused in onload")
+        logger.log("Window focused in onload")
 
         // Try to bring window to front
         if (printWindow.focus) {
@@ -3356,21 +2688,21 @@ function printDocument() {
         try {
           printWindow.moveTo(0, 0)
           printWindow.resizeTo(screen.width, screen.height)
-          console.log("Window positioned and resized")
+          logger.log("Window positioned and resized")
         } catch (e) {
-          console.log("Could not position window:", e)
+          logger.log("Could not position window:", e)
         }
 
         // Try to focus using different methods
         try {
           printWindow.blur()
           printWindow.focus()
-          console.log("Window focused with blur/focus method")
+          logger.log("Window focused with blur/focus method")
         } catch (e) {
-          console.log("Blur/focus method failed:", e)
+          logger.log("Blur/focus method failed:", e)
         }
       } catch (e) {
-        console.log("Focus attempt failed:", e)
+        logger.log("Focus attempt failed:", e)
       }
     }
 
@@ -3385,12 +2717,12 @@ function printDocument() {
 
     // Small delay to ensure window is focused before printing
     setTimeout(() => {
-      console.log("Attempting to print...")
+      logger.log("Attempting to print...")
       printWindow.print()
 
       // Close window after printing (with delay)
       setTimeout(() => {
-        console.log("Closing print window...")
+        logger.log("Closing print window...")
         printWindow.close()
       }, 1000)
     }, 200)
@@ -3398,12 +2730,12 @@ function printDocument() {
 
   // Additional focus attempt after window creation
   setTimeout(() => {
-    console.log("Additional focus attempt after 500ms...")
+    logger.log("Additional focus attempt after 500ms...")
     try {
       printWindow.focus()
-      console.log("Additional focus successful")
+      logger.log("Additional focus successful")
     } catch (e) {
-      console.log("Additional focus failed:", e)
+      logger.log("Additional focus failed:", e)
     }
   }, 500)
 
@@ -3415,7 +2747,7 @@ function generateBewerbungHTML(data) {
   // Get current form values dynamically
   const currentValues = getCurrentFormValues()
 
-  console.log("Generating bewerbung HTML with current values:", currentValues)
+  logger.log("Generating bewerbung HTML with current values:", currentValues)
 
   const currentDate =
     getTranslation("fieldValues.date") ||
@@ -3540,7 +2872,7 @@ function generateLebenslaufHTML(data) {
   // Get current form values dynamically
   const currentValues = getCurrentFormValues()
 
-  console.log("Generating lebenslauf HTML with current values:", currentValues)
+  logger.log("Generating lebenslauf HTML with current values:", currentValues)
 
   const birthDate = currentValues.lebenslaufBirthDate || currentValues.birthDate
   const formattedBirthDate = birthDate
@@ -3707,7 +3039,7 @@ function generateLebenslaufHTML(data) {
               ${(() => {
                 // Отримуємо фото з даних або глобальної змінної
                 const photoUrl = globalPhotoData || currentValues.lebenslaufPhoto
-                console.log("PDF Generation - Photo URL:", photoUrl)
+                logger.log("PDF Generation - Photo URL:", photoUrl)
 
                 if (
                   photoUrl &&
@@ -3810,7 +3142,7 @@ async function downloadFile(filename, content, mimeType) {
       return
     } catch (error) {
       if (error.name !== "AbortError") {
-        console.warn("File System Access API failed, falling back to download:", error)
+        logger.warn("File System Access API failed, falling back to download:", error)
       } else {
         showStatus("Speichern abgebrochen", "info")
         return
@@ -3877,12 +3209,12 @@ function showBrowserCompatibility() {
 // Generate PDF using browser print dialog (more reliable)
 async function generatePDF(htmlContent, filename) {
   try {
-    console.log("Generating PDF using browser print dialog...")
+    logger.log("Generating PDF using browser print dialog...")
 
     // Use the alternative method which is more reliable
     generatePDFAlternative(htmlContent, filename)
   } catch (error) {
-    console.error("Error generating PDF:", error)
+    logger.error("Error generating PDF:", error)
     showStatus(`PDF-Generierung fehlgeschlagen: ${error.message}`, "error")
   }
 }
@@ -3891,12 +3223,12 @@ function generatePDFAlternative(htmlContent, filename) {
   try {
     // Check if HTML content is empty
     if (!htmlContent || htmlContent.trim().length === 0) {
-      console.error("HTML content is empty for filename:", filename)
+      logger.error("HTML content is empty for filename:", filename)
       showStatus(`HTML-Inhalt ist leer für ${filename}`, "error")
       return
     }
 
-    console.log("Generating PDF alternative for:", filename, "HTML length:", htmlContent.length)
+    logger.log("Generating PDF alternative for:", filename, "HTML length:", htmlContent.length)
 
     // Create a new window for printing
     const printWindow = window.open(
@@ -4090,7 +3422,7 @@ function generatePDFAlternative(htmlContent, filename) {
 
     showStatus("PDF-Druckdialog geöffnet. Bitte wählen Sie 'Als PDF speichern'.", "info")
   } catch (error) {
-    console.error("Error generating PDF alternative:", error)
+    logger.error("Error generating PDF alternative:", error)
     showStatus("Fehler beim Öffnen des PDF-Druckdialogs", "error")
   }
 }
@@ -4121,7 +3453,7 @@ async function htmlToDocx(htmlContent) {
 
     return docxBlob
   } catch (error) {
-    console.error("Error converting HTML to DOCX:", error)
+    logger.error("Error converting HTML to DOCX:", error)
     throw new Error("Failed to convert HTML to DOCX format")
   }
 }
@@ -4129,7 +3461,7 @@ async function htmlToDocx(htmlContent) {
 // Generate DOCX using client-side conversion
 async function generateDOCX(htmlContent, filename) {
   try {
-    console.log("Generating DOCX document...")
+    logger.log("Generating DOCX document...")
     showStatus("DOCX wird generiert...", "info")
 
     // Convert HTML to DOCX using client-side library
@@ -4138,7 +3470,7 @@ async function generateDOCX(htmlContent, filename) {
     }
 
     const docxBlob = htmlDocx.asBlob(htmlContent)
-    console.log("DOCX generated successfully, size:", docxBlob.size, "bytes")
+    logger.log("DOCX generated successfully, size:", docxBlob.size, "bytes")
 
     // Try File System Access API first (працює тільки з user gesture)
     if ("showSaveFilePicker" in window) {
@@ -4168,7 +3500,7 @@ async function generateDOCX(htmlContent, filename) {
           showStatus("DOCX-Speichern abgebrochen", "info")
           return
         }
-        console.warn("File System Access API failed, using fallback:", error)
+        logger.warn("File System Access API failed, using fallback:", error)
       }
     }
 
@@ -4184,10 +3516,10 @@ async function generateDOCX(htmlContent, filename) {
 
     showStatus(`✅ DOCX heruntergeladen: ${filename}`, "success")
   } catch (error) {
-    console.error("Error generating DOCX:", error)
+    logger.error("Error generating DOCX:", error)
 
     // Try fallback method
-    console.log("Trying fallback DOCX generation...")
+    logger.log("Trying fallback DOCX generation...")
     const fallbackSuccess = window.generateSimpleDOCX(htmlContent, filename)
 
     if (fallbackSuccess) {
@@ -4260,7 +3592,7 @@ function generateDOCXAlternative(htmlContent, filename) {
         return
       } catch (error) {
         if (error.name !== "AbortError") {
-          console.warn("File System Access API failed, using fallback:", error)
+          logger.warn("File System Access API failed, using fallback:", error)
         } else {
           showStatus("RTF-Speichern abgebrochen", "info")
           return
@@ -4283,7 +3615,7 @@ function generateDOCXAlternative(htmlContent, filename) {
       "success"
     )
   } catch (error) {
-    console.error("Error generating RTF alternative:", error)
+    logger.error("Error generating RTF alternative:", error)
     showStatus("Alternative DOCX-Generierung fehlgeschlagen", "error")
   }
 }
@@ -4417,7 +3749,7 @@ function convertHTMLToDOCX(htmlContent, docx) {
 
 // Generate PDF only
 async function generatePDFOnly() {
-  const form = document.getElementById("bewerbungForm")
+  const form = DOM.bewerbungForm
   const formDataObj = new FormData(form)
   formData = Object.fromEntries(formDataObj)
 
@@ -4427,7 +3759,7 @@ async function generatePDFOnly() {
     formData.lebenslaufPhoto = globalPhotoData
   }
 
-  console.log("Generate PDF - FormData with photo:", {
+  logger.log("Generate PDF - FormData with photo:", {
     hasPhoto: !!formData.photo,
     hasLebenslaufPhoto: !!formData.lebenslaufPhoto,
     globalPhotoData: !!globalPhotoData
@@ -4438,7 +3770,7 @@ async function generatePDFOnly() {
   try {
     // Get current active tab
     const activeTab = getCurrentActiveTab()
-    console.log("Active tab for PDF generation:", activeTab)
+    logger.log("Active tab for PDF generation:", activeTab)
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
     const name = formData.fullName ? formData.fullName.replace(/\s+/g, "_") : "Dokument"
@@ -4446,19 +3778,19 @@ async function generatePDFOnly() {
     // Generate PDF for active tab with File System Access API
     if (activeTab === "bewerbung") {
       const bewerbungHtml = generateBewerbungHTML(formData)
-      console.log("Generated bewerbung HTML length:", bewerbungHtml.length)
+      logger.log("Generated bewerbung HTML length:", bewerbungHtml.length)
       await generatePDFWithSaveDialog(bewerbungHtml, `Bewerbung_${name}_${timestamp}.pdf`)
       showStatus("Bewerbung PDF erfolgreich erstellt!", "success")
     } else if (activeTab === "lebenslauf") {
       const lebenslaufHtml = generateLebenslaufHTML(formData)
-      console.log("Generated lebenslauf HTML length:", lebenslaufHtml.length)
+      logger.log("Generated lebenslauf HTML length:", lebenslaufHtml.length)
       await generatePDFWithSaveDialog(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.pdf`)
       showStatus("Lebenslauf PDF erfolgreich erstellt!", "success")
     } else {
       showStatus("Bitte wählen Sie eine Registerkarte aus", "error")
     }
   } catch (error) {
-    console.error("Error generating PDF:", error)
+    logger.error("Error generating PDF:", error)
     showStatus(`Fehler beim Generieren der PDF-Dateien: ${error.message}`, "error")
   }
 }
@@ -4526,7 +3858,7 @@ async function generatePDFWithSaveDialog(htmlContent, suggestedName) {
       generatePDFAlternative(htmlContent, suggestedName);
     }
   } catch (error) {
-    console.error("File System Access API failed:", error);
+    logger.error("File System Access API failed:", error);
     // Fallback якщо користувач закрив діалог
     generatePDFAlternative(htmlContent, suggestedName);
   }
@@ -4534,7 +3866,7 @@ async function generatePDFWithSaveDialog(htmlContent, suggestedName) {
 
 // Generate DOCX only
 async function generateDOCXOnly() {
-  const form = document.getElementById("bewerbungForm")
+  const form = DOM.bewerbungForm
   const formDataObj = new FormData(form)
   formData = Object.fromEntries(formDataObj)
 
@@ -4544,7 +3876,7 @@ async function generateDOCXOnly() {
     formData.lebenslaufPhoto = globalPhotoData
   }
 
-  console.log("Generate DOCX - FormData with photo:", {
+  logger.log("Generate DOCX - FormData with photo:", {
     hasPhoto: !!formData.photo,
     hasLebenslaufPhoto: !!formData.lebenslaufPhoto,
     globalPhotoData: !!globalPhotoData
@@ -4555,7 +3887,7 @@ async function generateDOCXOnly() {
   try {
     // Get current active tab
     const activeTab = getCurrentActiveTab()
-    console.log("Active tab for DOCX generation:", activeTab)
+    logger.log("Active tab for DOCX generation:", activeTab)
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19)
     const name = formData.fullName ? formData.fullName.replace(/\s+/g, "_") : "Dokument"
@@ -4563,28 +3895,28 @@ async function generateDOCXOnly() {
     // Generate DOCX only for active tab
     if (activeTab === "bewerbung") {
       const bewerbungHtml = generateBewerbungHTML(formData)
-      console.log("Generated bewerbung HTML length:", bewerbungHtml.length)
+      logger.log("Generated bewerbung HTML length:", bewerbungHtml.length)
       await generateDOCX(bewerbungHtml, `Bewerbung_${name}_${timestamp}.docx`)
       showStatus("Bewerbung DOCX erfolgreich erstellt!", "success")
     } else if (activeTab === "lebenslauf") {
       const lebenslaufHtml = generateLebenslaufHTML(formData)
-      console.log("Generated lebenslauf HTML length:", lebenslaufHtml.length)
+      logger.log("Generated lebenslauf HTML length:", lebenslaufHtml.length)
       await generateDOCX(lebenslaufHtml, `Lebenslauf_${name}_${timestamp}.docx`)
       showStatus("Lebenslauf DOCX erfolgreich erstellt!", "success")
     } else {
       showStatus("Bitte wählen Sie eine Registerkarte aus", "error")
     }
   } catch (error) {
-    console.error("Error generating DOCX documents:", error)
+    logger.error("Error generating DOCX documents:", error)
     showStatus(`Fehler beim Generieren der DOCX-Dateien: ${error.message}`, "error")
   }
 }
 
 // Reset form
 function resetForm() {
-  document.getElementById("bewerbungForm").reset()
+  DOM.bewerbungForm.reset()
   formData = {}
-  document.getElementById("previewContent").innerHTML = `
+  DOM.previewContent.innerHTML = `
          <h2 data-translate="preview.title">📋 Live Preview</h2>
                 <div class="preview-placeholder">
                   <div class="icon">📄</div>
@@ -4594,369 +3926,73 @@ function resetForm() {
   showStatus("Formular wurde zurückgesetzt", "info")
 }
 
-// Language and translation functionality
+// Language and translation functionality - MIGRATED TO TranslationService
+// Backwards compatibility variables
 let currentLanguage = "de"
 let translations = {}
 let originalContent = {} // Store original content for each field
 
-// Load translations
+// Compatibility wrapper for loadTranslations
 async function loadTranslations(lang) {
-  console.log("loadTranslations called with lang:", lang)
-  try {
-    const response = await fetch(`locales/${lang}.json?v=20250914`)
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    translations[lang] = await response.json()
-    console.log("Translations loaded for", lang, ":", translations[lang])
-    console.log("lebenslaufInputValues:", translations[lang].lebenslaufInputValues)
-
-    // Add delay to ensure translations are fully processed
-    console.log("Waiting for translations to be fully processed...")
-    await new Promise(resolve => setTimeout(resolve, 100))
-  } catch (error) {
-    console.error(`Failed to load translations for ${lang}:`, error)
-  }
+  return await translationService.loadTranslations(lang);
 }
 
-// Change language - simplified version
+// Change language - DELEGATED TO TranslationService
 async function changeLanguage(lang) {
   const newLang = lang || document.getElementById("languageSelect")?.value
-  console.log("changeLanguage called with:", newLang, "current:", currentLanguage)
+  logger.log("changeLanguage called with:", newLang, "current:", currentLanguage)
 
   if (newLang !== currentLanguage) {
     // Store current active tab before language change
     const currentActiveTab = currentPreviewType
-    console.log("Storing current active tab:", currentActiveTab)
+    logger.log("Storing current active tab:", currentActiveTab)
 
-    currentLanguage = newLang
-    console.log("Language changed to:", currentLanguage)
+    // Use TranslationService for language change
+    const success = await translationService.changeLanguage(newLang);
 
-    // Load translations if not already loaded
-    if (!translations[newLang]) {
-      console.log("Loading translations for new language:", newLang)
-      await loadTranslations(newLang)
-    }
+    if (success) {
+      // Update compatibility variable
+      currentLanguage = translationService.getCurrentLanguage();
+      translations = {}; // Clear old compatibility cache
 
-    // Verify translations are loaded
-    if (!translations[newLang]) {
-      console.error("Failed to load translations for new language:", newLang)
-      return
-    }
+      logger.log("Language changed to:", currentLanguage)
 
-    // Update document language
-    document.documentElement.lang = newLang
+      // Re-add event listeners after translation
+      logger.log("Calling addFormEventListeners()")
+      addFormEventListeners()
 
-    // Update active language flag
-    const activeLanguageFlags = document.querySelectorAll(".language-flag")
-    activeLanguageFlags.forEach(flag => {
-      flag.classList.remove("active")
-      if (flag.getAttribute("data-lang") === newLang) {
-        flag.classList.add("active")
+      // Save current state
+      logger.log("Calling saveFormData()")
+      saveFormData()
+
+      // Add delay to ensure translations are applied
+      logger.log("Waiting for translations to be applied...")
+      await new Promise(resolve => setTimeout(resolve, 200))
+
+      // Перекласти введений користувачем текст на нову мову
+      logger.log("Translating user inputs to new language:", newLang)
+      try {
+        await translateAllUserInputs(newLang)
+      } catch (error) {
+        logger.error("Error translating user inputs:", error)
       }
-    })
 
-    // Reset showing original flag
-    showingOriginal = false
-
-    // Translate all elements
-    console.log("Calling translatePage()")
-    translatePage()
-
-    // Translate all form field values
-    console.log("Calling translateFormFields()")
-    console.log("Current language in translateFormFields:", currentLanguage)
-    console.log("Translations available in translateFormFields:", Object.keys(translations))
-    console.log(
-      "Current language translations in translateFormFields:",
-      translations[currentLanguage]
-    )
-    await translateFormFields()
-
-    // Re-add event listeners after translation
-    console.log("Calling addFormEventListeners()")
-    addFormEventListeners()
-
-    // Save current state
-    console.log("Calling saveFormData()")
-    saveFormData()
-
-    // Add delay to ensure translations are applied
-    console.log("Waiting for translations to be applied...")
-    await new Promise(resolve => setTimeout(resolve, 200))
-
-    // Note: We don't automatically reload data from JSON file when changing language
-    // because translateFormFields() already sets the correct values from translations
-    // Users can manually click "Load Data" button if they want to load from JSON files
-    console.log("Using translation values for language change - JSON data not auto-reloaded")
-
-    // Перекласти введений користувачем текст на нову мову
-    console.log("Translating user inputs to new language:", newLang)
-    try {
-      await translateAllUserInputs(newLang)
-    } catch (error) {
-      console.error("Error translating user inputs:", error)
-    }
-
-    // Update preview with current active tab
-    console.log("Updating preview for current tab:", currentActiveTab)
-    console.log("Current language before showPreview:", currentLanguage)
-    console.log("Translations available:", Object.keys(translations))
-    console.log("Current language translations:", translations[currentLanguage])
-    await showPreview(currentActiveTab)
-  }
-}
-// Translate form field values
-async function translateFormFields() {
-  console.log("=== translateFormFields called ===")
-  console.log("Current language:", currentLanguage)
-  console.log("Available translations:", Object.keys(translations))
-  console.log("Current language translations:", translations[currentLanguage])
-
-  // Get all form fields that need translation
-  const fieldsToTranslate = [
-    {id: "fullName", key: "form.fullName"},
-    {id: "address", key: "form.address"},
-    {id: "phone", key: "form.phone"},
-    {id: "email", key: "form.email"},
-    {id: "birthDate", key: "form.birthDate"},
-    {id: "nationality", key: "form.nationality"},
-    {id: "position", key: "form.position"},
-    {id: "company", key: "form.company"},
-    {id: "jobNumber", key: "form.jobNumber"},
-    {id: "contactName", key: "form.contactName"},
-    {id: "contactAddress", key: "form.contactAddress"},
-    {id: "contactPhone", key: "form.contactPhone"},
-    {id: "contactEmail", key: "form.contactEmail"},
-    {id: "subject", key: "form.subject"},
-    {id: "greeting", key: "form.greetingPlaceholder"},
-    {id: "motivation", key: "form.motivationPlaceholder"},
-    {id: "qualifications", key: "form.qualificationsPlaceholder"},
-    {id: "tasks", key: "form.tasksPlaceholder"},
-    {id: "future", key: "form.futurePlaceholder"},
-    {id: "availability", key: "form.availabilityPlaceholder"},
-    {id: "closing", key: "form.closing"},
-    {id: "signature", key: "form.signature"}
-  ]
-
-  // Translate main form fields
-  fieldsToTranslate.forEach(field => {
-    const element = document.getElementById(field.id)
-    if (element) {
-      const translatedValue = getTranslation(field.key)
-      const translatedFieldValue = getTranslation(`fieldValues.${field.id}`)
-      const translatedContentValue = getTranslation(`contentValues.${field.id}`)
-      console.log(
-        `Field ${field.id}: current value="${element.value}", placeholder="${element.placeholder}", translated="${translatedValue}", fieldValue="${translatedFieldValue}", contentValue="${translatedContentValue}"`
-      )
-      if (translatedValue && !showingOriginal) {
-        console.log(`Translating ${field.id}:`, translatedValue)
-        // Update placeholder
-        element.placeholder = translatedValue
-        console.log(`Set placeholder for ${field.id}: ${translatedValue}`)
-
-        // Update field value - prioritize contentValues for textarea fields
-        // Only set value if field is empty or if we're explicitly changing language
-        const valueToUse = translatedContentValue || translatedFieldValue
-        if (valueToUse && (!element.value || element.value.trim() === "")) {
-          element.value = valueToUse
-          console.log(`Set value for ${field.id}: ${valueToUse}`)
-        } else if (valueToUse && element.value && element.value.trim() !== "") {
-          console.log(
-            `Field ${field.id} already has value "${element.value}", not overwriting with "${valueToUse}"`
-          )
-        }
-      }
+      // Update preview with current active tab
+      logger.log("Updating preview for current tab:", currentActiveTab)
+      await showPreview(currentActiveTab)
     } else {
-      console.log(`Element ${field.id} not found`)
+      logger.error("Failed to change language to:", newLang)
     }
-  })
-
-  // Translate Lebenslauf section fields
-  const lebenslaufSection = document.getElementById("lebenslaufSection")
-  console.log("🔍 lebenslaufSection found:", lebenslaufSection)
-  if (lebenslaufSection) {
-    const lebenslaufFields = [
-      {
-        id: "lebenslaufFullName",
-        key: "form.fullName",
-        valueKey: "lebenslaufInputValues.fullName"
-      },
-      {
-        id: "lebenslaufAddress",
-        key: "form.address",
-        valueKey: "lebenslaufInputValues.address"
-      },
-      {id: "lebenslaufPhone", key: "form.phone", valueKey: "lebenslaufInputValues.phone"},
-      {id: "lebenslaufEmail", key: "form.email", valueKey: "lebenslaufInputValues.email"},
-      {
-        id: "lebenslaufBirthDate",
-        key: "form.birthDate",
-        valueKey: "lebenslaufInputValues.birthDate"
-      },
-      {
-        id: "lebenslaufNationality",
-        key: "form.nationality",
-        valueKey: "lebenslaufInputValues.nationality"
-      },
-      {
-        id: "lebenslaufSummary",
-        key: "form.motivationPlaceholder",
-        valueKey: "lebenslaufInputValues.summary"
-      },
-      {
-        id: "lebenslaufSkills",
-        key: "form.qualificationsPlaceholder",
-        valueKey: "lebenslaufInputValues.skills"
-      },
-      {
-        id: "lebenslaufExperience",
-        key: "form.qualificationsPlaceholder",
-        valueKey: "lebenslaufInputValues.experience"
-      },
-      {
-        id: "lebenslaufEducation",
-        key: "form.qualificationsPlaceholder",
-        valueKey: "lebenslaufInputValues.education"
-      },
-      {
-        id: "lebenslaufCertifications",
-        key: "form.qualificationsPlaceholder",
-        valueKey: "lebenslaufInputValues.certifications"
-      },
-      {
-        id: "lebenslaufLanguages",
-        key: "form.qualificationsPlaceholder",
-        valueKey: "lebenslaufInputValues.languages"
-      },
-      {
-        id: "lebenslaufAdditional",
-        key: "form.qualificationsPlaceholder",
-        valueKey: "lebenslaufInputValues.additional"
-      }
-    ]
-
-    lebenslaufFields.forEach(field => {
-      const element = document.getElementById(field.id)
-      console.log(`🔍 Field ${field.id} found:`, element)
-      if (element) {
-        const translatedValue = getTranslation(field.key)
-        const translatedFieldValue = getTranslation(field.valueKey)
-
-        // Get field name without "lebenslauf" prefix
-        const fieldName = field.id.replace("lebenslauf", "")
-        const camelCaseFieldName = fieldName.charAt(0).toLowerCase() + fieldName.slice(1)
-
-        const translatedContentValue = getTranslation(`contentValues.${camelCaseFieldName}`)
-        const translatedLebenslaufValue = getTranslation(`lebenslaufValues.${camelCaseFieldName}`)
-        const translatedLebenslaufInputValue = getTranslation(
-          `lebenslaufInputValues.${camelCaseFieldName}`
-        )
-
-        console.log(`=== Field ${field.id} ===`)
-        console.log(`Current value: "${element.value}"`)
-        console.log(`Placeholder: "${element.placeholder}"`)
-        console.log(`translatedValue (placeholder): "${translatedValue}"`)
-        console.log(`translatedFieldValue (new valueKey): "${translatedFieldValue}"`)
-        console.log(`translatedContentValue: "${translatedContentValue}"`)
-        console.log(`translatedLebenslaufValue: "${translatedLebenslaufValue}"`)
-        console.log(`translatedLebenslaufInputValue: "${translatedLebenslaufInputValue}"`)
-
-        // Special logging for lebenslaufFullName
-        if (field.id === "lebenslaufFullName") {
-          console.log("🔍 Special logging for lebenslaufFullName:")
-          console.log("Field key:", field.key)
-          console.log("Looking for lebenslaufInputValues.fullName")
-          console.log(
-            "Available lebenslaufInputValues:",
-            translations[currentLanguage]?.lebenslaufInputValues
-          )
-          console.log(
-            "lebenslaufInputValues.fullName:",
-            translations[currentLanguage]?.lebenslaufInputValues?.fullName
-          )
-        }
-
-        if (translatedValue && !showingOriginal) {
-          console.log(`Translating Lebenslauf ${field.id}:`, translatedValue)
-          // Update placeholder
-          element.placeholder = translatedValue
-
-          // Update field value - prioritize new valueKey for Lebenslauf fields
-          const valueToUse =
-            translatedFieldValue ||
-            translatedLebenslaufInputValue ||
-            translatedLebenslaufValue ||
-            translatedContentValue
-
-          console.log(`=== Value Selection for ${field.id} ===`)
-          console.log(`translatedFieldValue (priority): "${translatedFieldValue}"`)
-          console.log(`translatedLebenslaufInputValue: "${translatedLebenslaufInputValue}"`)
-          console.log(`translatedLebenslaufValue: "${translatedLebenslaufValue}"`)
-          console.log(`translatedContentValue: "${translatedContentValue}"`)
-          console.log(`Selected valueToUse: "${valueToUse}"`)
-
-          if (valueToUse) {
-            // Only set value if field is empty or if we're explicitly changing language
-            if (!element.value || element.value.trim() === "") {
-              element.value = valueToUse
-              console.log(`✅ Set value for Lebenslauf ${field.id}: ${valueToUse}`)
-            } else {
-              console.log(
-                `Field ${field.id} already has value "${element.value}", not overwriting with "${valueToUse}"`
-              )
-            }
-
-            // Add event to track if value gets changed later
-            const originalValue = valueToUse
-            const observer = new MutationObserver(mutations => {
-              mutations.forEach(mutation => {
-                if (mutation.type === "attributes" && mutation.attributeName === "value") {
-                  console.log(
-                    `⚠️ Value changed for ${field.id}: "${originalValue}" -> "${element.value}"`
-                  )
-                }
-              })
-            })
-            observer.observe(element, {attributes: true, attributeFilter: ["value"]})
-
-            // Also listen for input events
-            element.addEventListener("input", () => {
-              console.log(
-                `⚠️ Input event for ${field.id}: "${originalValue}" -> "${element.value}"`
-              )
-            })
-          } else {
-            console.log(`❌ No translation found for Lebenslauf ${field.id}`)
-          }
-        }
-      }
-    })
   }
-
-  // Add delay to ensure all translations are applied
-  console.log("Waiting for all translations to be applied...")
-  await new Promise(resolve => setTimeout(resolve, 100))
-
-  console.log("=== translateFormFields completed ===")
+}
+// Translate form field values - DELEGATED TO TranslationService
+async function translateFormFields() {
+  return await translationService.translateFormFields();
 }
 
-// Translate page
+// Translate page - DELEGATED TO TranslationService
 function translatePage() {
-  const elements = document.querySelectorAll("[data-translate]")
-  elements.forEach(element => {
-    const key = element.getAttribute("data-translate")
-    const translation = getTranslation(key)
-    if (translation) {
-      if (element.tagName === "INPUT" && element.type === "submit") {
-        element.value = translation
-      } else if (element.tagName === "INPUT" && element.placeholder) {
-        element.placeholder = translation
-      } else {
-        element.textContent = translation
-      }
-    }
-  })
+  return translationService.translatePage();
 }
 
 // Initialize theme
@@ -4982,12 +4018,12 @@ async function initializeTheme() {
 // Toggle theme
 function toggleTheme() {
   try {
-    console.log("Toggling theme...")
+    logger.log("Toggling theme...")
     const currentTheme = document.documentElement.getAttribute("data-theme")
     const newTheme = currentTheme === "dark" ? "light" : "dark"
 
-    console.log("Current theme:", currentTheme)
-    console.log("New theme:", newTheme)
+    logger.log("Current theme:", currentTheme)
+    logger.log("New theme:", newTheme)
 
     // Update theme immediately
     document.documentElement.setAttribute("data-theme", newTheme)
@@ -5012,9 +4048,9 @@ function toggleTheme() {
     saveFormData()
 
     // Theme is automatically saved to localStorage (no backend needed for GitHub Pages)
-    console.log("Theme saved to localStorage:", newTheme)
+    logger.log("Theme saved to localStorage:", newTheme)
   } catch (error) {
-    console.error("Error toggling theme:", error)
+    logger.error("Error toggling theme:", error)
   }
 }
 
@@ -5097,42 +4133,9 @@ async function toggleTranslation() {
   }
 }
 
-// Get translation by key
+// Get translation by key - DELEGATED TO TranslationService
 function getTranslation(key) {
-  console.log("getTranslation called with key:", key, "currentLanguage:", currentLanguage)
-  const keys = key.split(".")
-  let translation = translations[currentLanguage]
-  console.log("translations[currentLanguage]:", translation)
-
-  // Special logging for lebenslaufInputValues
-  if (key.includes("lebenslaufInputValues")) {
-    console.log("🔍 Looking for lebenslaufInputValues key:", key)
-    console.log(
-      "Available lebenslaufInputValues:",
-      translations[currentLanguage]?.lebenslaufInputValues
-    )
-  }
-
-  if (!translation) {
-    console.error("No translations loaded for language:", currentLanguage)
-    return null
-  }
-
-  for (const k of keys) {
-    if (translation && translation[k]) {
-      translation = translation[k]
-    } else {
-      console.log("Translation not found for key:", key, "at level:", k)
-      console.log(
-        "Available keys at this level:",
-        translation ? Object.keys(translation) : "translation is null"
-      )
-      return null
-    }
-  }
-
-  console.log("Final translation for", key, ":", translation)
-  return translation
+  return translationService.getTranslation(key);
 }
 
 // Initialize mobile menu
@@ -5143,7 +4146,7 @@ function initializeMobileMenu() {
   const mobileThemeToggle = document.getElementById("mobileThemeToggle")
 
   if (!mobileMenuBtn || !mobileMenuOverlay || !mobileMenuPanel) {
-    console.warn("Mobile menu elements not found")
+    logger.warn("Mobile menu elements not found")
     return
   }
 
@@ -5267,14 +4270,14 @@ async function translateText(text, targetLang, sourceLang = "auto") {
   // Спочатку спробуємо локальний словник
   const localTranslation = await translateTextFallback(text, targetLang, sourceLang)
   if (localTranslation !== text) {
-    console.log(`✅ Local translation found: "${text}" -> "${localTranslation}"`)
+    logger.log(`✅ Local translation found: "${text}" -> "${localTranslation}"`)
     translationCache.set(cacheKey, localTranslation)
     return localTranslation
   }
 
   // Try Google Translate API directly
   try {
-    console.log(`🌐 Using Google Translate API for: "${text}"`)
+    logger.log(`🌐 Using Google Translate API for: "${text}"`)
 
     // Use Google Translate API directly (no server needed)
     const googleTranslateUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`
@@ -5291,27 +4294,27 @@ async function translateText(text, targetLang, sourceLang = "auto") {
       if (data && data[0] && data[0][0] && data[0][0][0]) {
         const translatedText = data[0][0][0]
         if (translatedText && translatedText !== text) {
-          console.log(`✅ Google Translate successful: "${text}" -> "${translatedText}"`)
+          logger.log(`✅ Google Translate successful: "${text}" -> "${translatedText}"`)
           translationCache.set(cacheKey, translatedText)
           return translatedText
         }
       }
     } else {
-      console.log(`⚠️ Google Translate API error: ${response.status}`)
+      logger.log(`⚠️ Google Translate API error: ${response.status}`)
     }
   } catch (error) {
-    console.log(`⚠️ Google Translate request failed: ${error.message}`)
+    logger.log(`⚠️ Google Translate request failed: ${error.message}`)
   }
 
   // Якщо всі методи не спрацювали, повертаємо оригінальний текст
-  console.log(`ℹ️ No translation available for: "${text}"`)
+  logger.log(`ℹ️ No translation available for: "${text}"`)
   return text
 }
 
 // Резервна функція перекладу через LibreTranslate (якщо доступний)
 async function translateTextFallback(text, targetLang, sourceLang = "auto") {
   try {
-    console.log("Trying fallback translation method")
+    logger.log("Trying fallback translation method")
 
     // Розширений словник для основних фраз
     const basicDictionary = {
@@ -5441,14 +4444,14 @@ async function translateTextFallback(text, targetLang, sourceLang = "auto") {
 
     return text // Повернути оригінальний текст якщо переклад недоступний
   } catch (error) {
-    console.error("Fallback translation failed:", error)
+    logger.error("Fallback translation failed:", error)
     return text
   }
 }
 // Функція для перекладу всіх текстових полів форми
 async function translateAllUserInputs(targetLang) {
   try {
-    console.log(`Translating all user inputs to: ${targetLang}`)
+    logger.log(`Translating all user inputs to: ${targetLang}`)
 
     // Знаходимо всі текстові поля та textarea, які користувач може заповнити
     const inputFields = document.querySelectorAll('input[type="text"], textarea')
@@ -5471,11 +4474,11 @@ async function translateAllUserInputs(targetLang) {
     })
 
     if (fieldsToTranslate.length === 0) {
-      console.log("No fields to translate")
+      logger.log("No fields to translate")
       return
     }
 
-    console.log(`Found ${fieldsToTranslate.length} fields to translate`)
+    logger.log(`Found ${fieldsToTranslate.length} fields to translate`)
 
     // Перекладаємо поля з обмеженою паралельністю
     const batchSize = 3 // Максимум 3 поля одночасно
@@ -5486,12 +4489,12 @@ async function translateAllUserInputs(targetLang) {
       await Promise.all(
         batch.map(async field => {
           try {
-            console.log(`🔍 About to translate field: ${field.name || field.id || "unknown"}`)
+            logger.log(`🔍 About to translate field: ${field.name || field.id || "unknown"}`)
             await translateInputField(field, targetLang)
-            console.log(`✅ Successfully translated field: ${field.name || field.id || "unknown"}`)
+            logger.log(`✅ Successfully translated field: ${field.name || field.id || "unknown"}`)
           } catch (error) {
-            console.log(`⚠️ Error translating field: ${error.message}`)
-            console.log(`⚠️ Error stack: ${error.stack}`)
+            logger.log(`⚠️ Error translating field: ${error.message}`)
+            logger.log(`⚠️ Error stack: ${error.stack}`)
           }
         })
       )
@@ -5502,7 +4505,7 @@ async function translateAllUserInputs(targetLang) {
       }
     }
 
-    console.log("All user inputs translated")
+    logger.log("All user inputs translated")
 
     // Показати повідомлення користувачу
     const statusMessage = document.createElement("div")
@@ -5518,7 +4521,7 @@ async function translateAllUserInputs(targetLang) {
       statusMessage.remove()
     }, 3000)
   } catch (error) {
-    console.log(`⚠️ Error translating user inputs: ${error.message}`)
+    logger.log(`⚠️ Error translating user inputs: ${error.message}`)
 
     // Показати повідомлення про помилку
     const errorMessage = document.createElement("div")
@@ -5547,7 +4550,7 @@ let currentLayout = "single-column"
 
 // Функція для зміни стилю резюме
 function applyResumeStyle(style, layout) {
-  console.log(`Applying resume style: ${style}, layout: ${layout}`)
+  logger.log(`Applying resume style: ${style}, layout: ${layout}`)
 
   // Отримати контейнер превью
   const previewSection = document.querySelector(".preview-section")
@@ -5620,36 +4623,60 @@ function getResumeStyleCSS(style, layout) {
 }
 
 // Initialize on page load
+const DOM = {};
+
 function initializeModules() {
   domCache = new DOMCache();
   eventManager = new EventManager();
-  stateManager = new StateManager();
-  validationService = new ValidationService();
-  exportService = new ExportService();
-  performanceMonitor = new PerformanceMonitor();
+  // stateManager вже ініціалізований як singleton в state-management.js
+  // validationService, exportService, performanceMonitor вже ініціалізовані в своїх модулях
   accessibilityManager = new AccessibilityManager();
+
+  // Ініціалізація TranslationService
+  translationService.setLogger(logger);
+  translationService.setDOMCache(domCache);
+
+  // Ініціалізація PreviewService
+  previewService.setLogger(logger);
+  previewService.setTranslationService(translationService);
+  previewService.setDOMCache(domCache);
 
   formHandler = new FormHandler({
     stateManager: stateManager,
     validationService: validationService
   });
 
-  console.log('✅ Модулі ініціалізовано успішно');
+  initializeDOMCache();
+
+  logger.log('✅ Модулі ініціалізовано успішно');
+}
+
+function initializeDOMCache() {
+  DOM.bewerbungForm = domCache.get('bewerbungForm');
+  DOM.photoPreview = domCache.get('photoPreview');
+  DOM.lebenslaufSection = domCache.get('lebenslaufSection');
+  DOM.removePhoto = domCache.get('removePhoto');
+  DOM.lebenslaufPhoto = domCache.get('lebenslaufPhoto');
+  DOM.previewContent = domCache.get('previewContent');
+  DOM.statusMessage = domCache.get('statusMessage');
+  DOM.themeToggle = domCache.get('themeToggle');
+  DOM.mobileThemeToggle = domCache.get('mobileThemeToggle');
+  DOM.mobileMenuPanel = domCache.get('mobileMenuPanel');
+  DOM.position = domCache.get('position');
+  DOM.subject = domCache.get('subject');
+  DOM.resumeStyle = domCache.get('resumeStyle');
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  console.log("=== DOMContentLoaded event triggered ===")
-  console.log("Current timestamp:", new Date().toISOString())
-  console.log("Document ready state:", document.readyState)
+  logger.log("=== DOMContentLoaded event triggered ===")
+  logger.log("Current timestamp:", new Date().toISOString())
+  logger.log("Document ready state:", document.readyState)
 
   initializeModules();
 
-  // Load default language translations
-  await loadTranslations("de")
-
-  // Set default language as active
-  currentLanguage = "de"
-  document.documentElement.lang = "de"
+  // Initialize TranslationService with default language
+  await translationService.changeLanguage("de");
+  currentLanguage = translationService.getCurrentLanguage();
 
   // Update active language flag
   const initLanguageFlags = document.querySelectorAll(".language-flag")
@@ -5682,7 +4709,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   removeUnwantedPositionText()
 
   // Initialize form tabs
-  console.log("Initializing form tabs with currentPreviewType:", currentPreviewType)
+  logger.log("Initializing form tabs with currentPreviewType:", currentPreviewType)
   switchFormTab(currentPreviewType)
 
   // Load data for Lebenslauf if it's the initial tab
@@ -5691,7 +4718,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Ensure the correct tab is active
   setTimeout(() => {
     const activeTab = document.querySelector(".form-tab-button.active")
-    console.log("Active tab after initialization:", activeTab ? activeTab.textContent : "none")
+    logger.log("Active tab after initialization:", activeTab ? activeTab.textContent : "none")
   }, 100)
 
   // Add click handlers for form tabs
@@ -5710,15 +4737,15 @@ document.addEventListener("DOMContentLoaded", async function () {
   loadPhotoFromJSON()
 
   // Initialize photo upload functionality
-  console.log("=== About to initialize photo upload functions ===")
-  console.log("Current timestamp:", new Date().toISOString())
+  logger.log("=== About to initialize photo upload functions ===")
+  logger.log("Current timestamp:", new Date().toISOString())
 
   // Check if elements exist before initializing
-  const lebenslaufPhotoInput = document.getElementById("lebenslaufPhoto")
-  const lebenslaufPhotoPreview = document.getElementById("photoPreview")
+  const lebenslaufPhotoInput = DOM.lebenslaufPhoto
+  const lebenslaufPhotoPreview = DOM.photoPreview
 
-  console.log("Lebenslauf photo input exists:", !!lebenslaufPhotoInput)
-  console.log("Lebenslauf photo preview exists:", !!lebenslaufPhotoPreview)
+  logger.log("Lebenslauf photo input exists:", !!lebenslaufPhotoInput)
+  logger.log("Lebenslauf photo preview exists:", !!lebenslaufPhotoPreview)
 
   initializePhotoUpload()
 
@@ -5741,7 +4768,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   const translateButton = document.getElementById("translateButton")
   if (translateButton) {
     translateButton.addEventListener("click", async function () {
-      console.log("Manual translation button clicked")
+      logger.log("Manual translation button clicked")
 
       // Показати індикацію завантаження
       const originalIcon = this.innerHTML
@@ -5752,7 +4779,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       try {
         // Отримати поточну мову інтерфейсу
         const currentLang = currentLanguage || "de"
-        console.log(`🌐 Starting Google Translate for language: ${currentLang}`)
+        logger.log(`🌐 Starting Google Translate for language: ${currentLang}`)
 
         // Показати прогрес
         buttonElement.innerHTML = '<span class="translate-icon">🌐</span>'
@@ -5766,7 +4793,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           buttonElement.innerHTML = originalIcon || '<span class="translate-icon">🌐</span>'
         }, 2000)
       } catch (error) {
-        console.log(`⚠️ Google Translate failed: ${error.message}`)
+        logger.log(`⚠️ Google Translate failed: ${error.message}`)
         // Показати помилку
         buttonElement.innerHTML = '<span class="translate-icon">❌</span>'
         showStatus(`❌ Помилка перекладу: ${error.message}`, "error")
@@ -5789,7 +4816,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       const selectedLayout =
         document.querySelector('input[name="layout"]:checked')?.value || "single-column"
       applyResumeStyle(selectedStyle, selectedLayout)
-      console.log(`Style changed to: ${selectedStyle}`)
+      logger.log(`Style changed to: ${selectedStyle}`)
     })
   }
 
@@ -5799,7 +4826,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         const selectedLayout = this.value
         const selectedStyle = styleDropdown?.value || "modern-professional"
         applyResumeStyle(selectedStyle, selectedLayout)
-        console.log(`Layout changed to: ${selectedLayout}`)
+        logger.log(`Layout changed to: ${selectedLayout}`)
       }
     })
   })
@@ -5831,25 +4858,25 @@ window.debugPopulateForm = populateFormWithLebenslaufData
 
 // Debug function for photo upload testing
 window.debugPhotoUpload = function () {
-  console.log("=== PHOTO UPLOAD DEBUG ===")
-  console.log("globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-  console.log("Photo input element:", document.getElementById("lebenslaufPhoto"))
-  console.log("Photo preview element:", document.getElementById("photoPreview"))
+  logger.log("=== PHOTO UPLOAD DEBUG ===")
+  logger.log("globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("Photo input element:", DOM.lebenslaufPhoto)
+  logger.log("Photo preview element:", DOM.photoPreview)
 
   if (globalPhotoData) {
-    console.log("globalPhotoData type:", typeof globalPhotoData)
-    console.log("globalPhotoData length:", globalPhotoData.length)
-    console.log(
+    logger.log("globalPhotoData type:", typeof globalPhotoData)
+    logger.log("globalPhotoData length:", globalPhotoData.length)
+    logger.log(
       "globalPhotoData starts with data:image/:",
       globalPhotoData.startsWith("data:image/")
     )
   }
 
   if (formData.lebenslaufPhoto) {
-    console.log("formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
-    console.log("formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
-    console.log(
+    logger.log("formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
+    logger.log("formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
+    logger.log(
       "formData.lebenslaufPhoto starts with data:image/:",
       formData.lebenslaufPhoto.startsWith("data:image/")
     )
@@ -5858,35 +4885,35 @@ window.debugPhotoUpload = function () {
 
 // Debug function for testing save
 window.debugSaveData = async function () {
-  console.log("=== SAVE DATA DEBUG ===")
-  console.log("Current language:", currentLanguage)
-  console.log("About to call saveLebenslaufData()...")
+  logger.log("=== SAVE DATA DEBUG ===")
+  logger.log("Current language:", currentLanguage)
+  logger.log("About to call saveLebenslaufData()...")
   await saveLebenslaufData()
 }
 
 // Debug function for testing photo input
 window.debugPhotoInput = function () {
-  console.log("=== PHOTO INPUT DEBUG ===")
-  const photoInput = document.getElementById("lebenslaufPhoto")
-  console.log("Photo input element:", photoInput)
-  console.log("Photo input value:", photoInput?.value)
-  console.log("Photo input files:", photoInput?.files)
-  console.log("Photo input files length:", photoInput?.files?.length)
+  logger.log("=== PHOTO INPUT DEBUG ===")
+  const photoInput = DOM.lebenslaufPhoto
+  logger.log("Photo input element:", photoInput)
+  logger.log("Photo input value:", photoInput?.value)
+  logger.log("Photo input files:", photoInput?.files)
+  logger.log("Photo input files length:", photoInput?.files?.length)
 
   if (photoInput?.files?.length > 0) {
     const file = photoInput.files[0]
-    console.log("Selected file:", file)
-    console.log("File name:", file.name)
-    console.log("File type:", file.type)
-    console.log("File size:", file.size)
+    logger.log("Selected file:", file)
+    logger.log("File name:", file.name)
+    logger.log("File type:", file.type)
+    logger.log("File size:", file.size)
 
     // Test FileReader
     const reader = new FileReader()
     reader.onload = function (e) {
-      console.log("FileReader result:", e.target.result)
-      console.log("Result type:", typeof e.target.result)
-      console.log("Result length:", e.target.result.length)
-      console.log("Starts with data:image/:", e.target.result.startsWith("data:image/"))
+      logger.log("FileReader result:", e.target.result)
+      logger.log("Result type:", typeof e.target.result)
+      logger.log("Result length:", e.target.result.length)
+      logger.log("Starts with data:image/:", e.target.result.startsWith("data:image/"))
     }
     reader.readAsDataURL(file)
   }
@@ -5894,77 +4921,77 @@ window.debugPhotoInput = function () {
 
 // Debug function to clear invalid photo data
 window.debugClearPhotoData = function () {
-  console.log("=== CLEARING PHOTO DATA ===")
+  logger.log("=== CLEARING PHOTO DATA ===")
   globalPhotoData = null
   formData.lebenslaufPhoto = null
-  console.log("✅ Photo data cleared")
-  console.log("globalPhotoData:", globalPhotoData)
-  console.log("formData.lebenslaufPhoto:", formData.lebenslaufPhoto)
+  logger.log("✅ Photo data cleared")
+  logger.log("globalPhotoData:", globalPhotoData)
+  logger.log("formData.lebenslaufPhoto:", formData.lebenslaufPhoto)
 }
 
 // Function to load photo from JSON file
 async function loadPhotoFromJSON() {
   try {
-    console.log("=== LOADING PHOTO FROM JSON ===")
-    console.log(`Current language: ${currentLanguage}`)
-    console.log("Skipping API call - using dynamic preview instead")
+    logger.log("=== LOADING PHOTO FROM JSON ===")
+    logger.log(`Current language: ${currentLanguage}`)
+    logger.log("Skipping API call - using dynamic preview instead")
 
     // Skip API call since we're using dynamic preview
     return
   } catch (error) {
-    console.log("Error in loadPhotoFromJSON:", error)
+    logger.log("Error in loadPhotoFromJSON:", error)
   }
 }
 
 // Debug function to test pagination on both tabs
 window.debugTestPagination = function () {
-  console.log("🔍 DIAGNOSING PAGINATION ISSUE")
-  console.log("================================")
+  logger.log("🔍 DIAGNOSING PAGINATION ISSUE")
+  logger.log("================================")
 
   const activeTab = getCurrentActiveTab()
-  console.log(`📋 Current active tab: ${activeTab}`)
+  logger.log(`📋 Current active tab: ${activeTab}`)
 
   // Test bewerbung tab
-  console.log("🅱️ Testing Bewerbung pagination...")
+  logger.log("🅱️ Testing Bewerbung pagination...")
   switchFormTab("bewerbung").then(() => {
     setTimeout(() => {
       const bewerbungActiveTab = getCurrentActiveTab()
       const bewerbungValues = getCurrentFormValues()
-      const bewerbungPreview = document.getElementById("previewContent")
+      const bewerbungPreview = DOM.previewContent
       const bewerbungPages = bewerbungPreview?.querySelectorAll(".document-page")
 
-      console.log(`📋 Bewerbung active tab: ${bewerbungActiveTab}`)
-      console.log(`📝 Bewerbung content length: ${JSON.stringify(bewerbungValues).length}`)
-      console.log(`📄 Bewerbung pages found: ${bewerbungPages?.length || 0}`)
+      logger.log(`📋 Bewerbung active tab: ${bewerbungActiveTab}`)
+      logger.log(`📝 Bewerbung content length: ${JSON.stringify(bewerbungValues).length}`)
+      logger.log(`📄 Bewerbung pages found: ${bewerbungPages?.length || 0}`)
 
       if (bewerbungPages) {
         bewerbungPages.forEach((page, index) => {
           const pageText = page.textContent || page.innerText || ""
-          console.log(`📄   Page ${index + 1}: ${pageText.length} characters`)
+          logger.log(`📄   Page ${index + 1}: ${pageText.length} characters`)
         })
       }
 
       // Test lebenslauf tab
-      console.log("\n📝 Testing Lebenslauf pagination...")
+      logger.log("\n📝 Testing Lebenslauf pagination...")
       switchFormTab("lebenslauf").then(() => {
         setTimeout(() => {
           const lebenslaufActiveTab = getCurrentActiveTab()
           const lebenslaufValues = getCurrentFormValues()
-          const lebenslaufPreview = document.getElementById("previewContent")
+          const lebenslaufPreview = DOM.previewContent
           const lebenslaufPages = lebenslaufPreview?.querySelectorAll(".document-page")
 
-          console.log(`📋 Lebenslauf active tab: ${lebenslaufActiveTab}`)
-          console.log(`📝 Lebenslauf content length: ${JSON.stringify(lebenslaufValues).length}`)
-          console.log(`📄 Lebenslauf pages found: ${lebenslaufPages?.length || 0}`)
+          logger.log(`📋 Lebenslauf active tab: ${lebenslaufActiveTab}`)
+          logger.log(`📝 Lebenslauf content length: ${JSON.stringify(lebenslaufValues).length}`)
+          logger.log(`📄 Lebenslauf pages found: ${lebenslaufPages?.length || 0}`)
 
           if (lebenslaufPages) {
             lebenslaufPages.forEach((page, index) => {
               const pageText = page.textContent || page.innerText || ""
-              console.log(`📄   Page ${index + 1}: ${pageText.length} characters`)
+              logger.log(`📄   Page ${index + 1}: ${pageText.length} characters`)
             })
           }
 
-          console.log("🏁 Pagination diagnosis complete!")
+          logger.log("🏁 Pagination diagnosis complete!")
         }, 500)
       })
     }, 500)
@@ -5973,23 +5000,23 @@ window.debugTestPagination = function () {
 
 // Debug function to test tab switching and form values
 window.debugTabSwitching = function () {
-  console.log("=== 🔄 TESTING TAB SWITCHING ===")
+  logger.log("=== 🔄 TESTING TAB SWITCHING ===")
 
-  console.log("1. Current active tab:", getCurrentActiveTab())
-  console.log("2. Current form values:", getCurrentFormValues())
+  logger.log("1. Current active tab:", getCurrentActiveTab())
+  logger.log("2. Current form values:", getCurrentFormValues())
 
-  console.log("3. Testing bewerbung tab...")
+  logger.log("3. Testing bewerbung tab...")
   switchFormTab("bewerbung").then(() => {
-    console.log("4. After switching to bewerbung:")
-    console.log("   Active tab:", getCurrentActiveTab())
-    console.log("   Form values:", getCurrentFormValues())
+    logger.log("4. After switching to bewerbung:")
+    logger.log("   Active tab:", getCurrentActiveTab())
+    logger.log("   Form values:", getCurrentFormValues())
 
     setTimeout(() => {
-      console.log("5. Testing lebenslauf tab...")
+      logger.log("5. Testing lebenslauf tab...")
       switchFormTab("lebenslauf").then(() => {
-        console.log("6. After switching to lebenslauf:")
-        console.log("   Active tab:", getCurrentActiveTab())
-        console.log("   Form values:", getCurrentFormValues())
+        logger.log("6. After switching to lebenslauf:")
+        logger.log("   Active tab:", getCurrentActiveTab())
+        logger.log("   Form values:", getCurrentFormValues())
       })
     }, 1000)
   })
@@ -5997,67 +5024,67 @@ window.debugTabSwitching = function () {
 
 // Debug function to refresh photo display
 window.debugRefreshPhotoDisplay = function () {
-  console.log("=== REFRESHING PHOTO DISPLAY ===")
+  logger.log("=== REFRESHING PHOTO DISPLAY ===")
 
   // Check current photo data
-  console.log("globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
 
   // Get photo data from JSON if available
   const photoData = globalPhotoData || formData.lebenslaufPhoto
 
   if (photoData && photoData.startsWith("data:image/")) {
-    console.log("📸 Valid photo data found, updating display...")
+    logger.log("📸 Valid photo data found, updating display...")
 
     // Update left menu photo preview
-    const photoPreview = document.getElementById("photoPreview")
+    const photoPreview = DOM.photoPreview
     if (photoPreview) {
       photoPreview.innerHTML = `<img src="${photoData}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
-      console.log("✅ Left menu photo updated")
+      logger.log("✅ Left menu photo updated")
     }
 
     // Update remove button
-    const removePhotoBtn = document.getElementById("removePhoto")
+    const removePhotoBtn = DOM.removePhoto
     if (removePhotoBtn) {
       removePhotoBtn.style.display = "block"
     }
 
     // Update preview
     updatePreviewOnInput()
-    console.log("✅ Preview updated")
+    logger.log("✅ Preview updated")
   } else {
-    console.log("❌ No valid photo data found")
+    logger.log("❌ No valid photo data found")
   }
 }
 
 // Debug function to force photo upload from input
 window.debugForcePhotoUpload = function () {
-  console.log("=== FORCING PHOTO UPLOAD ===")
-  const photoInput = document.getElementById("lebenslaufPhoto")
+  logger.log("=== FORCING PHOTO UPLOAD ===")
+  const photoInput = DOM.lebenslaufPhoto
   if (photoInput && photoInput.files && photoInput.files.length > 0) {
     const file = photoInput.files[0]
-    console.log("📸 Found file:", file.name, file.type, file.size)
+    logger.log("📸 Found file:", file.name, file.type, file.size)
 
     const reader = new FileReader()
     reader.onload = function (e) {
       const dataURL = e.target.result
-      console.log("📸 Photo converted to data URL:", dataURL.length, "characters")
+      logger.log("📸 Photo converted to data URL:", dataURL.length, "characters")
       globalPhotoData = dataURL
       formData.lebenslaufPhoto = dataURL
-      console.log("✅ Photo data updated globally")
+      logger.log("✅ Photo data updated globally")
     }
     reader.readAsDataURL(file)
   } else {
-    console.log("❌ No file found in input")
+    logger.log("❌ No file found in input")
   }
 }
 
 // Debug function for manual photo upload
 window.debugManualPhotoUpload = function () {
-  console.log("=== MANUAL PHOTO UPLOAD DEBUG ===")
-  const photoInput = document.getElementById("lebenslaufPhoto")
+  logger.log("=== MANUAL PHOTO UPLOAD DEBUG ===")
+  const photoInput = DOM.lebenslaufPhoto
   if (!photoInput) {
-    console.log("❌ Photo input not found")
+    logger.log("❌ Photo input not found")
     return
   }
 
@@ -6068,23 +5095,23 @@ window.debugManualPhotoUpload = function () {
   photoInput.addEventListener("change", function (e) {
     const file = e.target.files[0]
     if (file) {
-      console.log("File selected:", file.name)
+      logger.log("File selected:", file.name)
 
       const reader = new FileReader()
       reader.onload = function (e) {
         const result = e.target.result
-        console.log("Photo data URL created:", result.length, "characters")
+        logger.log("Photo data URL created:", result.length, "characters")
 
         // Update global variables
         globalPhotoData = result
         formData.lebenslaufPhoto = result
 
-        console.log("✅ Photo uploaded successfully!")
-        console.log("globalPhotoData updated:", !!globalPhotoData)
-        console.log("formData.lebenslaufPhoto updated:", !!formData.lebenslaufPhoto)
+        logger.log("✅ Photo uploaded successfully!")
+        logger.log("globalPhotoData updated:", !!globalPhotoData)
+        logger.log("formData.lebenslaufPhoto updated:", !!formData.lebenslaufPhoto)
 
         // Update preview
-        const photoPreview = document.getElementById("photoPreview")
+        const photoPreview = DOM.photoPreview
         if (photoPreview) {
           photoPreview.innerHTML = `<img src="${result}" alt="Uploaded photo" style="max-width: 100%; max-height: 200px; border-radius: 8px;" />`
         }
@@ -6096,34 +5123,34 @@ window.debugManualPhotoUpload = function () {
 
 // Debug function to manually load photo from JSON
 window.debugLoadPhotoFromJSON = function () {
-  console.log("=== MANUALLY LOADING PHOTO FROM JSON ===")
+  logger.log("=== MANUALLY LOADING PHOTO FROM JSON ===")
   loadPhotoFromJSON()
 }
 
 // Debug function to test synchronization
 window.debugTestSync = function () {
-  console.log("=== 🔧 TESTING SYNCHRONIZATION ===")
+  logger.log("=== 🔧 TESTING SYNCHRONIZATION ===")
 
   // Test Lebenslauf section
   const lebenslaufInputs = document.querySelectorAll(
     "#lebenslaufSection input, #lebenslaufSection textarea, #lebenslaufSection select"
   )
-  console.log(`📝 Found ${lebenslaufInputs.length} inputs in Lebenslauf section`)
+  logger.log(`📝 Found ${lebenslaufInputs.length} inputs in Lebenslauf section`)
 
   // Test Anschreiben section (it's part of bewerbungForm)
   const anschreibenInputs = document.querySelectorAll(
     "#bewerbungForm input, #bewerbungForm textarea, #bewerbungForm select"
   )
-  console.log(`📝 Found ${anschreibenInputs.length} inputs in Bewerbung/Anschreiben form`)
+  logger.log(`📝 Found ${anschreibenInputs.length} inputs in Bewerbung/Anschreiben form`)
 
   // Test main form (same as anschreibenInputs)
   const mainFormInputs = document.querySelectorAll(
     "#bewerbungForm input, #bewerbungForm textarea, #bewerbungForm select"
   )
-  console.log(`📝 Found ${mainFormInputs.length} inputs in main form (same as Anschreiben)`)
+  logger.log(`📝 Found ${mainFormInputs.length} inputs in main form (same as Anschreiben)`)
 
   // Check event listeners
-  console.log("🎯 Checking event listeners...")
+  logger.log("🎯 Checking event listeners...")
   let listenersCount = 0
 
   document
@@ -6136,10 +5163,10 @@ window.debugTestSync = function () {
       listenersCount++
     })
 
-  console.log(`Inputs with event listeners: ${listenersCount}`)
+  logger.log(`Inputs with event listeners: ${listenersCount}`)
 
   // Trigger update
-  console.log("Triggering preview update...")
+  logger.log("Triggering preview update...")
   updatePreviewOnInput()
 
   return {
@@ -6182,7 +5209,7 @@ function updatePageScaleVar() {
 
     document.documentElement.style.setProperty("--page-scale", String(scale))
   } catch (e) {
-    console.warn("updatePageScaleVar failed:", e)
+    logger.warn("updatePageScaleVar failed:", e)
   }
 }
 
@@ -6244,7 +5271,7 @@ window.addEventListener("load", () => {
         const bp = getBreakpointName(vw)
         label.innerHTML = `Viewport: <strong>${vw}px</strong> · Preview container: <strong>${cW}px</strong> · Scale: <strong>${Math.round(Number(scale) * 100)}%</strong> · <em>[${bp}]</em>`
       } catch (e) {
-        console.warn("updateScreenLabel failed", e)
+        logger.warn("updateScreenLabel failed", e)
       }
     }
 
@@ -6286,7 +5313,7 @@ window.addEventListener("load", () => {
           updatePageScaleVar()
         })
       } catch (e) {
-        console.warn("applyInputToPreview error", e)
+        logger.warn("applyInputToPreview error", e)
       }
     }
 
@@ -6322,7 +5349,7 @@ window.addEventListener("load", () => {
           })
         })
       } catch (e) {
-        console.warn("attachFormSync failed", e)
+        logger.warn("attachFormSync failed", e)
       }
     }
 
@@ -6331,55 +5358,55 @@ window.addEventListener("load", () => {
       try {
         attachFormSync()
       } catch (e) {
-        console.warn(e)
+        logger.warn(e)
       }
     })
   }
 })
 // Debug function to analyze photo data overwriting issue
 window.debugPhotoOverwrite = function () {
-  console.log("=== 🔍 ANALYZING PHOTO DATA OVERWRITING ===")
+  logger.log("=== 🔍 ANALYZING PHOTO DATA OVERWRITING ===")
 
-  console.log("📊 Current state:")
-  console.log("- globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("- formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-  console.log("- formData.photo:", formData.photo ? "Present" : "Missing")
+  logger.log("📊 Current state:")
+  logger.log("- globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("- formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("- formData.photo:", formData.photo ? "Present" : "Missing")
 
   if (globalPhotoData) {
-    console.log("- globalPhotoData type:", typeof globalPhotoData)
-    console.log("- globalPhotoData length:", globalPhotoData.length)
-    console.log(
+    logger.log("- globalPhotoData type:", typeof globalPhotoData)
+    logger.log("- globalPhotoData length:", globalPhotoData.length)
+    logger.log(
       "- globalPhotoData starts with data:image/:",
       globalPhotoData.startsWith("data:image/")
     )
   }
 
   if (formData.lebenslaufPhoto) {
-    console.log("- formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
-    console.log("- formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
-    console.log(
+    logger.log("- formData.lebenslaufPhoto type:", typeof formData.lebenslaufPhoto)
+    logger.log("- formData.lebenslaufPhoto length:", formData.lebenslaufPhoto.length)
+    logger.log(
       "- formData.lebenslaufPhoto starts with data:image/:",
       formData.lebenslaufPhoto.startsWith("data:image/")
     )
   }
 
   // Check if photo preview is showing
-  const photoPreview = document.getElementById("photoPreview")
+  const photoPreview = DOM.photoPreview
   if (photoPreview) {
-    console.log("- Photo preview element:", photoPreview.innerHTML.substring(0, 100) + "...")
+    logger.log("- Photo preview element:", photoPreview.innerHTML.substring(0, 100) + "...")
   }
 
   // Check if remove button is visible
-  const removeBtn = document.getElementById("removePhoto")
+  const removeBtn = DOM.removePhoto
   if (removeBtn) {
-    console.log("- Remove photo button display:", removeBtn.style.display)
+    logger.log("- Remove photo button display:", removeBtn.style.display)
   }
 
-  console.log("🔄 Testing data loading sequence...")
-  console.log("1. Current form data before any operations:")
-  console.log("   - fullName:", formData.fullName)
-  console.log("   - address:", formData.address)
-  console.log("   - photo present:", formData.lebenslaufPhoto ? "Yes" : "No")
+  logger.log("🔄 Testing data loading sequence...")
+  logger.log("1. Current form data before any operations:")
+  logger.log("   - fullName:", formData.fullName)
+  logger.log("   - address:", formData.address)
+  logger.log("   - photo present:", formData.lebenslaufPhoto ? "Yes" : "No")
 
   return {
     globalPhotoData: globalPhotoData ? "Present" : "Missing",
@@ -6391,21 +5418,21 @@ window.debugPhotoOverwrite = function () {
 
 // Debug function to test data loading sequence
 window.debugDataSequence = async function () {
-  console.log("=== 🔄 TESTING DATA LOADING SEQUENCE ===")
+  logger.log("=== 🔄 TESTING DATA LOADING SEQUENCE ===")
 
-  console.log("1. Current state before loading:")
-  console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-  console.log("   - formData.fullName:", formData.fullName)
+  logger.log("1. Current state before loading:")
+  logger.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("   - formData.fullName:", formData.fullName)
 
-  console.log("2. Testing loadPhotoFromJSON()...")
+  logger.log("2. Testing loadPhotoFromJSON()...")
   await loadPhotoFromJSON()
 
-  console.log("3. State after loadPhotoFromJSON():")
-  console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("3. State after loadPhotoFromJSON():")
+  logger.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
 
-  console.log("4. Testing populateFormWithLebenslaufData()...")
+  logger.log("4. Testing populateFormWithLebenslaufData()...")
   // Create test data
   const testData = {
     fullName: "Test User",
@@ -6419,18 +5446,18 @@ window.debugDataSequence = async function () {
 
   await populateFormWithLebenslaufData(testData)
 
-  console.log("5. State after populateFormWithLebenslaufData():")
-  console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-  console.log("   - formData.fullName:", formData.fullName)
+  logger.log("5. State after populateFormWithLebenslaufData():")
+  logger.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("   - formData.fullName:", formData.fullName)
 
-  console.log("6. Testing updateFormData()...")
+  logger.log("6. Testing updateFormData()...")
   updateFormData()
 
-  console.log("7. Final state after updateFormData():")
-  console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
-  console.log("   - formData.fullName:", formData.fullName)
+  logger.log("7. Final state after updateFormData():")
+  logger.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("   - formData.fullName:", formData.fullName)
 
   return {
     initialPhoto: globalPhotoData ? "Present" : "Missing",
@@ -6441,12 +5468,12 @@ window.debugDataSequence = async function () {
 
 // Debug function to test auto-synchronization
 window.debugAutoSync = function () {
-  console.log("=== 🔄 TESTING AUTO-SYNCHRONIZATION ===")
+  logger.log("=== 🔄 TESTING AUTO-SYNCHRONIZATION ===")
 
-  console.log("1. Checking event listeners...")
+  logger.log("1. Checking event listeners...")
   const sections = [
-    document.getElementById("bewerbungForm"),
-    document.getElementById("lebenslaufSection")
+    DOM.bewerbungForm,
+    DOM.lebenslaufSection
   ]
 
   let totalInputs = 0
@@ -6456,7 +5483,7 @@ window.debugAutoSync = function () {
     if (section) {
       const inputs = section.querySelectorAll("input, textarea, select")
       totalInputs += inputs.length
-      console.log(`📝 ${section.id}: ${inputs.length} inputs`)
+      logger.log(`📝 ${section.id}: ${inputs.length} inputs`)
 
       inputs.forEach(input => {
         // Check if input has event listeners by testing a simple property
@@ -6467,10 +5494,10 @@ window.debugAutoSync = function () {
     }
   })
 
-  console.log(`📊 Total inputs: ${totalInputs}`)
-  console.log(`📊 Inputs with listeners: ${inputsWithListeners}`)
+  logger.log(`📊 Total inputs: ${totalInputs}`)
+  logger.log(`📊 Inputs with listeners: ${inputsWithListeners}`)
 
-  console.log("2. Testing form data update...")
+  logger.log("2. Testing form data update...")
   const testValue = "Test " + new Date().getTime()
 
   // Find a text input to test
@@ -6478,31 +5505,31 @@ window.debugAutoSync = function () {
     "#bewerbungForm input[type='text'], #lebenslaufSection input[type='text']"
   )
   if (testInput) {
-    console.log(`🧪 Testing with input: ${testInput.name || testInput.id}`)
-    console.log(`🧪 Current value: "${testInput.value}"`)
+    logger.log(`🧪 Testing with input: ${testInput.name || testInput.id}`)
+    logger.log(`🧪 Current value: "${testInput.value}"`)
 
     // Set test value
     testInput.value = testValue
-    console.log(`🧪 Set value to: "${testValue}"`)
+    logger.log(`🧪 Set value to: "${testValue}"`)
 
     // Trigger input event
     const inputEvent = new Event("input", {bubbles: true})
     testInput.dispatchEvent(inputEvent)
-    console.log(`🧪 Dispatched input event`)
+    logger.log(`🧪 Dispatched input event`)
 
     // Check if formData was updated
     setTimeout(() => {
-      console.log(`🧪 FormData after update:`, formData[testInput.name] || formData[testInput.id])
-      console.log(`🧪 Expected: "${testValue}"`)
-      console.log(`🧪 Match: ${(formData[testInput.name] || formData[testInput.id]) === testValue}`)
+      logger.log(`🧪 FormData after update:`, formData[testInput.name] || formData[testInput.id])
+      logger.log(`🧪 Expected: "${testValue}"`)
+      logger.log(`🧪 Match: ${(formData[testInput.name] || formData[testInput.id]) === testValue}`)
     }, 100)
   } else {
-    console.log("❌ No text input found for testing")
+    logger.log("❌ No text input found for testing")
   }
 
-  console.log("3. Testing debounced function...")
-  console.log(`🧪 debouncedUpdatePreview type: ${typeof debouncedUpdatePreview}`)
-  console.log(`🧪 updatePreviewOnInput type: ${typeof updatePreviewOnInput}`)
+  logger.log("3. Testing debounced function...")
+  logger.log(`🧪 debouncedUpdatePreview type: ${typeof debouncedUpdatePreview}`)
+  logger.log(`🧪 updatePreviewOnInput type: ${typeof updatePreviewOnInput}`)
 
   return {
     totalInputs: totalInputs,
@@ -6514,15 +5541,15 @@ window.debugAutoSync = function () {
 
 // Debug function to test JSON data overwriting
 window.debugJSONOverwrite = async function () {
-  console.log("=== 📄 TESTING JSON DATA OVERWRITING ===")
+  logger.log("=== 📄 TESTING JSON DATA OVERWRITING ===")
 
-  console.log("1. Current state before JSON loading:")
-  console.log("   - formData.fullName:", formData.fullName)
-  console.log("   - formData.address:", formData.address)
-  console.log("   - formData.phone:", formData.phone)
-  console.log("   - formData.email:", formData.email)
-  console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("1. Current state before JSON loading:")
+  logger.log("   - formData.fullName:", formData.fullName)
+  logger.log("   - formData.address:", formData.address)
+  logger.log("   - formData.phone:", formData.phone)
+  logger.log("   - formData.email:", formData.email)
+  logger.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
 
   // Test with sample data
   const testData = {
@@ -6535,27 +5562,27 @@ window.debugJSONOverwrite = async function () {
     // No photo in test data to test preservation
   }
 
-  console.log("2. Testing populateFormWithLebenslaufData with test data...")
+  logger.log("2. Testing populateFormWithLebenslaufData with test data...")
   await populateFormWithLebenslaufData(testData)
 
-  console.log("3. State after populateFormWithLebenslaufData:")
-  console.log("   - formData.fullName:", formData.fullName)
-  console.log("   - formData.address:", formData.address)
-  console.log("   - formData.phone:", formData.phone)
-  console.log("   - formData.email:", formData.email)
-  console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("3. State after populateFormWithLebenslaufData:")
+  logger.log("   - formData.fullName:", formData.fullName)
+  logger.log("   - formData.address:", formData.address)
+  logger.log("   - formData.phone:", formData.phone)
+  logger.log("   - formData.email:", formData.email)
+  logger.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
 
-  console.log("4. Testing updateFormData...")
+  logger.log("4. Testing updateFormData...")
   updateFormData()
 
-  console.log("5. Final state after updateFormData:")
-  console.log("   - formData.fullName:", formData.fullName)
-  console.log("   - formData.address:", formData.address)
-  console.log("   - formData.phone:", formData.phone)
-  console.log("   - formData.email:", formData.email)
-  console.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
-  console.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
+  logger.log("5. Final state after updateFormData:")
+  logger.log("   - formData.fullName:", formData.fullName)
+  logger.log("   - formData.address:", formData.address)
+  logger.log("   - formData.phone:", formData.phone)
+  logger.log("   - formData.email:", formData.email)
+  logger.log("   - globalPhotoData:", globalPhotoData ? "Present" : "Missing")
+  logger.log("   - formData.lebenslaufPhoto:", formData.lebenslaufPhoto ? "Present" : "Missing")
 
   // Check if photo was preserved
   const photoPreserved =
@@ -6571,19 +5598,19 @@ window.debugJSONOverwrite = async function () {
 
 // Debug function to test complete data flow
 window.debugDataFlow = async function () {
-  console.log("=== 🔄 TESTING COMPLETE DATA FLOW ===")
+  logger.log("=== 🔄 TESTING COMPLETE DATA FLOW ===")
 
-  console.log("1. Initial state:")
-  console.log("   - formData.fullName:", formData.fullName)
-  console.log("   - formData.address:", formData.address)
+  logger.log("1. Initial state:")
+  logger.log("   - formData.fullName:", formData.fullName)
+  logger.log("   - formData.address:", formData.address)
 
   // Test user input
-  console.log("2. Testing user input...")
+  logger.log("2. Testing user input...")
   const nameInput = document.querySelector("#bewerbungForm input[name='fullName']")
   if (nameInput) {
     const testValue = "User Input Test " + new Date().getTime()
     nameInput.value = testValue
-    console.log(`   - Set name input to: "${testValue}"`)
+    logger.log(`   - Set name input to: "${testValue}"`)
 
     // Trigger input event
     const inputEvent = new Event("input", {bubbles: true})
@@ -6591,28 +5618,28 @@ window.debugDataFlow = async function () {
 
     // Wait for debounced update
     setTimeout(() => {
-      console.log("   - formData.fullName after input:", formData.fullName)
-      console.log("   - Match:", formData.fullName === testValue)
+      logger.log("   - formData.fullName after input:", formData.fullName)
+      logger.log("   - Match:", formData.fullName === testValue)
     }, 500)
   }
 
   // Test JSON loading
-  console.log("3. Testing JSON data loading...")
+  logger.log("3. Testing JSON data loading...")
   setTimeout(async () => {
-    console.log("   - Before JSON load - formData.fullName:", formData.fullName)
+    logger.log("   - Before JSON load - formData.fullName:", formData.fullName)
 
     // Load JSON data
     await loadDataFromJSON()
 
-    console.log("   - After JSON load - formData.fullName:", formData.fullName)
+    logger.log("   - After JSON load - formData.fullName:", formData.fullName)
 
     // Test input again after JSON load
-    console.log("4. Testing input after JSON load...")
+    logger.log("4. Testing input after JSON load...")
     const nameInput2 = document.querySelector("#bewerbungForm input[name='fullName']")
     if (nameInput2) {
       const testValue2 = "After JSON Test " + new Date().getTime()
       nameInput2.value = testValue2
-      console.log(`   - Set name input to: "${testValue2}"`)
+      logger.log(`   - Set name input to: "${testValue2}"`)
 
       // Trigger input event
       const inputEvent2 = new Event("input", {bubbles: true})
@@ -6620,8 +5647,8 @@ window.debugDataFlow = async function () {
 
       // Wait for debounced update
       setTimeout(() => {
-        console.log("   - formData.fullName after second input:", formData.fullName)
-        console.log("   - Match:", formData.fullName === testValue2)
+        logger.log("   - formData.fullName after second input:", formData.fullName)
+        logger.log("   - Match:", formData.fullName === testValue2)
       }, 500)
     }
   }, 1000)
@@ -6634,34 +5661,34 @@ window.debugDataFlow = async function () {
 
 // Debug function to test if event listeners are working
 window.debugEventListeners = function () {
-  console.log("=== 🎯 TESTING EVENT LISTENERS ===")
+  logger.log("=== 🎯 TESTING EVENT LISTENERS ===")
 
   // Find a text input
   const nameInput = document.querySelector("#bewerbungForm input[name='fullName']")
   if (!nameInput) {
-    console.log("❌ No name input found")
+    logger.log("❌ No name input found")
     return {error: "No name input found"}
   }
 
-  console.log("📝 Found name input:", nameInput)
-  console.log("📝 Current value:", nameInput.value)
+  logger.log("📝 Found name input:", nameInput)
+  logger.log("📝 Current value:", nameInput.value)
 
   // Test direct value change
   const testValue = "Event Test " + new Date().getTime()
-  console.log(`🧪 Setting value to: "${testValue}"`)
+  logger.log(`🧪 Setting value to: "${testValue}"`)
   nameInput.value = testValue
 
   // Test if updateFormData works
-  console.log("🧪 Testing updateFormData()...")
+  logger.log("🧪 Testing updateFormData()...")
   updateFormData()
-  console.log("🧪 formData.fullName after updateFormData:", formData.fullName)
+  logger.log("🧪 formData.fullName after updateFormData:", formData.fullName)
 
   // Test if debounced function works
-  console.log("🧪 Testing debouncedUpdatePreview()...")
+  logger.log("🧪 Testing debouncedUpdatePreview()...")
   debouncedUpdatePreview()
 
   // Test manual event dispatch
-  console.log("🧪 Testing manual event dispatch...")
+  logger.log("🧪 Testing manual event dispatch...")
   const inputEvent = new Event("input", {bubbles: true})
   nameInput.dispatchEvent(inputEvent)
 
@@ -6675,14 +5702,14 @@ window.debugEventListeners = function () {
 
   // Wait and check results
   setTimeout(() => {
-    console.log("🧪 Final formData.fullName:", formData.fullName)
-    console.log("🧪 Expected:", testValue)
-    console.log("🧪 Match:", formData.fullName === testValue)
+    logger.log("🧪 Final formData.fullName:", formData.fullName)
+    logger.log("🧪 Expected:", testValue)
+    logger.log("🧪 Match:", formData.fullName === testValue)
 
     // Check if preview was updated
     const previewName = document.querySelector(".preview-content h1")
     if (previewName) {
-      console.log("🧪 Preview name:", previewName.textContent)
+      logger.log("🧪 Preview name:", previewName.textContent)
     }
   }, 1000)
 
@@ -6693,23 +5720,23 @@ window.debugEventListeners = function () {
   }
 }
 
-console.log("Debug functions available:")
-console.log("- debugGetTranslation('key') - Test translation")
-console.log("- debugShowStatus('message', 'type') - Test status display")
-console.log("- debugPopulateForm(data) - Test form population")
-console.log("- debugPhotoUpload() - Test photo upload status")
-console.log("- debugPhotoInput() - Test photo input element")
-console.log("- debugManualPhotoUpload() - Manual photo upload test")
-console.log("- debugPhotoOverwrite() - Analyze photo data overwriting")
-console.log("- debugDataSequence() - Test data loading sequence")
-console.log("- debugTestSync() - Test synchronization")
-console.log("- debugAutoSync() - Test auto-synchronization")
-console.log("- debugJSONOverwrite() - Test JSON data overwriting")
-console.log("- debugTestPagination() - Test pagination on both tabs")
-console.log("- debugDataFlow() - Test complete data flow")
-console.log("- debugEventListeners() - Test if event listeners work")
-console.log("- debugSaveData() - Test save data with photo")
-console.log("- debugClearPhotoData() - Clear invalid photo data")
-console.log("- debugForcePhotoUpload() - Force photo upload from input")
-console.log("- debugRefreshPhotoDisplay() - Refresh photo display in UI")
-console.log("- debugLoadPhotoFromJSON() - Manually load photo from JSON")
+logger.log("Debug functions available:")
+logger.log("- debugGetTranslation('key') - Test translation")
+logger.log("- debugShowStatus('message', 'type') - Test status display")
+logger.log("- debugPopulateForm(data) - Test form population")
+logger.log("- debugPhotoUpload() - Test photo upload status")
+logger.log("- debugPhotoInput() - Test photo input element")
+logger.log("- debugManualPhotoUpload() - Manual photo upload test")
+logger.log("- debugPhotoOverwrite() - Analyze photo data overwriting")
+logger.log("- debugDataSequence() - Test data loading sequence")
+logger.log("- debugTestSync() - Test synchronization")
+logger.log("- debugAutoSync() - Test auto-synchronization")
+logger.log("- debugJSONOverwrite() - Test JSON data overwriting")
+logger.log("- debugTestPagination() - Test pagination on both tabs")
+logger.log("- debugDataFlow() - Test complete data flow")
+logger.log("- debugEventListeners() - Test if event listeners work")
+logger.log("- debugSaveData() - Test save data with photo")
+logger.log("- debugClearPhotoData() - Clear invalid photo data")
+logger.log("- debugForcePhotoUpload() - Force photo upload from input")
+logger.log("- debugRefreshPhotoDisplay() - Refresh photo display in UI")
+logger.log("- debugLoadPhotoFromJSON() - Manually load photo from JSON")
