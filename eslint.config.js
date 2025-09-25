@@ -37,14 +37,19 @@ export default [
         DOMParser: 'readonly',
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
         requestAnimationFrame: 'readonly',
         performance: 'readonly',
         PerformanceObserver: 'readonly',
+        CustomEvent: 'readonly',
         gtag: 'readonly',
         htmlDocx: 'readonly',
         updatePreview: 'readonly',
         showStatus: 'readonly',
-        saveFormData: 'readonly'
+        saveFormData: 'readonly',
+        global: 'writable',
+        process: 'readonly'
       }
     },
     rules: {

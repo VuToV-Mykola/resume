@@ -3,11 +3,31 @@
  * Експорт документів в PDF та DOCX формати
  */
 
-class ExportService {
+export class ExportService {
   constructor() {
     this.serverUrl = 'http://localhost:8000';
     this.isServerAvailable = false;
+    this.logger = window.logger || console;
+    this.isInitialized = false;
     this.checkServerStatus();
+  }
+
+  /**
+   * Ініціалізація сервісу
+   */
+  async initialize() {
+    if (this.isInitialized) {
+      this.logger.warn('ExportService already initialized');
+      return;
+    }
+
+    this.logger.info('Initializing ExportService...');
+    
+    // Встановлюємо залежності з глобального контексту
+    this.logger = window.logger || console;
+    
+    this.isInitialized = true;
+    this.logger.info('ExportService initialized successfully');
   }
 
   /**
@@ -643,9 +663,10 @@ class ExportService {
   }
 }
 
-// Експорт
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = ExportService;
-} else if (typeof window !== 'undefined') {
-  window.exportService = new ExportService();
+// Створення глобального екземпляру для backward compatibility
+if (typeof window !== 'undefined') {
+  // Створюємо екземпляр тільки якщо його ще немає
+  if (!window.exportService) {
+    window.exportService = new ExportService();
+  }
 }
