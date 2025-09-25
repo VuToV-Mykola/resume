@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест генерації PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-content {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            background: white;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .warning {
+            background: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Тест генерації PDF</h1>
+        <p>Цей тест перевіряє працездатність системи генерації PDF в проекті резюме.</p>
+
+        <div class="test-content">
+            <h2>Тестовий документ для PDF</h2>
+            <p>Це тестовий контент для генерації PDF документу.</p>
+            <p>Тут може бути інформація про:</p>
+            <ul>
+                <li>Персональні дані</li>
+                <li>Досвід роботи</li>
+                <li>Освіта</li>
+                <li>Навички</li>
+            </ul>
+            <p><strong>Важливо:</strong> PDF повинен коректно відображати всі елементи.</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="checkLibraries()">🔍 Перевірити бібліотеки</button>
+            <button class="btn" onclick="testPDFGeneration()">📄 Генерувати PDF</button>
+            <button class="btn" onclick="clearStatus()">🗑️ Очистити</button>
+        </div>
+
+        <div id="status" class="status" style="display: none;"></div>
+    </div>
+
+    <!-- PDF Generation Libraries -->
+    <script>
+      // Функція для безпечного завантаження PDF бібліотек
+      async function loadPDFLibraries() {
+        console.log('🔄 Завантаження PDF бібліотек...');
+        updateStatus('Завантаження бібліотек...', 'warning');
+
+        // Завантаження html2canvas
+        if (!window.html2canvas) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            script.crossOrigin = 'anonymous';
+            script.referrerPolicy = 'no-referrer';
+            script.onload = () => {
+              console.log('✅ html2canvas завантажено');
+              resolve();
+            };
+            script.onerror = (error) => {
+              console.error('❌ Помилка завантаження html2canvas:', error);
+              reject(error);
+            };
+            document.head.appendChild(script);
+          });
+        }
+
+        // Завантаження jsPDF
+        if (!window.jsPDF) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.crossOrigin = 'anonymous';
+            script.referrerPolicy = 'no-referrer';
+            script.onload = () => {
+              console.log('✅ jsPDF завантажено');
+              resolve();
+            };
+            script.onerror = (error) => {
+              console.error('❌ Помилка завантаження jsPDF:', error);
+              reject(error);
+            };
+            document.head.appendChild(script);
+          });
+        }
+
+        console.log('✅ Всі PDF бібліотеки завантажено успішно');
+        updateStatus('Всі бібліотеки завантажено успішно!', 'success');
+      }
+
+      // Запускаємо завантаження при завантаженні сторінки
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          await loadPDFLibraries();
+        } catch (error) {
+          console.error('❌ Критична помилка завантаження PDF бібліотек:', error);
+          updateStatus(`Помилка завантаження бібліотек: ${error.message}`, 'error');
+        }
+      });
+
+      function updateStatus(message, type = 'info') {
+        const statusDiv = document.getElementById('status');
+        statusDiv.textContent = message;
+        statusDiv.className = `status ${type}`;
+        statusDiv.style.display = 'block';
+      }
+
+      function clearStatus() {
+        const statusDiv = document.getElementById('status');
+        statusDiv.style.display = 'none';
+      }
+
+      function checkLibraries() {
+        const html2canvasAvailable = typeof window.html2canvas !== 'undefined';
+        const jsPDFAvailable = typeof window.jsPDF !== 'undefined';
+
+        let message = 'Стан бібліотек:\n';
+        message += `• html2canvas: ${html2canvasAvailable ? '✅ Доступна' : '❌ Відсутня'}\n`;
+        message += `• jsPDF: ${jsPDFAvailable ? '✅ Доступна' : '❌ Відсутня'}`;
+
+        const allAvailable = html2canvasAvailable && jsPDFAvailable;
+        updateStatus(message, allAvailable ? 'success' : 'error');
+      }
+
+      async function testPDFGeneration() {
+        updateStatus('Початок генерації PDF...', 'warning');
+
+        try {
+          // Перевіряємо доступність бібліотек
+          if (typeof window.html2canvas === 'undefined' || typeof window.jsPDF === 'undefined') {
+            throw new Error('PDF бібліотеки недоступні');
+          }
+
+          // Отримуємо контент для PDF
+          const testContent = document.querySelector('.test-content');
+
+          updateStatus('Створення canvas з HTML контенту...', 'warning');
+
+          // Генеруємо canvas
+          const canvas = await html2canvas(testContent, {
+            width: 794,
+            height: 1123,
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff',
+            logging: false
+          });
+
+          updateStatus('Створення PDF документу...', 'warning');
+
+          // Створюємо PDF
+          const { jsPDF } = window;
+          const pdf = new jsPDF('p', 'mm', 'a4');
+
+          // Конвертуємо canvas в зображення
+          const imgData = canvas.toDataURL('image/png', 1.0);
+          const imgWidth = 210; // A4 width in mm
+          const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+          // Додаємо зображення до PDF
+          pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, Math.min(imgHeight, 297));
+
+          // Зберігаємо PDF
+          const pdfBlob = pdf.output('blob');
+
+          // Створюємо посилання для завантаження
+          const url = URL.createObjectURL(pdfBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `test-pdf-${new Date().toISOString().slice(0, 19)}.pdf`;
+          link.style.display = 'none';
+
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          setTimeout(() => {
+            URL.revokeObjectURL(url);
+          }, 100);
+
+          updateStatus(`✅ PDF успішно згенеровано! Розмір: ${pdfBlob.size} байт`, 'success');
+
+        } catch (error) {
+          console.error('❌ Помилка генерації PDF:', error);
+          updateStatus(`❌ Помилка генерації PDF: ${error.message}`, 'error');
+        }
+      }
+    </script>
+</body>
+</html>

@@ -1,40 +1,69 @@
 <!doctype html>
-<html lang="de" data-theme="dark">
+<html lang="de" data-theme="dark" dir="ltr">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Bewerbung Dokument Generator - Erstellen Sie professionelle Bewerbungsunterlagen">
-    <meta name="author" content="Mykola Vutov">
-    <title>Bewerbung Dokument Generator</title>
+      content="Bewerbung Dokument Generator - Erstellen Sie professionelle Bewerbungsunterlagen mit modernem Design und optimaler Benutzerfreundlichkeit"
+    />
+    <meta
+      name="keywords"
+      content="Bewerbung, Lebenslauf, Anschreiben, Dokument Generator, professionelle Bewerbungsunterlagen, Stellenbewerbung"
+    />
+    <meta name="author" content="Mykola Vutov" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://vutov.github.io/bewerbung-stationsservice/" />
+    <meta property="og:title" content="Bewerbung Dokument Generator - Professionelle Bewerbungsunterlagen" />
+    <meta
+      property="og:description"
+      content="Erstellen Sie professionelle Bewerbungsunterlagen mit modernem Design und optimaler Benutzerfreundlichkeit"
+    />
+    <meta property="og:image" content="https://vutov.github.io/bewerbung-stationsservice/assets/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://vutov.github.io/bewerbung-stationsservice/" />
+    <meta property="twitter:title" content="Bewerbung Dokument Generator" />
+    <meta
+      property="twitter:description"
+      content="Erstellen Sie professionelle Bewerbungsunterlagen mit modernem Design"
+    />
+    <meta property="twitter:image" content="https://vutov.github.io/bewerbung-stationsservice/assets/og-image.jpg" />
+
+    <title>Bewerbung Dokument Generator - Professionelle Bewerbungsunterlagen</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="alternate icon" href="/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" href="/favicon.ico" />
 
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#1a5490">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Bewerbung Gen">
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1a5490" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Bewerbung Gen" />
 
     <!-- Preconnect для Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <!-- Preload критичних шрифтів -->
     <link
       rel="preload"
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&v=20250914"
       as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
     <noscript>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&v=20250914">
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap&v=20250914"
+      />
     </noscript>
     <!--!!! MODERN NORMALIZE !!!-->
     <link
@@ -42,122 +71,192 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/3.0.1/modern-normalize.css"
       integrity="sha512-gnAN+RgTMylunXI7AMg+PtcUGpKZFkZJoFIkAWvdPFRrFJz3p2tx4+9xbjILRfN7CzoViMgS8vSf06fSQzWZjA=="
       crossorigin="anonymous"
-      referrerpolicy="no-referrer">
-    <link class="link" rel="stylesheet" href="./css/styles.css">
+      referrerpolicy="no-referrer"
+    />
+    <link class="link" rel="stylesheet" href="./css/styles-modular.css" />
+
+    <!-- Screen Reader Only Styles -->
+    <style>
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
   </head>
   <body>
     <!-- Skip navigation для accessibility -->
     <a href="#main-content" class="skip-link">Перейти до основного вмісту</a>
 
     <div class="container">
-      <header class="header" role="banner">
+      <header class="header" role="banner" aria-label="Hauptnavigation">
         <button
+          type="button"
           class="mobile-menu-btn"
           id="mobileMenuBtn"
           aria-label="Відкрити мобільне меню"
           aria-expanded="false"
-          aria-controls="mobileMenuPanel">
+          aria-controls="mobileMenuPanel"
+        >
           ☰
         </button>
-        <div class="header-controls">
-          <div class="control-group">
-            <button id="themeToggle" class="theme-toggle" title="Theme wechseln">
-              <span class="theme-icon">☀️</span>
+        <nav class="header-controls" role="toolbar" aria-label="Anwendungssteuerung">
+          <div class="control-group" role="group" aria-label="Design-Einstellungen">
+            <button
+              id="themeToggle"
+              class="theme-toggle"
+              type="button"
+              title="Theme wechseln"
+              aria-label="Zwischen hellem und dunklem Design wechseln"
+            >
+              <span class="theme-icon" aria-hidden="true">☀️</span>
             </button>
           </div>
-          <div class="control-group">
-            <div class="language-flags">
-              <button class="language-flag active" data-lang="de" title="Deutsch"> 🇩🇪 </button>
-              <button class="language-flag" data-lang="en" title="English"> 🇺🇸 </button>
-              <button class="language-flag" data-lang="uk" title="Українська"> 🇺🇦 </button>
+          <div class="control-group" role="group" aria-label="Spracheinstellungen">
+            <div class="language-flags" role="radiogroup" aria-label="Verfügbare Sprachen">
+              <button
+                class="language-flag active"
+                data-lang="de"
+                type="button"
+                title="Deutsch"
+                aria-label="Deutsch auswählen"
+                aria-pressed="true"
+              >
+                🇩🇪
+              </button>
+              <button
+                class="language-flag"
+                data-lang="en"
+                type="button"
+                title="English"
+                aria-label="English auswählen"
+                aria-pressed="false"
+              >
+                🇺🇸
+              </button>
+              <button
+                class="language-flag"
+                data-lang="uk"
+                type="button"
+                title="Українська"
+                aria-label="Українська auswählen"
+                aria-pressed="false"
+              >
+                🇺🇦
+              </button>
             </div>
           </div>
-          <div class="control-group">
+          <div class="control-group" role="group" aria-label="Übersetzungstools">
             <button
               id="translateButton"
               class="translate-toggle"
-              title="Перекласти текст через Google Translate">
-              <span class="translate-icon">🌍</span>
+              type="button"
+              title="Перекласти текст через Google Translate"
+              aria-label="Text mit Google Translate übersetzen"
+            >
+              <span class="translate-icon" aria-hidden="true">🌍</span>
             </button>
           </div>
-        </div>
+        </nav>
         <h1 data-translate="header.title">📄 Bewerbung Dokument Generator</h1>
-        <p data-translate="header.subtitle">
-          Erstellen Sie professionelle Bewerbungsunterlagen mit modernem Design
-        </p>
-        <div class="form-tabs">
+        <p data-translate="header.subtitle">Erstellen Sie professionelle Bewerbungsunterlagen mit modernem Design</p>
+
+        <nav class="form-tabs" role="tablist" aria-label="Dokumenttypen-Navigation">
           <button
             class="form-tab-button active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="bewerbung-panel"
+            id="bewerbung-tab"
             onclick="switchFormTab('bewerbung').catch(console.error)"
-            data-translate="tabs.bewerbung">
-            📝 Anschreiben
+            data-translate="tabs.bewerbung"
+          >
+            <span aria-hidden="true">📝</span> Anschreiben
           </button>
           <button
             class="form-tab-button"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="lebenslauf-panel"
+            id="lebenslauf-tab"
             onclick="switchFormTab('lebenslauf').catch(console.error)"
-            data-translate="tabs.lebenslauf">
-            👤 Lebenslauf
+            data-translate="tabs.lebenslauf"
+          >
+            <span aria-hidden="true">👤</span> Lebenslauf
           </button>
-        </div>
+        </nav>
 
         <!-- Селектор стилів резюме -->
-        <div class="resume-style-selector">
-          <label for="resumeStyle" data-translate="style.selector">Стиль резюме:</label>
-          <select id="resumeStyle" class="style-dropdown">
-            <option value="modern-professional" data-translate="style.modern-professional"
-              >Modern professionell</option
-            >
-            <option value="minimalist" data-translate="style.minimalist">Minimalistisch</option>
-            <option value="creative-blue" data-translate="style.creative-blue">Kreativ blau</option>
-            <option value="elegant-serif" data-translate="style.elegant-serif"
-              >Elegant serif</option
-            >
-            <option value="tech-modern" data-translate="style.tech-modern">Tech modern</option>
-            <option value="classic-formal" data-translate="style.classic-formal"
-              >Klassisch formal</option
-            >
-            <option value="artistic-gradient" data-translate="style.artistic-gradient"
-              >Künstlerisch Gradient</option
-            >
-            <option value="corporate-clean" data-translate="style.corporate-clean"
-              >Corporate sauber</option
-            >
-            <option value="startup-bold" data-translate="style.startup-bold">Startup mutig</option>
-            <option value="academic-traditional" data-translate="style.academic-traditional"
-              >Akademisch traditionell</option
-            >
-          </select>
-          <div class="layout-toggle">
-            <label>
-              <input type="radio" name="layout" value="single-column" checked>
-              <span data-translate="layout.single">Одна колонка</span>
-            </label>
-            <label>
-              <input type="radio" name="layout" value="two-column">
-              <span data-translate="layout.two">Дві колонки</span>
-            </label>
+        <fieldset class="resume-style-selector">
+          <legend data-translate="style.selector">Dokumentstil-Einstellungen</legend>
+          <div class="style-controls">
+            <label for="resumeStyle" data-translate="style.selector">Стиль резюме:</label>
+            <select id="resumeStyle" class="style-dropdown" aria-describedby="style-description">
+              <option value="modern-professional" data-translate="style.modern-professional">
+                Modern professionell
+              </option>
+              <option value="minimalist" data-translate="style.minimalist">Minimalistisch</option>
+              <option value="creative-blue" data-translate="style.creative-blue">Kreativ blau</option>
+              <option value="elegant-serif" data-translate="style.elegant-serif">Elegant serif</option>
+              <option value="tech-modern" data-translate="style.tech-modern">Tech modern</option>
+              <option value="classic-formal" data-translate="style.classic-formal">Klassisch formal</option>
+              <option value="artistic-gradient" data-translate="style.artistic-gradient">Künstlerisch Gradient</option>
+              <option value="corporate-clean" data-translate="style.corporate-clean">Corporate sauber</option>
+              <option value="startup-bold" data-translate="style.startup-bold">Startup mutig</option>
+              <option value="academic-traditional" data-translate="style.academic-traditional">
+                Akademisch traditionell
+              </option>
+            </select>
+            <div id="style-description" class="sr-only">Wählen Sie einen Stil für Ihr Bewerbungsdokument aus</div>
           </div>
-        </div>
+          <fieldset class="layout-toggle">
+            <legend data-translate="layout.title">Layout-Optionen</legend>
+            <div class="layout-options">
+              <label>
+                <input type="radio" name="layout" value="single-column" checked aria-describedby="layout-single-desc" />
+                <span data-translate="layout.single">Одна колонка</span>
+                <span id="layout-single-desc" class="sr-only">Einspaltiges Layout für einfache Lesbarkeit</span>
+              </label>
+              <label>
+                <input type="radio" name="layout" value="two-column" aria-describedby="layout-two-desc" />
+                <span data-translate="layout.two">Дві колонки</span>
+                <span id="layout-two-desc" class="sr-only">Zweispaltiges Layout für kompakte Darstellung</span>
+              </label>
+            </div>
+          </fieldset>
+        </fieldset>
 
-        <div class="header-data-buttons">
+        <div class="header-data-buttons" role="toolbar" aria-label="Dokument-Aktionen">
           <button
             type="button"
             class="btn btn-print btn-sm"
             onclick="generateDocuments()"
             data-translate="buttons.generateDocuments"
-            title="Створити всі документи">
-            📄 <span data-translate="buttons.create">Створити</span>
+            title="Створити всі документи"
+            aria-label="Alle Dokumente generieren"
+          >
+            <span aria-hidden="true">📄</span> <span data-translate="buttons.create">Створити</span>
           </button>
           <button
             type="button"
             class="btn btn-print btn-sm"
             onclick="generatePDFOnly()"
             data-translate="buttons.createPDF"
-            title="Створити PDF документ">
+            title="Створити PDF документ"
+          >
             <img
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iMiIgZmlsbD0iI0VFMzMzNiIvPgo8cGF0aCBkPSJNNS41IDYuNUg4LjVWOC41SDUuNVY2LjVaTTUuNSA5LjVIOC41VjExLjVINS41VjkuNVpNNS41IDEyLjVIOC41VjE0LjVINS41VjEyLjVaTTEwLjUgNi41SDEzLjVWOC41SDEwLjVWNi41Wk0xMC41IDkuNUgxMy41VjExLjVIMTAuNVY5LjVaTTEwLjUgMTIuNUgxMy41VjE0LjVIMTAuNVYxMi41WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+"
               alt="PDF"
-              style="width: 20px; height: 20px; margin-right: 5px">
+              style="width: 20px; height: 20px; margin-right: 5px"
+            />
             <span data-translate="buttons.pdf">PDF</span>
           </button>
           <button
@@ -165,11 +264,13 @@
             class="btn btn-print btn-sm"
             onclick="generateDOCXOnly()"
             data-translate="buttons.createWord"
-            title="Створити Word документ">
+            title="Створити Word документ"
+          >
             <img
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiByeD0iMiIgZmlsbD0iIzJCNzM5NiIvPgo8dGV4dCB4PSIxMCIgeT0iMTQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5XPC90ZXh0Pgo8L3N2Zz4="
               alt="Word"
-              style="width: 20px; height: 20px; margin-right: 5px">
+              style="width: 20px; height: 20px; margin-right: 5px"
+            />
             <span data-translate="buttons.word">Word</span>
           </button>
           <button
@@ -177,7 +278,8 @@
             class="btn btn-print btn-sm"
             onclick="printDocument()"
             data-translate="buttons.printDocument"
-            title="Друкувати документ">
+            title="Друкувати документ"
+          >
             🖨️ <span data-translate="buttons.print">Друк</span>
           </button>
           <button
@@ -185,7 +287,8 @@
             class="btn btn-print btn-sm"
             onclick="saveAnschreibenData()"
             data-translate="buttons.saveForm"
-            title="Зберегти дані Anschreiben">
+            title="Зберегти дані Anschreiben"
+          >
             💾 <span data-translate="buttons.save">Зберегти</span>
           </button>
           <button
@@ -193,7 +296,8 @@
             class="btn btn-print btn-sm"
             onclick="loadDataFromJSON()"
             data-translate="buttons.loadForm"
-            title="Завантажити дані">
+            title="Завантажити дані"
+          >
             📂 <span data-translate="buttons.load">Завантажити</span>
           </button>
           <button
@@ -201,7 +305,8 @@
             class="btn btn-print btn-sm"
             onclick="clearAllCache()"
             data-translate="buttons.clearCache"
-            title="Очистити кеш">
+            title="Очистити кеш"
+          >
             🗑️ <span data-translate="buttons.clear">Очистити</span>
           </button>
           <button
@@ -209,7 +314,8 @@
             class="btn btn-print btn-sm"
             onclick="showCurrentDataInfo()"
             data-translate="buttons.currentData"
-            title="Поточні дані">
+            title="Поточні дані"
+          >
             📄 <span data-translate="buttons.data">Дані</span>
           </button>
         </div>
@@ -218,9 +324,15 @@
       <main class="main-content" id="main-content" role="main">
         <!-- Form Tabs -->
 
-        <section class="form-section" id="bewerbungFormSection" aria-label="Форма Anschreiben">
+        <section
+          class="form-section"
+          id="bewerbungFormSection"
+          role="tabpanel"
+          aria-labelledby="bewerbung-tab"
+          aria-hidden="false"
+        >
           <h2 data-translate="form.personalData">📝 Persönliche Daten</h2>
-          <form id="bewerbungForm">
+          <form id="bewerbungForm" novalidate>
             <div class="form-group">
               <label for="fullName" data-translate="form.fullName">Vollständiger Name *</label>
               <input
@@ -229,63 +341,48 @@
                 name="fullName"
                 required
                 autocomplete="name"
-                placeholder="Vollständiger Name *">
+                placeholder="Vollständiger Name *"
+                aria-describedby="fullName-help"
+                aria-required="true"
+              />
+              <div id="fullName-help" class="sr-only">Geben Sie Ihren vollständigen Vor- und Nachnamen ein</div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label for="address" data-translate="form.address">Adresse *</label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  required
-                  autocomplete="off"
-                  placeholder="Adresse *">
+                <input type="text" id="address" name="address" required autocomplete="off" placeholder="Adresse *" />
               </div>
               <div class="form-group">
                 <label for="phone" data-translate="form.phone">Telefon *</label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  required
-                  autocomplete="tel"
-                  placeholder="Telefon *">
+                <input type="tel" id="phone" name="phone" required autocomplete="tel" placeholder="Telefon *" />
               </div>
             </div>
 
             <div class="form-group">
               <label for="email" data-translate="form.email">E-Mail *</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                autocomplete="email"
-                placeholder="E-Mail *">
+              <input type="email" id="email" name="email" required autocomplete="email" placeholder="E-Mail *" />
             </div>
 
             <div class="form-row">
               <div class="form-group">
                 <label for="birthDate" data-translate="form.birthDate">Geburtsdatum *</label>
-                <input type="date" id="birthDate" name="birthDate" required autocomplete="off">
+                <input type="date" id="birthDate" name="birthDate" required autocomplete="off" />
               </div>
               <div class="form-group">
-                <label for="nationality" data-translate="form.nationality"
-                  >Staatsangehörigkeit *</label
-                >
+                <label for="nationality" data-translate="form.nationality">Staatsangehörigkeit *</label>
                 <input
                   type="text"
                   id="nationality"
                   name="nationality"
                   required
                   autocomplete="country"
-                  placeholder="Staatsangehörigkeit *">
+                  placeholder="Staatsangehörigkeit *"
+                />
               </div>
             </div>
 
-            <h2 data-translate="form.professionalInfo"> 💼 Berufliche Informationen </h2>
+            <h2 data-translate="form.professionalInfo">💼 Berufliche Informationen</h2>
 
             <div class="form-group">
               <label for="position" data-translate="form.position">Beworbene Position *</label>
@@ -295,7 +392,8 @@
                 name="position"
                 required
                 autocomplete="off"
-                placeholder="Beworbene Position *">
+                placeholder="Beworbene Position *"
+              />
             </div>
 
             <div class="form-group">
@@ -306,64 +404,61 @@
                 name="company"
                 required
                 autocomplete="organization"
-                placeholder="Unternehmen *">
+                placeholder="Unternehmen *"
+              />
             </div>
 
             <div class="form-group">
               <label for="jobNumber" data-translate="form.jobNumber">Ausschreibungsnummer</label>
-              <input type="text" id="jobNumber" name="jobNumber" value="" autocomplete="off">
+              <input type="text" id="jobNumber" name="jobNumber" value="" autocomplete="off" />
             </div>
 
             <h3 data-translate="form.contactPerson">👤 Kontaktperson</h3>
 
             <div class="form-group">
-              <label for="contactName" data-translate="form.contactName"
-                >Name der Kontaktperson *</label
-              >
+              <label for="contactName" data-translate="form.contactName">Name der Kontaktperson *</label>
               <input
                 type="text"
                 id="contactName"
                 name="contactName"
                 required
                 autocomplete="name"
-                placeholder="Kontaktperson">
+                placeholder="Kontaktperson"
+              />
             </div>
 
             <div class="form-group">
-              <label for="contactAddress" data-translate="form.contactAddress"
-                >Adresse der Kontaktperson *</label
-              >
+              <label for="contactAddress" data-translate="form.contactAddress">Adresse der Kontaktperson *</label>
               <input
                 type="text"
                 id="contactAddress"
                 name="contactAddress"
                 required
                 autocomplete="off"
-                placeholder="Adresse der Kontaktperson">
+                placeholder="Adresse der Kontaktperson"
+              />
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="contactPhone" data-translate="form.contactPhone"
-                  >Telefon der Kontaktperson</label
-                >
+                <label for="contactPhone" data-translate="form.contactPhone">Telefon der Kontaktperson</label>
                 <input
                   type="tel"
                   id="contactPhone"
                   name="contactPhone"
                   autocomplete="tel"
-                  placeholder="Telefon der Kontaktperson">
+                  placeholder="Telefon der Kontaktperson"
+                />
               </div>
               <div class="form-group">
-                <label for="contactEmail" data-translate="form.contactEmail"
-                  >E-Mail der Kontaktperson</label
-                >
+                <label for="contactEmail" data-translate="form.contactEmail">E-Mail der Kontaktperson</label>
                 <input
                   type="email"
                   id="contactEmail"
                   name="contactEmail"
                   autocomplete="email"
-                  placeholder="E-Mail der Kontaktperson">
+                  placeholder="E-Mail der Kontaktperson"
+                />
               </div>
             </div>
 
@@ -377,25 +472,19 @@
                 name="subject"
                 required
                 placeholder="Betreff des Anschreibens"
-                data-translate-content="content.subject">
+                data-translate-content="content.subject"
+              />
             </div>
 
             <div class="form-group">
-              <label for="subjectColor" data-translate="form.subjectColor"
-                >Farbe des Betreffs</label
-              >
+              <label for="subjectColor" data-translate="form.subjectColor">Farbe des Betreffs</label>
               <input
                 type="color"
                 id="subjectColor"
                 name="subjectColor"
                 value="#1a5490"
-                style="
-                  width: 60px;
-                  height: 40px;
-                  border: none;
-                  border-radius: 4px;
-                  cursor: pointer;
-                ">
+                style="width: 60px; height: 40px; border: none; border-radius: 4px; cursor: pointer"
+              />
             </div>
 
             <div class="form-group">
@@ -407,7 +496,8 @@
                 required
                 autocomplete="off"
                 placeholder="Anrede"
-                data-translate="form.greetingPlaceholder">
+                data-translate="form.greetingPlaceholder"
+              />
             </div>
 
             <div class="form-row">
@@ -420,38 +510,37 @@
                   required
                   autocomplete="address-level2"
                   placeholder="Magdeburg"
-                  value="Magdeburg">
+                  value="Magdeburg"
+                />
               </div>
               <div class="form-group">
                 <label for="letterDate" data-translate="form.letterDate">Datum *</label>
-                <input type="date" id="letterDate" name="letterDate" required autocomplete="off">
+                <input type="date" id="letterDate" name="letterDate" required autocomplete="off" />
               </div>
             </div>
 
             <div class="form-group">
-              <label for="motivation" data-translate="form.motivation"
-                >Motivation und Interesse *</label
-              >
+              <label for="motivation" data-translate="form.motivation">Motivation und Interesse *</label>
               <textarea
                 id="motivation"
                 name="motivation"
                 required
                 placeholder="Beschreiben Sie Ihre Motivation für diese Position..."
-                data-translate-content="content.motivation">
+                data-translate-content="content.motivation"
+              >
 mit großem Interesse habe ich Ihre Stellenanzeige gelesen. Die Möglichkeit, in einem renommierten Krankenhaus wie dem Universitätsklinikum Magdeburg zu arbeiten und dabei Menschen zu helfen, motiviert mich sehr, mich bei Ihnen zu bewerben.</textarea
               >
             </div>
 
             <div class="form-group">
-              <label for="qualifications" data-translate="form.qualifications"
-                >Qualifikationen und Erfahrungen *</label
-              >
+              <label for="qualifications" data-translate="form.qualifications">Qualifikationen und Erfahrungen *</label>
               <textarea
                 id="qualifications"
                 name="qualifications"
                 required
                 placeholder="Beschreiben Sie Ihre relevanten Qualifikationen..."
-                data-translate-content="content.qualifications">
+                data-translate-content="content.qualifications"
+              >
 Als zuverlässige und verantwortungsbewusste Person bringe ich die erforderlichen Eigenschaften für diese Position mit. Hygiene und Sauberkeit haben für mich höchste Priorität, was ich als grundlegend für die Arbeit im Gesundheitswesen betrachte. In meiner bisherigen Arbeit habe ich immer gut im Team gearbeitet. Ich kann gut organisieren und bin kommunikativ, freundlich zu allen Menschen und auch in stressigen Situationen ruhig und effizient bleiben.</textarea
               >
             </div>
@@ -463,7 +552,8 @@ Als zuverlässige und verantwortungsbewusste Person bringe ich die erforderliche
                 name="tasks"
                 required
                 placeholder="Beschreiben Sie Ihr Verständnis der Aufgaben..."
-                data-translate-content="content.tasks">
+                data-translate-content="content.tasks"
+              >
 Die in Ihrer Ausschreibung genannten Aufgaben - von der Speiseversorgung über Hol- und Bringdienste bis zur hygienischen Aufbereitung - entsprechen genau meinen Fähigkeiten. Ich verstehe die Wichtigkeit dieser Tätigkeiten für das Wohlbefinden der Patienten und bin bereit, mit großer Sorgfalt und Empathie zu arbeiten.</textarea
               >
             </div>
@@ -474,7 +564,8 @@ Die in Ihrer Ausschreibung genannten Aufgaben - von der Speiseversorgung über H
                 id="future"
                 name="future"
                 placeholder="Beschreiben Sie Ihre Zukunftspläne..."
-                data-translate-content="content.future">
+                data-translate-content="content.future"
+              >
 Besonders ansprechend finde ich Ihr Angebot der Fort- und Weiterbildungsmöglichkeiten sowie die Aussicht auf einen sicheren Arbeitsplatz. Ich bin motiviert, mich kontinuierlich weiterzuentwickeln und langfristig Teil Ihres Teams zu werden.</textarea
               >
             </div>
@@ -487,7 +578,8 @@ Besonders ansprechend finde ich Ihr Angebot der Fort- und Weiterbildungsmöglich
                 required
                 placeholder="Beschreiben Sie Ihre Verfügbarkeit..."
                 data-translate="form.availabilityPlaceholder"
-                data-translate-content="content.availability">
+                data-translate-content="content.availability"
+              >
 Ich stehe Ihnen ab sofort zur Verfügung und bin flexibel bezüglich der Arbeitszeiten. Über die Möglichkeit, mich in einem persönlichen Gespräch vorstellen zu dürfen, würde ich mich sehr freuen.</textarea
               >
             </div>
@@ -500,7 +592,8 @@ Ich stehe Ihnen ab sofort zur Verfügung und bin flexibel bezüglich der Arbeits
                 id="experience"
                 name="experience"
                 placeholder="Beschreiben Sie Ihre relevante Berufserfahrung..."
-                rows="4">
+                rows="4"
+              >
               </textarea>
             </div>
 
@@ -510,29 +603,20 @@ Ich stehe Ihnen ab sofort zur Verfügung und bin flexibel bezüglich der Arbeits
                 id="education"
                 name="education"
                 placeholder="Beschreiben Sie Ihre Bildung und Qualifikationen..."
-                rows="4">
+                rows="4"
+              >
               </textarea>
             </div>
 
             <div class="form-group">
               <label for="languages" data-translate="form.languages">Sprachen</label>
-              <textarea
-                id="languages"
-                name="languages"
-                placeholder="Beschreiben Sie Ihre Sprachkenntnisse..."
-                rows="3">
+              <textarea id="languages" name="languages" placeholder="Beschreiben Sie Ihre Sprachkenntnisse..." rows="3">
               </textarea>
             </div>
 
             <div class="form-group">
-              <label for="additional" data-translate="form.additional"
-                >Zusätzliche Informationen</label
-              >
-              <textarea
-                id="additional"
-                name="additional"
-                placeholder="Weitere relevante Informationen..."
-                rows="3">
+              <label for="additional" data-translate="form.additional">Zusätzliche Informationen</label>
+              <textarea id="additional" name="additional" placeholder="Weitere relevante Informationen..." rows="3">
               </textarea>
             </div>
             <h2 data-translate="form.signatureSection">📝 Unterschrift</h2>
@@ -544,27 +628,33 @@ Ich stehe Ihnen ab sofort zur Verfügung und bin flexibel bezüglich der Arbeits
                 required
                 placeholder="Vielen Dank im Voraus für Ihre Antwort!..."
                 data-translate-content="content.closing"
-                style="min-height: 100px">
+                style="min-height: 100px"
+              >
 Vielen Dank im Voraus für Ihre Antwort!
 Mit freundlichen Grüßen,
 Mykola Vutov</textarea
               >
             </div>
             <div class="form-group">
-              <label for="signature" data-translate="form.signature"
-                >Unterschrift und Anlagen *</label
-              >
+              <label for="signature" data-translate="form.signature">Unterschrift und Anlagen *</label>
               <textarea
                 id="signature"
                 name="signature"
                 required
                 placeholder="Mit freundlichen Grüßen,..."
                 data-translate-content="content.signature"
-                style="min-height: 150px">
+                style="min-height: 150px"
+              >
 Anlagen:
 - Lebenslauf
 - Zeugnisse</textarea
               >
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <span aria-hidden="true">📄</span> Dokument generieren
+              </button>
             </div>
           </form>
         </section>
@@ -577,15 +667,11 @@ Anlagen:
           <div class="form-group photo-upload-section">
             <label for="lebenslaufPhoto" data-translate="lebenslauf.photo">📷 Foto</label>
             <div class="photo-upload-container">
-              <input
-                type="file"
-                id="lebenslaufPhoto"
-                name="lebenslaufPhoto"
-                accept="image/*"
-                style="display: none">
+              <input type="file" id="lebenslaufPhoto" name="lebenslaufPhoto" accept="image/*" style="display: none" />
               <div
                 class="photo-upload-area"
-                onclick="console.log('Photo upload area clicked'); document.getElementById('lebenslaufPhoto').click()">
+                onclick="console.log('Photo upload area clicked'); document.getElementById('lebenslaufPhoto').click()"
+              >
                 <div class="photo-preview" id="photoPreview">
                   <div class="photo-placeholder">
                     <span class="photo-icon">📷</span>
@@ -593,11 +679,7 @@ Anlagen:
                   </div>
                 </div>
               </div>
-              <button
-                type="button"
-                class="btn btn-secondary photo-remove-btn"
-                id="removePhoto"
-                style="display: none">
+              <button type="button" class="btn btn-secondary photo-remove-btn" id="removePhoto" style="display: none">
                 <span data-translate="lebenslauf.removePhoto">Foto entfernen</span>
               </button>
             </div>
@@ -605,129 +687,88 @@ Anlagen:
 
           <div class="form-grid">
             <div class="form-group">
-              <label for="lebenslaufFullName" data-translate="form.fullName"
-                >Vollständiger Name *</label
-              >
-              <input
-                type="text"
-                id="lebenslaufFullName"
-                name="lebenslaufFullName"
-                required
-                autocomplete="name">
+              <label for="lebenslaufFullName" data-translate="form.fullName">Vollständiger Name *</label>
+              <input type="text" id="lebenslaufFullName" name="lebenslaufFullName" required autocomplete="name" />
             </div>
             <div class="form-group">
               <label for="lebenslaufAddress" data-translate="form.address">Adresse *</label>
-              <input
-                type="text"
-                id="lebenslaufAddress"
-                name="lebenslaufAddress"
-                required
-                autocomplete="off">
+              <input type="text" id="lebenslaufAddress" name="lebenslaufAddress" required autocomplete="off" />
             </div>
             <div class="form-group">
               <label for="lebenslaufPhone" data-translate="form.phone">Telefon *</label>
-              <input
-                type="tel"
-                id="lebenslaufPhone"
-                name="lebenslaufPhone"
-                required
-                autocomplete="tel">
+              <input type="tel" id="lebenslaufPhone" name="lebenslaufPhone" required autocomplete="tel" />
             </div>
             <div class="form-group">
               <label for="lebenslaufEmail" data-translate="form.email">E-Mail *</label>
-              <input
-                type="email"
-                id="lebenslaufEmail"
-                name="lebenslaufEmail"
-                required
-                autocomplete="email">
+              <input type="email" id="lebenslaufEmail" name="lebenslaufEmail" required autocomplete="email" />
             </div>
             <div class="form-group">
-              <label for="lebenslaufBirthDate" data-translate="form.birthDate"
-                >Geburtsdatum *</label
-              >
-              <input
-                type="date"
-                id="lebenslaufBirthDate"
-                name="lebenslaufBirthDate"
-                required
-                autocomplete="off">
+              <label for="lebenslaufBirthDate" data-translate="form.birthDate">Geburtsdatum *</label>
+              <input type="date" id="lebenslaufBirthDate" name="lebenslaufBirthDate" required autocomplete="off" />
             </div>
             <div class="form-group">
-              <label for="lebenslaufNationality" data-translate="form.nationality"
-                >Staatsangehörigkeit *</label
-              >
+              <label for="lebenslaufNationality" data-translate="form.nationality">Staatsangehörigkeit *</label>
               <input
                 type="text"
                 id="lebenslaufNationality"
                 name="lebenslaufNationality"
                 required
-                autocomplete="country">
+                autocomplete="country"
+              />
             </div>
           </div>
 
-          <h2 data-translate="lebenslauf.professionalSummary"> 💼 Berufliche Qualifikation </h2>
+          <h2 data-translate="lebenslauf.professionalSummary">💼 Berufliche Qualifikation</h2>
           <div class="form-group">
-            <label for="lebenslaufSummary" data-translate="form.motivation"
-              >Berufliche Zusammenfassung *</label
-            >
+            <label for="lebenslaufSummary" data-translate="form.motivation">Berufliche Zusammenfassung *</label>
             <textarea
               id="lebenslaufSummary"
               name="lebenslaufSummary"
               rows="4"
               placeholder="Beschreiben Sie Ihre berufliche Qualifikation..."
-              required></textarea>
+              required
+            ></textarea>
           </div>
 
           <h2 data-translate="lebenslauf.skills">🎯 Kernkompetenzen</h2>
           <div class="form-group">
-            <label for="lebenslaufSkills" data-translate="form.qualifications"
-              >Fähigkeiten und Kompetenzen *</label
-            >
+            <label for="lebenslaufSkills" data-translate="form.qualifications">Fähigkeiten und Kompetenzen *</label>
             <textarea
               id="lebenslaufSkills"
               name="lebenslaufSkills"
               rows="6"
               placeholder="Liste Ihrer Kernkompetenzen (eine pro Zeile)..."
-              required></textarea>
+              required
+            ></textarea>
           </div>
 
           <h2 data-translate="lebenslauf.experience">💼 Berufserfahrung</h2>
           <div class="form-group">
-            <label for="lebenslaufExperience" data-translate="form.qualifications"
-              >Berufserfahrung *</label
-            >
-            <textarea
-              id="lebenslaufExperience"
-              name="lebenslaufExperience"
-              rows="8"
-              placeholder=""
-              required></textarea>
+            <label for="lebenslaufExperience" data-translate="form.qualifications">Berufserfahrung *</label>
+            <textarea id="lebenslaufExperience" name="lebenslaufExperience" rows="8" placeholder="" required></textarea>
           </div>
 
           <h2 data-translate="lebenslauf.education">🎓 Ausbildung</h2>
           <div class="form-group">
-            <label for="lebenslaufEducation" data-translate="form.qualifications"
-              >Ausbildung *</label
-            >
+            <label for="lebenslaufEducation" data-translate="form.qualifications">Ausbildung *</label>
             <textarea
               id="lebenslaufEducation"
               name="lebenslaufEducation"
               rows="4"
               placeholder="Abschluss&#10;Institution&#10;Zeitraum"
-              required></textarea>
+              required
+            ></textarea>
           </div>
 
           <h2 data-translate="lebenslauf.certifications">📜 Zertifizierungen & Kurse</h2>
           <div class="form-group">
-            <label for="lebenslaufCertifications" data-translate="form.qualifications"
-              >Zertifizierungen & Kurse</label
-            >
+            <label for="lebenslaufCertifications" data-translate="form.qualifications">Zertifizierungen & Kurse</label>
             <textarea
               id="lebenslaufCertifications"
               name="lebenslaufCertifications"
               rows="6"
-              placeholder="• HTML Kurs&#10;• CSS Kurs&#10;• JavaScript Kurs&#10;• Grundlagen der Cyberhygiene&#10;• GoIT.UA Kurs, Kiew"></textarea>
+              placeholder="• HTML Kurs&#10;• CSS Kurs&#10;• JavaScript Kurs&#10;• Grundlagen der Cyberhygiene&#10;• GoIT.UA Kurs, Kiew"
+            ></textarea>
           </div>
 
           <h2 data-translate="lebenslauf.languages">🌍 Sprachkenntnisse</h2>
@@ -738,39 +779,37 @@ Anlagen:
               name="lebenslaufLanguages"
               rows="4"
               placeholder="Sprache - Niveau&#10;Sprache - Niveau"
-              required></textarea>
+              required
+            ></textarea>
           </div>
 
-          <h2 data-translate="lebenslauf.additionalQualifications">
-            ⭐ Zusätzliche Qualifikationen
-          </h2>
+          <h2 data-translate="lebenslauf.additionalQualifications">⭐ Zusätzliche Qualifikationen</h2>
           <div class="form-group">
-            <label for="lebenslaufAdditional" data-translate="form.qualifications"
-              >Weitere Qualifikationen</label
-            >
+            <label for="lebenslaufAdditional" data-translate="form.qualifications">Weitere Qualifikationen</label>
             <textarea
               id="lebenslaufAdditional"
               name="lebenslaufAdditional"
               rows="4"
-              placeholder="Zusätzliche Qualifikationen (eine pro Zeile)..."></textarea>
+              placeholder="Zusätzliche Qualifikationen (eine pro Zeile)..."
+            ></textarea>
           </div>
 
           <!-- Lebenslauf Form Buttons -->
-          <div class="form-actions"> </div>
+          <div class="form-actions"></div>
         </section>
 
-        <section class="preview-section" id="previewContent">
+        <section class="preview-section" id="previewSection">
           <h2 data-translate="preview.title">📋 Live Preview</h2>
-          <div class="preview-container">
+          <div class="preview-container" id="previewContent" role="region" aria-label="Dokumentvorschau">
             <div class="preview-placeholder">
-              <div class="preview-icon">📄</div>
+              <div class="preview-icon" aria-hidden="true">📄</div>
               <h3>Документ готовий до перегляду</h3>
               <p data-translate="preview.placeholder">
                 Заповніть поля форми, щоб побачити попередній перегляд документів
               </p>
               <div class="preview-actions">
-                <button class="btn btn-primary btn-sm" onclick="generatePreview()">
-                  🔄 Оновити перегляд
+                <button class="btn btn-primary btn-sm" onclick="generatePreview()" aria-label="Vorschau aktualisieren">
+                  <span aria-hidden="true">🔄</span> Оновити перегляд
                 </button>
               </div>
             </div>
@@ -778,17 +817,14 @@ Anlagen:
         </section>
       </main>
 
-      <footer class="footer">
+      <footer class="footer" role="contentinfo">
         <p data-translate="footer.copyright">
           &copy; 2025 Bewerbung Dokument Generator | Erstellt mit modernen Web-Standards
         </p>
       </footer>
 
       <!-- Mobile Menu Overlay -->
-      <div
-        class="mobile-menu-overlay"
-        id="mobileMenuOverlay"
-        aria-hidden="true"></div>
+      <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true"></div>
 
       <!-- Mobile Menu Panel -->
       <nav
@@ -796,26 +832,17 @@ Anlagen:
         id="mobileMenuPanel"
         role="navigation"
         aria-label="Мобільне меню"
-        aria-hidden="true">
+        aria-hidden="true"
+      >
         <h3 data-translate="mobile.menu" id="mobile-menu-title">📱 Menu</h3>
-        <button
-          class="mobile-menu-close"
-          aria-label="Закрити мобільне меню">
-          ✕
-        </button>
+        <button class="mobile-menu-close" aria-label="Закрити мобільне меню">✕</button>
 
         <div class="mobile-menu-section">
           <h4 data-translate="mobile.language">🌐 Sprache</h4>
           <div class="mobile-menu-buttons">
-            <button class="btn btn-secondary language-flag active" data-lang="de" title="Deutsch">
-              🇩🇪 Deutsch
-            </button>
-            <button class="btn btn-secondary language-flag" data-lang="en" title="English">
-              🇺🇸 English
-            </button>
-            <button class="btn btn-secondary language-flag" data-lang="uk" title="Українська">
-              🇺🇦 Українська
-            </button>
+            <button class="btn btn-secondary language-flag active" data-lang="de" title="Deutsch">🇩🇪 Deutsch</button>
+            <button class="btn btn-secondary language-flag" data-lang="en" title="English">🇺🇸 English</button>
+            <button class="btn btn-secondary language-flag" data-lang="uk" title="Українська">🇺🇦 Українська</button>
           </div>
         </div>
 
@@ -835,13 +862,15 @@ Anlagen:
             <button
               class="btn btn-primary form-tab-button active"
               onclick="switchFormTab('bewerbung').catch(console.error)"
-              data-translate="tabs.bewerbung">
+              data-translate="tabs.bewerbung"
+            >
               📝 Anschreiben
             </button>
             <button
               class="btn btn-primary form-tab-button"
               onclick="switchFormTab('lebenslauf').catch(console.error)"
-              data-translate="tabs.lebenslauf">
+              data-translate="tabs.lebenslauf"
+            >
               👤 Lebenslauf
             </button>
           </div>
@@ -854,7 +883,8 @@ Anlagen:
               class="iphone-action-btn create"
               onclick="generateDocuments()"
               data-translate="buttons.generateDocuments"
-              title="Створити всі документи">
+              title="Створити всі документи"
+            >
               <span class="btn-icon">📄</span>
               <span class="btn-text" data-translate="buttons.create">Створити</span>
             </button>
@@ -862,7 +892,8 @@ Anlagen:
               class="iphone-action-btn pdf"
               onclick="generatePDFOnly()"
               data-translate="buttons.createPDF"
-              title="Створити PDF документ">
+              title="Створити PDF документ"
+            >
               <span class="btn-icon">📄</span>
               <span class="btn-text" data-translate="buttons.pdf">PDF</span>
             </button>
@@ -870,7 +901,8 @@ Anlagen:
               class="iphone-action-btn word"
               onclick="generateDOCXOnly()"
               data-translate="buttons.createWord"
-              title="Створити Word документ">
+              title="Створити Word документ"
+            >
               <span class="btn-icon">📝</span>
               <span class="btn-text" data-translate="buttons.word">Word</span>
             </button>
@@ -878,7 +910,8 @@ Anlagen:
               class="iphone-action-btn print"
               onclick="printDocument()"
               data-translate="buttons.printDocument"
-              title="Друкувати документ">
+              title="Друкувати документ"
+            >
               <span class="btn-icon">🖨️</span>
               <span class="btn-text" data-translate="buttons.print">Друк</span>
             </button>
@@ -886,7 +919,8 @@ Anlagen:
               class="iphone-action-btn save"
               onclick="saveLebenslaufData()"
               data-translate="buttons.saveForm"
-              title="Зберегти дані форми">
+              title="Зберегти дані форми"
+            >
               <span class="btn-icon">💾</span>
               <span class="btn-text" data-translate="buttons.save">Зберегти</span>
             </button>
@@ -894,7 +928,8 @@ Anlagen:
               class="iphone-action-btn load"
               onclick="loadDataFromJSON()"
               data-translate="buttons.loadForm"
-              title="Завантажити дані форми">
+              title="Завантажити дані форми"
+            >
               <span class="btn-icon">📂</span>
               <span class="btn-text" data-translate="buttons.load">Завантажити</span>
             </button>
@@ -902,7 +937,8 @@ Anlagen:
               class="iphone-action-btn clear"
               onclick="clearAllCache()"
               data-translate="buttons.clearForm"
-              title="Очистити форму">
+              title="Очистити форму"
+            >
               <span class="btn-icon">🗑️</span>
               <span class="btn-text" data-translate="buttons.clear">Очистити</span>
             </button>
@@ -910,7 +946,8 @@ Anlagen:
               class="iphone-action-btn info"
               onclick="showCurrentDataInfo()"
               data-translate="buttons.showInfo"
-              title="Показати інформацію про дані">
+              title="Показати інформацію про дані"
+            >
               <span class="btn-icon">ℹ️</span>
               <span class="btn-text" data-translate="buttons.info">Інформація</span>
             </button>
@@ -922,7 +959,8 @@ Anlagen:
         class="status-message"
         style="display: none"
         onclick="clearStatus()"
-        title="Klicken zum Schließen"></div>
+        title="Klicken zum Schließen"
+      ></div>
     </div>
     <!-- Core modules -->
     <script src="./js/core/state-management.js"></script>
@@ -944,6 +982,7 @@ Anlagen:
     <script src="./js/utils.js"></script>
     <script src="./js/utils/dom-cache.js"></script>
     <script src="./js/utils/logger.js"></script>
+    <script src="./js/utils/error-fixer.js"></script>
     <script src="./js/utils/event-manager.js"></script>
 
     <!-- Live Print Preview -->
@@ -951,6 +990,69 @@ Anlagen:
 
     <!-- HTML to DOCX conversion library -->
     <script src="./html-docx.js"></script>
+
+    <!-- PDF Generation Libraries з перевіркою завантаження -->
+    <script>
+      // Функція для безпечного завантаження PDF бібліотек
+      async function loadPDFLibraries() {
+        console.log('🔄 Завантаження PDF бібліотек...');
+
+        // Завантаження html2canvas
+        if (!window.html2canvas) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            script.crossOrigin = 'anonymous';
+            script.referrerPolicy = 'no-referrer';
+            script.onload = () => {
+              console.log('✅ html2canvas завантажено');
+              resolve();
+            };
+            script.onerror = (error) => {
+              console.error('❌ Помилка завантаження html2canvas:', error);
+              reject(error);
+            };
+            document.head.appendChild(script);
+          });
+        }
+
+        // Завантаження jsPDF
+        if (!window.jsPDF) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+            script.crossOrigin = 'anonymous';
+            script.referrerPolicy = 'no-referrer';
+            script.onload = () => {
+              console.log('✅ jsPDF завантажено');
+              resolve();
+            };
+            script.onerror = (error) => {
+              console.error('❌ Помилка завантаження jsPDF:', error);
+              reject(error);
+            };
+            document.head.appendChild(script);
+          });
+        }
+
+        console.log('✅ Всі PDF бібліотеки завантажено успішно');
+      }
+
+      // Запускаємо завантаження при завантаженні сторінки
+      document.addEventListener('DOMContentLoaded', async () => {
+        try {
+          await loadPDFLibraries();
+
+          // Перевіряємо доступність бібліотек
+          if (window.exportService) {
+            console.log('🔍 Перевірка бібліотек у export service...');
+            await window.exportService.checkServerStatus();
+          }
+        } catch (error) {
+          console.error('❌ Критична помилка завантаження PDF бібліотек:', error);
+        }
+      });
+    </script>
 
     <!-- Translation API -->
     <script src="./js/check-html-docx.js"></script>
